@@ -26,6 +26,22 @@ Si vas a evaluar el proyecto rápido, revisa en este orden:
 
 ---
 
+## 📦 Publicación en GitHub
+
+Archivos clave para colaboración y despliegue del entorno:
+
+- `requirements.txt` (dependencias Python)
+- `LICENSE` (licencia MIT)
+- `CONTRIBUTING.md` (guía de contribución)
+
+Instalación rápida:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
 ## 📁 Estructura de Carpetas
 
 ```
