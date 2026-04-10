@@ -325,5 +325,3 @@ tree /F (Windows) o tree -L 3 (Mac/Linux)
 **Mantenido por:** DAGRD  
 **Última revisión:** 2026-03-18  
 **Versión:** 2.0.0
-#   d a g r d - r i s k - a n a l y t i c s - d a s h b o a r d  
- 
