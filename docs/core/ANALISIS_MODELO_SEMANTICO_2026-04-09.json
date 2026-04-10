@@ -1,0 +1,646 @@
+{
+  "metadata": {
+    "modelo": "tableroDAGRD",
+    "fecha_analisis": "2026-04-09",
+    "version_tmdl": "tmdl_live",
+    "cultura": "es-ES",
+    "cultura_origen": "es-CO",
+    "total_tablas": 21
+  },
+  "tablas": {
+    "hechos": [
+      {
+        "nombre": "Hecho_Participacion_General",
+        "tipo": "Fact",
+        "id_lineage": "30b7b840-9e09-4ac8-8f80-20b78e4533cd",
+        "descripcion": "Tabla central con actividades de participación, incluyendo semilleros, comunitaria, empresarial e institucional",
+        "columnas": {
+          "claves": [
+            "id_actividad (int64, key)"
+          ],
+          "fechas": [
+            "fecha (dateTime, hidden)"
+          ],
+          "dimensiones": [
+            "comuna_cod (int64)",
+            "instancia (string)",
+            "seccion_tablero (string)",
+            "publico_comunidad (string)",
+            "semillero_grd (string)",
+            "actividad_semillero (string)",
+            "nombre_satc (string)",
+            "actividad_comunitaria (string)",
+            "publico_primera_infancia (string)",
+            "actividad_primera_infancia (string)",
+            "actividad_institucional (string)",
+            "mesa_institucional (string)",
+            "publico_empresarial (string)",
+            "nombre_cosegrd (string)",
+            "actividad_empresarial (string)"
+          ],
+          "medidas": [
+            "participantes (suma)",
+            "impacto_indirecto (suma)"
+          ]
+        },
+        "relaciones": [
+          "→ Dim_Fecha.fecha (R_DimFecha_HPG)",
+          "→ Dim_Comuna.comuna_cod (R_DimComuna_HPG)",
+          "→ Dim_Seccion.seccion_tablero (R_DimSeccion_HPG)",
+          "→ Dim_Instancia.instancia (R_DimInstancia_HPG)",
+          "→ Dim_SATC_Relaciones.Comuna_Cod (AutoDetected)",
+          "→ LocalDateTable_8db77276-1d8a-4c80-9ec7-937e69de8c4f.Date (variation)"
+        ],
+        "particion": "import (mode: import)",
+        "visible": true,
+        "observaciones": "Tabla principal con 3202 registros referenciados. Contiene múltiples públicos y tipos de actividad."
+      },
+      {
+        "nombre": "Hecho_Simulacros",
+        "tipo": "Fact",
+        "id_lineage": "3d0d5f72-16b5-4e24-9367-452cf55eefec",
+        "descripcion": "Registros de simulacros de emergencia con participantes",
+        "columnas": {
+          "claves": [
+            "fila_origen (int64, hidden)"
+          ],
+          "fechas": [
+            "fecha (dateTime, hidden)"
+          ],
+          "dimensiones": [
+            "nombre_entidad (string)",
+            "comuna_texto (string)",
+            "comuna_cod (int64)",
+            "sector_tablero (string)"
+          ],
+          "medidas": [
+            "personas_participantes (suma)"
+          ]
+        },
+        "relaciones": [
+          "→ Dim_Fecha.fecha (R_DimFecha_HS)",
+          "→ Dim_Comuna.comuna_cod (R_DimComuna_HS)",
+          "→ Dim_Seccion.seccion_tablero (R_DimSeccion_HS)",
+          "→ Dim_SATC_Relaciones.Comuna_Cod (AutoDetected)",
+          "→ LocalDateTable_15b2182d-b46e-4161-8338-943189c4acc8.Date (variation)",
+          "← Hecho_Participacion_General.fila_origen (inactive, both directions)"
+        ],
+        "particion": "import (mode: import)",
+        "visible": true,
+        "observaciones": "Registros de simulacros. Relación inactiva bidireccional con Hecho_Participacion_General por fila_origen."
+      },
+      {
+        "nombre": "Hecho_Demografia",
+        "tipo": "Fact",
+        "id_lineage": "a1617d98-d25e-4a7d-9303-bb6926f6f52c",
+        "descripcion": "Datos demográficos de actividades por comuna e instancia",
+        "columnas": {
+          "claves": [
+            "id_actividad (int64)"
+          ],
+          "fechas": [
+            "fecha (dateTime, hidden)"
+          ],
+          "dimensiones": [
+            "comuna_cod (int64)",
+            "instancia (string)",
+            "seccion_tablero (string)"
+          ],
+          "medidas": [
+            "valor_demografico"
+          ]
+        },
+        "relaciones": [
+          "→ Dim_Fecha.fecha (R_DimFecha_HD)",
+          "→ Dim_Comuna.comuna_cod (R_DimComuna_HD)",
+          "→ Dim_Seccion.seccion_tablero (R_DimSeccion_HD)",
+          "→ Dim_Instancia.instancia (R_DimInstancia_HD)",
+          "→ Dim_SATC_Relaciones.Comuna_Cod (AutoDetected)",
+          "→ LocalDateTable_fdd25ae3-1e7e-47ce-8a87-6344f31146ec.Date (variation)"
+        ],
+        "particion": "import (mode: import)",
+        "visible": true,
+        "observaciones": "Complementa análisis demográfico de participaciones por secciones."
+      }
+    ],
+    "dimensiones": [
+      {
+        "nombre": "Dim_Fecha",
+        "tipo": "Dimension (Time)",
+        "id_lineage": "c5e22b69-d47c-49f3-9a5c-e26f12b859e6",
+        "descripcion": "Calendario dinámico generado de las fechas en los hechos",
+        "columnas": [
+          "fecha (date, unique, key)",
+          "anio (int64)",
+          "mes_num (int64)",
+          "mes_nombre (string, sorted by mes_num)",
+          "trimestre (string)"
+        ],
+        "particion": "calculated (DAX)",
+        "expresion": "UNION de fechas de 3 hechos + CALENDAR(MinFecha, MaxFecha)",
+        "visible": true,
+        "observaciones": "Tabla calculada que genera automáticamente el rango de fechas. Rango seguro y consistente."
+      },
+      {
+        "nombre": "Dim_Comuna",
+        "tipo": "Dimension",
+        "id_lineage": "a86716e4-ae7b-4d03-817c-e65ba87f7a70",
+        "descripcion": "Dimensión de comunas de Medellín con códigos y nombres",
+        "columnas": [
+          "comuna_cod (int64, key)",
+          "comuna_nombre (string)"
+        ],
+        "particion": "calculated (DAX)",
+        "expresion": "DISTINCT de comuna_cod de 3 hechos + SWITCH para nombres",
+        "visible": true,
+        "observaciones": "Tabla calculada que mapea códigos de comuna a nombres. Soporta 16 comunas + zonas rurales."
+      },
+      {
+        "nombre": "Dim_Seccion",
+        "tipo": "Dimension",
+        "id_lineage": "b8fd4956-7b38-4409-b987-a0f09b5916cf",
+        "descripcion": "Clasificación de secciones de trabajo",
+        "columnas": [
+          "seccion_tablero (string, key)"
+        ],
+        "valores": [
+          "Comunitaria",
+          "Educativa",
+          "Empresarial",
+          "Institucional",
+          "Otros"
+        ],
+        "particion": "calculated (DATATABLE)",
+        "visible": true,
+        "observaciones": "Tabla estática mini-dimensión con 5 categorías. Ideal para slicing de visuales."
+      },
+      {
+        "nombre": "Dim_Instancia",
+        "tipo": "Dimension",
+        "id_lineage": "a0b6c24f-d44a-4c1c-9ebb-eefcb8ce4d89",
+        "descripcion": "Instancias o canales de participación",
+        "columnas": [
+          "instancia (string, key)"
+        ],
+        "particion": "calculated (DISTINCT)",
+        "expresion": "DISTINCT de Hecho_Participacion_General[instancia]",
+        "visible": true,
+        "observaciones": "Tabla calculada que extrae valores únicos de instancia."
+      },
+      {
+        "nombre": "Dim_SATC",
+        "tipo": "Dimension",
+        "id_lineage": "3a9f656a-fe10-4e4a-904d-7f5e4462d097",
+        "descripcion": "Sociedades de Acción Territorial y Comunitaria",
+        "columnas": [
+          "SATC_ID (string, key)",
+          "SATC_Nombre (string)",
+          "Comuna_Cod (int64)",
+          "Talleres (int64, suma)",
+          "Comites (int64, suma)",
+          "Activo (string)"
+        ],
+        "fuente": "Excel (Modelo_Reporte_Paginas_2026.xlsx - Dim_SATC)",
+        "particion": "import (M query)",
+        "visible": true,
+        "medidas_incluidas": [
+          "Num_SATC (DISTINCTCOUNT)",
+          "Total_SATC_Unicos (formatted)"
+        ],
+        "observaciones": "Tabla maestra de SATCs con contador de talleres y comités. Incluye medidas de agregación."
+      },
+      {
+        "nombre": "Dim_SATC_Relaciones",
+        "tipo": "Dimension (Bridge/Lookup)",
+        "id_lineage": "6329e5c1-d29b-4e8a-bf4d-7fb0bf88bb11",
+        "descripcion": "Mapeo de cantidad de SATCs por comuna",
+        "columnas": [
+          "Comuna_Cod (int64, key)",
+          "SATC_Cantidad (int64, suma)"
+        ],
+        "fuente": "Excel (Modelo_Reporte_Paginas_2026.xlsx - Dim_SATC_Relaciones)",
+        "particion": "import (M query)",
+        "visible": true,
+        "relaciones": [
+          "← Hecho_Participacion_General.comuna_cod",
+          "← Hecho_Simulacros.comuna_cod",
+          "← Hecho_Demografia.comuna_cod",
+          "← Dim_Semilleros_Confiable.comuna_cod",
+          "← Dim_SATC.Comuna_Cod"
+        ],
+        "observaciones": "Tabla puente de muchos-a-muchos. Actúa como hub central de relaciones por comuna. Es una tabla de lookup/referencia."
+      },
+      {
+        "nombre": "Dim_Semilleros",
+        "tipo": "Dimension",
+        "id_lineage": "d7607a0b-cd8a-4b8b-9605-e58c1bcdf91f",
+        "descripcion": "Catálogo de semilleros (grupos de apoyo comunitario)",
+        "columnas": [
+          "N° (int64, key)",
+          "Semillero (string)",
+          "Comuna (int64)",
+          "Comuna_Nombre (string)",
+          "Barrio_Organización (string)"
+        ],
+        "fuente": "Excel (Modelo_Reporte_Paginas_2026.xlsx - Dim_Semilleros)",
+        "particion": "import (M query)",
+        "visible": true,
+        "medidas_incluidas": [
+          "Num_Semilleros (DISTINCTCOUNT)",
+          "Total_Semilleros (formatted)"
+        ],
+        "observaciones": "Lista de semilleros con información geográfica. Incluye medidas de recuento."
+      },
+      {
+        "nombre": "Dim_Semilleros_Confiable",
+        "tipo": "Dimension",
+        "id_lineage": "75274982-07c0-4a23-ab85-e8c4eb4b3be2",
+        "descripcion": "Versión validada y confiable de semilleros con información de fuente y estado",
+        "columnas": [
+          "semillero_id (int64, key)",
+          "semillero_nombre (string)",
+          "comuna_cod (int64)",
+          "comuna_nombre (string)",
+          "barrio_organizacion (string)",
+          "fuente_semillero (string)",
+          "activo (string)"
+        ],
+        "fuente": "Excel (Modelo_Reporte_Paginas_2026.xlsx - Dim_Semilleros_Confiable)",
+        "particion": "import (M query)",
+        "visible": true,
+        "relaciones": [
+          "→ Dim_SATC_Relaciones.Comuna_Cod"
+        ],
+        "observaciones": "Versión mejorada de Dim_Semilleros con campos de auditoría (fuente, activo). Probablemente más actualizada y confiable."
+      },
+      {
+        "nombre": "Dim_Comites_Comisiones_2026",
+        "tipo": "Dimension",
+        "id_lineage": "52ff87cd-754d-479d-be32-9daa24d33b7d",
+        "descripcion": "Catálogo de comités y comisiones por comuna",
+        "columnas": [
+          "comuna_cod (int64, key)",
+          "comite_comision_nombre (string)",
+          "comite_comision_etiqueta (string)"
+        ],
+        "fuente": "CSV (Dim_Comites_Comisiones_2026.csv)",
+        "particion": "import (CSV query)",
+        "visible": true,
+        "observaciones": "Tabla de referencia pequeña con gobernanza local. Cargada desde CSV."
+      },
+      {
+        "nombre": "_Medidas",
+        "tipo": "Measurement Table (Role-Playing)",
+        "id_lineage": "b1f93f08-da6d-496c-9a96-414b9e4b2c9e",
+        "descripcion": "Tabla de rol para almacenar todas las medidas del modelo",
+        "medidas_totales": 40,
+        "estructura": {
+          "patron_naming": "{Nombre}_VAL para valor sin formato, {Nombre} para valor formateado",
+          "formatos": "Algunos con formato de número (#,##0), otros sin formato",
+          "visibilidad": "Medidas _VAL generalmente ocultas (isHidden)"
+        },
+        "categorias_medidas": {
+          "Generales": [
+            "GenF_Total_Actividades",
+            "GenF_Total_Participaciones",
+            "GenF_Comunitaria_Participaciones",
+            "GenF_Educativa_Participaciones",
+            "GenF_Empresarial_Participaciones",
+            "GenF_Institucional_Participaciones"
+          ],
+          "SATC": [],
+          "Simulacros": [
+            "Base_Simulacros",
+            "Base_Simulacros_Personas",
+            "Simulacros_Registrados_Total"
+          ],
+          "Cobertura": [
+            "Base_Impacto_Indirecto",
+            "Cobertura_Total"
+          ],
+          "Institucional": [
+            "Articulacion_Institucional",
+            "Mesas_Interinstitucionalidad",
+            "Acciones_Conjuntas",
+            "Participantes_Articulacion",
+            "Participantes_Mesas",
+            "Participantes_Acciones_Conjuntas"
+          ],
+          "Control": [
+            "Ctl_Referencia_Actividades_OK",
+            "Ctl_Referencia_Participaciones_OK"
+          ]
+        },
+        "visible": true,
+        "observaciones": "Tabla desnormalizada que consolida todas las medidas. Recomendable para facilitar mantenimiento centralizado."
+      }
+    ],
+    "control_auditoria": [
+      {
+        "nombre": "CAM_Control",
+        "tipo": "Control/Audit (Fact-like)",
+        "id_lineage": "a080df89-5258-4b0c-b9fd-d4b34572ab47",
+        "descripcion": "Tabla de control con métricas agregadas de CAMs (Centros de Atención Móvil)",
+        "columnas": [
+          "cam_activos_total (int64)",
+          "zonas_cam_total (int64)",
+          "empresas_unicas_global (int64)",
+          "empresas_unicas_suma_por_zona (int64)"
+        ],
+        "fuente": "Excel (Modelo_Reporte_Paginas_2026.xlsx - CAM_Control)",
+        "particion": "import (M query)",
+        "visible": true,
+        "relaciones_activas": "Ninguna",
+        "observaciones": "Tabla de propósitos especiales para validaciones cruzadas y control de calidad. No tiene relaciones."
+      },
+      {
+        "nombre": "CAM_Resumen_Zona",
+        "tipo": "Dimension/Summary",
+        "id_lineage": "8905fce6-4001-4b9f-ba7f-cf521d48bafe",
+        "descripcion": "Resumen de CAMs por zona geográfica",
+        "columnas": [
+          "cam_activo_id (int64, key)",
+          "zona_cam (string)",
+          "empresas_unicas_zona (int64, suma)"
+        ],
+        "fuente": "Excel (Modelo_Reporte_Paginas_2026.xlsx - CAM_Resumen_Zona)",
+        "particion": "import (M query)",
+        "visible": true,
+        "relaciones_activas": "Ninguna",
+        "observaciones": "Tabla de resumen por zona. Aislada sin relaciones a otras tablas."
+      },
+      {
+        "nombre": "CAM_Detalle",
+        "tipo": "Dimension Detail",
+        "id_lineage": "328660fb-5263-43c4-b6a8-a00e71e69e29",
+        "descripcion": "Detalle de empresas en CAMs con nombres normalizados",
+        "columnas": [
+          "cam_activo_id (int64, key)",
+          "zona_cam (string)",
+          "empresa (string)",
+          "empresa_normalizada (string)"
+        ],
+        "fuente": "Excel (Modelo_Reporte_Paginas_2026.xlsx - CAM_Detalle)",
+        "particion": "import (M query con renombrado de columnas)",
+        "visible": true,
+        "relaciones_activas": "Ninguna",
+        "observaciones": "Tabla de apoyo con empresas del programa CAM. Aislada sin conexión al modelo principal."
+      }
+    ],
+    "sistema_fechas": [
+      {
+        "nombre": "DateTableTemplate_cf3939a4-f1ee-4021-bad3-46d914bea584",
+        "tipo": "Date Table (System Template)",
+        "id_lineage": "9c562506-c339-49a5-9bbb-e0d66e577e0e",
+        "descripcion": "Tabla de fecha plantilla del sistema generada automáticamente",
+        "visible": false,
+        "privada": true,
+        "observaciones": "Tabla sistema oculta de Power BI. No se usa activamente en relaciones."
+      },
+      {
+        "nombre": "LocalDateTable_8db77276-1d8a-4c80-9ec7-937e69de8c4f",
+        "tipo": "Date Table (Local - Hecho_Participacion_General)",
+        "id_lineage": "Not specified",
+        "descripcion": "Tabla de fecha local generada para Hecho_Participacion_General",
+        "visible": false,
+        "privada": false,
+        "jerarquia": "Jerarquía de fechas",
+        "observaciones": "Tabla local AutoGenerated. Usada en variation relationships."
+      },
+      {
+        "nombre": "LocalDateTable_15b2182d-b46e-4161-8338-943189c4acc8",
+        "tipo": "Date Table (Local - Hecho_Simulacros)",
+        "id_lineage": "Not specified",
+        "descripcion": "Tabla de fecha local para Hecho_Simulacros",
+        "visible": false,
+        "privada": false,
+        "observaciones": "Tabla local AutoGenerated. Usada en variation relationships."
+      },
+      {
+        "nombre": "LocalDateTable_fdd25ae3-1e7e-47ce-8a87-6344f31146ec",
+        "tipo": "Date Table (Local - Hecho_Demografia)",
+        "id_lineage": "Not specified",
+        "descripcion": "Tabla de fecha local para Hecho_Demografia",
+        "visible": false,
+        "privada": false,
+        "observaciones": "Tabla local AutoGenerated. Usada en variation relationships."
+      }
+    ]
+  },
+  "relaciones": {
+    "resumen": {
+      "activas": 13,
+      "inactivas": 1,
+      "total": 14
+    },
+    "por_tipo": {
+      "Named": [
+        "R_DimFecha_HPG",
+        "R_DimFecha_HD",
+        "R_DimFecha_HS",
+        "R_DimComuna_HPG",
+        "R_DimComuna_HD",
+        "R_DimComuna_HS",
+        "R_DimSeccion_HPG",
+        "R_DimSeccion_HD",
+        "R_DimSeccion_HS",
+        "R_DimInstancia_HPG",
+        "R_DimInstancia_HD"
+      ],
+      "AutoDetected": [
+        "AutoDetected_f58f1728-78ac-4a8b-a8d0-16fb2fafac8b",
+        "AutoDetected_503d9cf3-c4c4-4ad8-82ae-92e3b6dc08cd",
+        "AutoDetected_b2ccf614-34b3-4ee2-b6c1-7f2e4238f528",
+        "AutoDetected_689423ad-2f28-4f2a-b16b-e8d205bed9b7",
+        "AutoDetected_edec8387-6468-4a92-80ba-4418def7f14d"
+      ],
+      "DateVariation": [
+        "LocalDateTable_8db77276-1d8a-4c80-9ec7-937e69de8c4f.Date",
+        "LocalDateTable_15b2182d-b46e-4161-8338-943189c4acc8.Date",
+        "LocalDateTable_fdd25ae3-1e7e-47ce-8a87-6344f31146ec.Date"
+      ]
+    },
+    "hub_central": {
+      "tabla": "Dim_SATC_Relaciones",
+      "descripcion": "Tabla puente de propósito general por Comuna_Cod",
+      "conexiones": 5,
+      "notas": "Actúa como tabla central de un modelo star schema modificado"
+    }
+  },
+  "patrones": {
+    "convenciones_nombre": {
+      "prefijos": {
+        "Dim_": "Tablas dimensionales",
+        "Hecho_": "Tablas de hechos",
+        "CAM_": "Tablas de control y activos móviles",
+        "_": "Tabla especial (medidas)"
+      },
+      "sufijos": {
+        "_VAL": "Medidas con valor base sin formato",
+        "_": "Medidas con formato aplicado"
+      },
+      "casos": {
+        "tablas": "PascalCase",
+        "columnas": "snake_case"
+      }
+    },
+    "patrones_columnas": {
+      "claves": [
+        "id_actividad",
+        "fila_origen (hidden)",
+        "N° (en Dim_Semilleros)"
+      ],
+      "fechas": [
+        "fecha (always hidden en hechos)",
+        "fecha_date (variación)",
+        "anio, mes_num, mes_nombre, trimestre (derived)"
+      ],
+      "ocultas": [
+        "fila_origen",
+        "fecha",
+        "columnas de fecha en tablas locales"
+      ]
+    },
+    "tipos_tabla": {
+      "dinamica_calculada": [
+        "Dim_Fecha (UNION + CALENDAR)",
+        "Dim_Comuna (DISTINCT + SWITCH)",
+        "Dim_Seccion (DATATABLE literal)",
+        "Dim_Instancia (DISTINCT)"
+      ],
+      "importada_excel": [
+        "Dim_SATC",
+        "Dim_SATC_Relaciones",
+        "Dim_Semilleros",
+        "Dim_Semilleros_Confiable",
+        "CAM_Control",
+        "CAM_Resumen_Zona",
+        "CAM_Detalle"
+      ],
+      "importada_csv": [
+        "Dim_Comites_Comisiones_2026"
+      ],
+      "sistema_autogenerated": [
+        "DateTableTemplate_*",
+        "LocalDateTable_*"
+      ]
+    },
+    "relaciones_data_flow": {
+      "estrellas": 3,
+      "hechos": [
+        "Hecho_Participacion_General (hechos central)",
+        "Hecho_Simulacros (hechos secundario)",
+        "Hecho_Demografia (hechos complementario)"
+      ],
+      "dimensiones_comunes": [
+        "Dim_Fecha",
+        "Dim_Comuna",
+        "Dim_Seccion",
+        "Dim_Instancia"
+      ],
+      "hub_adicional": "Dim_SATC_Relaciones"
+    }
+  },
+  "validaciones": {
+    "referencia_control": {
+      "Ctl_Referencia_Actividades_OK": "Debe ser SI (esperado: 3202)",
+      "Ctl_Referencia_Participaciones_OK": "Debe ser SI (esperado: 111694)"
+    }
+  },
+  "diagnostico": {
+    "fortalezas": [
+      "Modelo star schema bien estructurado",
+      "Separación clara entre hechos y dimensiones",
+      "Tabla de medidas centralizada facilitando mantenimiento",
+      "Dimensiones calculadas dinámicas garantizan consistencia",
+      "Convenciones de nombre consistentes",
+      "Relaciones explícitamente nombradas para claridad"
+    ],
+    "potenciales_problemas": [
+      {
+        "issue": "Cuatro tablas de fecha (3 locales + 1 template)",
+        "severidad": "Media",
+        "recomendacion": "Considerar consolidar en Dim_Fecha principal o usar solo LocalDateTables si es necesario",
+        "impacto": "Redundancia menor, sin impacto en resultados pero confusa para mantenimiento"
+      },
+      {
+        "issue": "Relación inactiva (both directions) entre Hecho_Simulacros y Hecho_Participacion_General",
+        "severidad": "Media",
+        "razon": "Probablemente desactivada por cruzar hechos (anti-pattern OLAP)",
+        "recomendacion": "Documentar razón; considerar si es necesaria o debe eliminarse"
+      },
+      {
+        "issue": "CAM_* tablas (Control, Resumen_Zona, Detalle) sin relaciones activas",
+        "severidad": "Baja",
+        "razon": "Probablemente son tablas de propósitos especiales/auxiliares",
+        "recomendacion": "Verificar si se usan en visuales; si no, considerar moverlas a fuente separada"
+      },
+      {
+        "issue": "Dim_Semilleros y Dim_Semilleros_Confiable (posible duplicación)",
+        "severidad": "Media",
+        "razon": "Dos versiones de misma dimensión",
+        "recomendacion": "Auditar cual es la versión oficial; considerar deprecar una"
+      },
+      {
+        "issue": "Dim_SATC_Relaciones con annotation PBI_ResultType = Exception",
+        "severidad": "Baja",
+        "razon": "En lugar de 'Table'",
+        "recomendacion": "Verificar que sea correcto; podría ser error de exportación"
+      }
+    ],
+    "integridad_datos": {
+      "tablas_huerfanas": [
+        "CAM_Control (sin relaciones entrada/salida)",
+        "CAM_Resumen_Zona (sin relaciones entrada/salida)"
+      ],
+      "tablas_redundantes": [
+        "Dim_Semilleros vs Dim_Semilleros_Confiable (auditar)"
+      ]
+    }
+  },
+  "recomendaciones": {
+    "corto_plazo": [
+      "Documentar propósito de CAM_* tablas aisladas",
+      "Eliminar o reubicar tablas de fecha locales no usadas",
+      "Aclarar cuál es la versión official de Semilleros",
+      "Verificar relación inactiva entre hechos"
+    ],
+    "mediano_plazo": [
+      "Consolidar medidas en estructura de carpetas (display folders)",
+      "Considerar crear tabla de configuración (estática) para valores de control",
+      "Hacer audit completo de cubiertas de data (qué tablas alimentan qué visuales)"
+    ],
+    "largo_plazo": [
+      "Evaluación de performance con datos históricos mayores",
+      "Migración a modo DirectQuery si volumen de datos lo requiere",
+      "Documentación de lineage completo de datos (ETL → Modelo → Reportes)"
+    ]
+  },
+  "metricas": {
+    "tablas_por_tipo": {
+      "Hechos": 3,
+      "Dimensiones": 8,
+      "Control/CAM": 3,
+      "Medidas": 1,
+      "Sistema Fechas": 4,
+      "Total": 19
+    },
+    "fuentes_datos": {
+      "Importadas Dinámicas (DAX)": 4,
+      "Importadas desde Excel (M)": 7,
+      "Importadas desde CSV (M)": 1,
+      "Autogeneradas (Sistema)": 4,
+      "Rol/Medidas": 1
+    },
+    "relaciones": {
+      "Activas": 13,
+      "Inactivas": 1,
+      "Total": 14
+    },
+    "medidas": {
+      "Total": 40,
+      "Ocultas": 20,
+      "Visibles": 20
+    }
+  }
+}

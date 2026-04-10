@@ -1,0 +1,68 @@
+table Dim_Semilleros
+	lineageTag: d7607a0b-cd8a-4b8b-9605-e58c1bcdf91f
+
+	column N°
+		dataType: int64
+		formatString: 0
+		lineageTag: 43e6af89-7bff-416d-8cf0-57a90e39eff4
+		summarizeBy: sum
+		sourceColumn: N°
+
+		annotation SummarizationSetBy = Automatic
+
+	column Semillero
+		dataType: string
+		lineageTag: b4c48786-d020-4f7b-b997-7c5226e87835
+		summarizeBy: none
+		sourceColumn: Semillero
+
+		annotation SummarizationSetBy = Automatic
+
+	column Comuna
+		dataType: int64
+		formatString: 0
+		lineageTag: 12a85033-b875-4f56-8b43-ce40d81039d5
+		summarizeBy: sum
+		sourceColumn: Comuna
+
+		annotation SummarizationSetBy = Automatic
+
+	column Comuna_Nombre
+		dataType: string
+		lineageTag: fcc08144-c1c6-49cb-b62f-3a882c1f84e3
+		summarizeBy: none
+		sourceColumn: Comuna_Nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column Barrio_Organización
+		dataType: string
+		lineageTag: 1f4537a1-7b9b-479a-b877-eff7a209fc66
+		summarizeBy: none
+		sourceColumn: Barrio_Organización
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Semilleros = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\Modelo_Reporte_Paginas_2026.xlsx"), null, true),
+				    Dim_Semilleros_Sheet = Origen{[Item="Dim_Semilleros",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Dim_Semilleros_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"N°", Int64.Type}, {"Semillero", type text}, {"Comuna", Int64.Type}, {"Comuna_Nombre", type text}, {"Barrio_Organización", type text}})
+				in
+				    #"Tipo cambiado"
+
+	measure Num_Semilleros
+		formatString: 0
+		expression: CALCULATE(DISTINCTCOUNT(Dim_Semilleros[Semillero]), ALLSELECTED(Dim_Semilleros), KEEPFILTERS(Hecho_Participacion_General[comuna_cod]))
+		lineageTag: 2dec133a-4a53-4519-90c9-78f62c153194
+
+	measure Total_Semilleros
+		formatString: 0
+		expression: VAR _v = CALCULATE(DISTINCTCOUNT(Dim_Semilleros[Semillero]), ALLSELECTED(Dim_Semilleros), KEEPFILTERS(Hecho_Participacion_General[comuna_cod])) RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
+		lineageTag: 6f74b7f9-81f0-4a90-9770-cddd13c0a095
+
+	annotation PBI_ResultType = Table
+

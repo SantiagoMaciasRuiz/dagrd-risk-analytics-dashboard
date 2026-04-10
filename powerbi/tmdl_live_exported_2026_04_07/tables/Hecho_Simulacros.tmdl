@@ -1,0 +1,147 @@
+table Hecho_Simulacros
+	lineageTag: 3d0d5f72-16b5-4e24-9367-452cf55eefec
+
+	column fila_origen
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ca550e72-dab7-4cb0-bc7c-26beef84082c
+		summarizeBy: sum
+		sourceColumn: fila_origen
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: aa20b7ae-8034-45f1-afb5-7ba56132e4e4
+		summarizeBy: none
+		sourceColumn: fecha
+
+		variation Variación
+			isDefault
+			relationship: 67806ee1-7416-467d-ae95-c74e9a9277cf
+			defaultHierarchy: LocalDateTable_15b2182d-b46e-4161-8338-943189c4acc8.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 474da0f0-9c9e-41ba-98ff-e1331d98c7d0
+		summarizeBy: sum
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes_num
+		dataType: int64
+		formatString: 0
+		lineageTag: 9a9e1d12-deb1-44e5-8102-1291b03f20f0
+		summarizeBy: sum
+		sourceColumn: mes_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes_nombre
+		dataType: string
+		lineageTag: 50a92cea-17c1-4d8f-8d25-19ad1818674d
+		summarizeBy: none
+		sourceColumn: mes_nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column nombre_entidad
+		dataType: string
+		lineageTag: 36011861-aaa6-4f74-8f93-70a06e1f6add
+		summarizeBy: none
+		sourceColumn: nombre_entidad
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_texto
+		dataType: string
+		lineageTag: dd575c91-e017-4591-a42c-4785dc487dd3
+		summarizeBy: none
+		sourceColumn: comuna_texto
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_cod
+		dataType: int64
+		formatString: 0
+		lineageTag: 7e935dcb-6dbb-4f8c-8b94-1b5a227bc45a
+		summarizeBy: none
+		sourceColumn: comuna_cod
+
+		annotation SummarizationSetBy = Automatic
+
+	column sector_origen
+		dataType: string
+		lineageTag: dda2d45f-2956-44ad-875e-410574b9e269
+		summarizeBy: none
+		sourceColumn: sector_origen
+
+		annotation SummarizationSetBy = Automatic
+
+	column sector_tablero
+		dataType: string
+		lineageTag: abb934b5-ec98-4f78-9437-88cd69dff7af
+		summarizeBy: none
+		sourceColumn: sector_tablero
+
+		annotation SummarizationSetBy = Automatic
+
+	column personas_participantes
+		dataType: int64
+		formatString: 0
+		lineageTag: cc8d66d7-4ba6-45e9-89d3-98ce8c2edee8
+		summarizeBy: sum
+		sourceColumn: personas_participantes
+
+		annotation SummarizationSetBy = Automatic
+
+	column fuente_archivo
+		dataType: string
+		isHidden
+		lineageTag: a7cf90cb-c362-49d2-8d34-a50aaa0d3a9b
+		summarizeBy: none
+		sourceColumn: fuente_archivo
+
+		annotation SummarizationSetBy = Automatic
+
+	column fuente_hoja
+		dataType: string
+		isHidden
+		lineageTag: ad1d5717-1304-4098-aa3c-5f694694799b
+		summarizeBy: none
+		sourceColumn: fuente_hoja
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha_date = VAR f = Hecho_Simulacros[fecha] RETURN IF(ISBLANK(f) || f < 2, BLANK(), DATE(1899,12,30) + f)
+		dataType: dateTime
+		isHidden
+		lineageTag: 73472f90-2f59-4962-b8a5-7fb3bcad74a7
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Hecho_Simulacros = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\Modelo_Reporte_Paginas_2026.xlsx"), null, true),
+				    Hecho_Simulacros_Sheet = Origen{[Item="Hecho_Simulacros",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Hecho_Simulacros_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"fila_origen", Int64.Type}, {"fecha", type date}, {"anio", Int64.Type}, {"mes_num", Int64.Type}, {"mes_nombre", type text}, {"nombre_entidad", type text}, {"comuna_texto", type text}, {"comuna_cod", Int64.Type}, {"sector_origen", type text}, {"sector_tablero", type text}, {"personas_participantes", Int64.Type}, {"fuente_archivo", type text}, {"fuente_hoja", type text}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

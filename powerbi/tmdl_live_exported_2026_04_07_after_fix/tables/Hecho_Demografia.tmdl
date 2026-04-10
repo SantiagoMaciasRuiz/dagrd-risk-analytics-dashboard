@@ -1,0 +1,184 @@
+table Hecho_Demografia
+	lineageTag: a1617d98-d25e-4a7d-9303-bb6926f6f52c
+
+	column id_actividad
+		dataType: int64
+		formatString: 0
+		lineageTag: 1028294a-3993-4999-9f8b-1de24757b4cb
+		summarizeBy: sum
+		sourceColumn: id_actividad
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: db346a7e-15a3-44cd-a782-3738ebc8f3cc
+		summarizeBy: none
+		sourceColumn: fecha
+
+		variation Variación
+			isDefault
+			relationship: d35d11fb-6b76-4a82-ae87-b617e9ca0794
+			defaultHierarchy: LocalDateTable_fdd25ae3-1e7e-47ce-8a87-6344f31146ec.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: a4040b05-d24c-4ab1-a56d-fb1c963d90a4
+		summarizeBy: sum
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes_num
+		dataType: int64
+		formatString: 0
+		lineageTag: 0a4f8b33-3e53-4587-95aa-24293e6a601e
+		summarizeBy: sum
+		sourceColumn: mes_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes_nombre
+		dataType: string
+		lineageTag: c4c9481b-91c9-4678-a386-55cd48d15b3d
+		summarizeBy: none
+		sourceColumn: mes_nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_cod
+		dataType: int64
+		formatString: 0
+		lineageTag: 5fafc3e7-86d1-45b3-b9a4-f8887a36aaa8
+		summarizeBy: none
+		sourceColumn: comuna_cod
+
+		annotation SummarizationSetBy = Automatic
+
+	column instancia
+		dataType: string
+		lineageTag: 44317f90-a230-4cec-a53e-bd7cd718943a
+		summarizeBy: none
+		sourceColumn: instancia
+
+		annotation SummarizationSetBy = Automatic
+
+	column seccion_tablero
+		dataType: string
+		lineageTag: 038c3842-e8d4-4dfc-9855-180d7b1f313a
+		summarizeBy: none
+		sourceColumn: seccion_tablero
+
+		annotation SummarizationSetBy = Automatic
+
+	column bloque_comunidad
+		dataType: string
+		lineageTag: aeeaa81d-2bf2-4881-a2f8-c2de4e6fd8d9
+		summarizeBy: none
+		sourceColumn: bloque_comunidad
+
+		annotation SummarizationSetBy = Automatic
+
+	column bloque_educacion
+		dataType: string
+		lineageTag: 64ac2a45-ca78-4d03-bb3d-9329d8216554
+		summarizeBy: none
+		sourceColumn: bloque_educacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column bloque_empresarial
+		dataType: string
+		lineageTag: f952c22e-22c0-4bca-9933-588b62bb4387
+		summarizeBy: none
+		sourceColumn: bloque_empresarial
+
+		annotation SummarizationSetBy = Automatic
+
+	column bloque_institucional
+		dataType: string
+		lineageTag: eff2bf03-9de7-4fbb-b4e1-0ff55b540ab7
+		summarizeBy: none
+		sourceColumn: bloque_institucional
+
+		annotation SummarizationSetBy = Automatic
+
+	column dimension
+		dataType: string
+		lineageTag: 69cc17dd-55f3-4756-8d11-186135072fbc
+		summarizeBy: none
+		sourceColumn: dimension
+
+		annotation SummarizationSetBy = Automatic
+
+	column categoria
+		dataType: string
+		lineageTag: 64ace94e-1ab6-4923-9d42-6f4c698ebcd0
+		summarizeBy: none
+		sourceColumn: categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column valor
+		dataType: int64
+		formatString: 0
+		lineageTag: c674d76f-89a1-4a3a-8b4b-ffacd6ca68d5
+		summarizeBy: sum
+		sourceColumn: valor
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha_date = VAR f = Hecho_Demografia[fecha] RETURN IF(ISBLANK(f) || f < 2, BLANK(), DATE(1899,12,30) + f)
+		dataType: dateTime
+		isHidden
+		lineageTag: 47e1f196-c5d0-4aa8-87fa-270955112b95
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column ambito_institucional
+		dataType: string
+		lineageTag: 9d6d287e-a15c-4bb8-8c0a-555639dab64f
+		summarizeBy: none
+		sourceColumn: ambito_institucional
+
+		annotation SummarizationSetBy = Automatic
+
+	column subbloque_institucional
+		dataType: string
+		lineageTag: 5709b7cf-8cf6-41f8-9f50-26f63f04cb0e
+		summarizeBy: none
+		sourceColumn: subbloque_institucional
+
+		annotation SummarizationSetBy = Automatic
+
+	column grupo_ambito_comparacion
+		dataType: string
+		lineageTag: 7c3bdf4a-1fab-4829-bbd2-e78332801d68
+		summarizeBy: none
+		sourceColumn: grupo_ambito_comparacion
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Hecho_Demografia = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\Modelo_Reporte_Paginas_2026.xlsx"), null, true),
+				    Hecho_Demografia_Sheet = Origen{[Item="Hecho_Demografia",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Hecho_Demografia_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"id_actividad", Int64.Type}, {"fecha", type date}, {"anio", Int64.Type}, {"mes_num", Int64.Type}, {"mes_nombre", type text}, {"comuna_cod", Int64.Type}, {"instancia", type text}, {"seccion_tablero", type text}, {"bloque_comunidad", type text}, {"bloque_educacion", type text}, {"bloque_empresarial", type text}, {"bloque_institucional", type text}, {"dimension", type text}, {"categoria", type text}, {"valor", Int64.Type}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,76 @@
+table Dim_Semilleros_Confiable
+	lineageTag: 75274982-07c0-4a23-ab85-e8c4eb4b3be2
+
+	column semillero_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 12350006-4aa8-4c23-8cf6-5acb9bac2a22
+		summarizeBy: sum
+		sourceColumn: semillero_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column semillero_nombre
+		dataType: string
+		lineageTag: 89689ea6-6fee-4376-ac84-2b3326b7b9fd
+		summarizeBy: none
+		sourceColumn: semillero_nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_cod
+		dataType: int64
+		formatString: 0
+		lineageTag: c61f82c6-175c-499c-94c0-37a617ee85bf
+		summarizeBy: none
+		sourceColumn: comuna_cod
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_nombre
+		dataType: string
+		lineageTag: 4380c736-4589-4ad5-923b-c47b1081c40b
+		summarizeBy: none
+		sourceColumn: comuna_nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column barrio_organizacion
+		dataType: string
+		lineageTag: 35617416-756c-44fb-95b2-a05cde327c7b
+		summarizeBy: none
+		sourceColumn: barrio_organizacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column fuente_semillero
+		dataType: string
+		lineageTag: 24f49944-4203-44da-9612-12f0632bdd97
+		summarizeBy: none
+		sourceColumn: fuente_semillero
+
+		annotation SummarizationSetBy = Automatic
+
+	column activo
+		dataType: string
+		lineageTag: 45361f67-fd48-41b2-95f4-ee9ccf1da1b3
+		summarizeBy: none
+		sourceColumn: activo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Semilleros_Confiable = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\Modelo_Reporte_Paginas_2026.xlsx"), null, true),
+				    Dim_Semilleros_Confiable_Sheet = Origen{[Item="Dim_Semilleros_Confiable",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Dim_Semilleros_Confiable_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"semillero_id", Int64.Type}, {"semillero_nombre", type text}, {"comuna_cod", Int64.Type}, {"comuna_nombre", type text}, {"barrio_organizacion", type text}, {"fuente_semillero", type text}, {"activo", type text}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

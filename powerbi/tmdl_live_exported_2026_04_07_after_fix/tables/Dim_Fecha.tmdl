@@ -1,0 +1,37 @@
+table Dim_Fecha
+	lineageTag: c5e22b69-d47c-49f3-9a5c-e26f12b859e6
+	dataCategory: Time
+
+	column fecha
+		isUnique
+		lineageTag: 14b36fcf-b236-46e1-8b30-68c32d7de945
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [fecha]
+
+	column anio
+		lineageTag: 65b45738-dd66-42b5-b6a4-02512ec35ae4
+		isNameInferred
+		sourceColumn: [anio]
+
+	column mes_num
+		lineageTag: 3f331e43-b290-46f7-90c6-10b0a162fc51
+		isNameInferred
+		sourceColumn: [mes_num]
+
+	column mes_nombre
+		lineageTag: 26217482-99cf-4def-9656-363d7004c3b3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [mes_nombre]
+		sortByColumn: mes_num
+
+	column trimestre
+		lineageTag: 1d0d1662-9641-4829-9382-7636a4512312
+		isNameInferred
+		sourceColumn: [trimestre]
+
+	partition Dim_Fecha = calculated
+		mode: import
+		source = VAR Fechas = UNION(SELECTCOLUMNS(Hecho_Participacion_General, "fecha", Hecho_Participacion_General[fecha_date]), SELECTCOLUMNS(Hecho_Demografia, "fecha", Hecho_Demografia[fecha_date]), SELECTCOLUMNS(Hecho_Simulacros, "fecha", Hecho_Simulacros[fecha_date])) VAR FechasValidas = FILTER(Fechas, NOT ISBLANK([fecha])) VAR MinFecha = MINX(FechasValidas, [fecha]) VAR MaxFecha = MAXX(FechasValidas, [fecha]) RETURN SELECTCOLUMNS(ADDCOLUMNS(CALENDAR(MinFecha, MaxFecha), "anio", YEAR([Date]), "mes_num", MONTH([Date]), "mes_nombre", FORMAT([Date], "[$-es-ES]mmmm"), "trimestre", "T" & FORMAT([Date], "Q")), "fecha", [Date], "anio", [anio], "mes_num", [mes_num], "mes_nombre", [mes_nombre], "trimestre", [trimestre])
+

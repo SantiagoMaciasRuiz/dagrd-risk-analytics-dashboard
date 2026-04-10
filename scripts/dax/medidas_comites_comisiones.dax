@@ -1,0 +1,5 @@
+-- Medida final para contar comites/comisiones unicos (sin el valor generico)
+-- Requiere tabla importada: Dim_Comites_Comisiones_2026
+
+Num_Comites_Comisiones =
+DISTINCTCOUNT(Dim_Comites_Comisiones_2026[comite_comision_nombre])

@@ -1,0 +1,42 @@
+table Dim_Comites_Comisiones_2026
+	lineageTag: 52ff87cd-754d-479d-be32-9daa24d33b7d
+
+	column comuna_cod
+		dataType: int64
+		formatString: 0
+		lineageTag: d9bc685f-1925-497d-8557-983fbeadd8f5
+		summarizeBy: none
+		sourceColumn: comuna_cod
+
+		annotation SummarizationSetBy = Automatic
+
+	column comite_comision_nombre
+		dataType: string
+		lineageTag: 003c0334-8b5e-4fe0-875f-c2895b45b229
+		summarizeBy: none
+		sourceColumn: comite_comision_nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column comite_comision_etiqueta
+		dataType: string
+		lineageTag: af56a6fb-0a2a-4c2a-8bfb-7575ad6342ae
+		summarizeBy: none
+		sourceColumn: comite_comision_etiqueta
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Comites_Comisiones_2026 = m
+		mode: import
+		source =
+				let
+				    Origen = Csv.Document(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\Dim_Comites_Comisiones_2026.csv"),[Delimiter=",", Columns=3, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"comuna_cod", Int64.Type}, {"comite_comision_nombre", type text}, {"comite_comision_etiqueta", type text}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

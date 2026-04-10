@@ -1,0 +1,37 @@
+model Model
+	culture: es-ES
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-CO
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["Hecho_Participacion_General","Hecho_Simulacros","Hecho_Demografia","Dim_SATC","Dim_SATC_Relaciones","Dim_Semilleros","Dim_Semilleros_Confiable","Dim_Comites_Comisiones_2026"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DaxQueryView_Desktop","MCP-PBIModeling"]
+
+ref table Hecho_Participacion_General
+ref table Hecho_Simulacros
+ref table Hecho_Demografia
+ref table Dim_Fecha
+ref table Dim_Comuna
+ref table Dim_Seccion
+ref table _Medidas
+ref table Dim_Instancia
+ref table DateTableTemplate_cf3939a4-f1ee-4021-bad3-46d914bea584
+ref table LocalDateTable_8db77276-1d8a-4c80-9ec7-937e69de8c4f
+ref table LocalDateTable_15b2182d-b46e-4161-8338-943189c4acc8
+ref table LocalDateTable_fdd25ae3-1e7e-47ce-8a87-6344f31146ec
+ref table Dim_SATC
+ref table Dim_SATC_Relaciones
+ref table Dim_Semilleros
+ref table Dim_Semilleros_Confiable
+ref table Dim_Comites_Comisiones_2026
+ref table CAM_Control
+ref table CAM_Resumen_Zona
+ref table CAM_Detalle
+
+ref cultureInfo es-ES
+

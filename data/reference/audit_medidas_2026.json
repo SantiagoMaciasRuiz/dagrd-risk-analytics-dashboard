@@ -1,0 +1,589 @@
+{
+  "metadata": {
+    "modelo": "tableroDAGRD",
+    "archivo_fuente": "C:\\Users\\santi\\OneDrive\\Escritorio\\Chamba\\Dashboard\\powerbi\\tmdl_live\\tables\\_Medidas.tmdl",
+    "descripción": "Auditoría completa de medidas DAX - estado, uso, errores, duplicación"
+  },
+  "resumen_ejecutivo": {
+    "fecha_auditoria": "1775769405.6157384",
+    "total_medidas": 89,
+    "medidas_vales_support": 83,
+    "resumen": {
+      "activas": 87,
+      "huérfanas": 2,
+      "duplicadas": 0,
+      "quebradas": 0,
+      "obsoletas": 0
+    },
+    "porcentajes": {
+      "utilizadas": "97.8%",
+      "huérfanas": "2.2%",
+      "problema": "0.0%"
+    }
+  },
+  "clasificación": {
+    "ACTIVAS": {
+      "descripción": "Medidas que se usan en visuales o son referenciadas por otras medidas",
+      "count": 87,
+      "medidas": [
+        {
+          "nombre": "Acciones_Conjuntas",
+          "carpeta": "",
+          "categoría": "Institucional",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_AccionesConjuntas",
+          "carpeta": "Institucional",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_ArticulacionInstitucional",
+          "carpeta": "Institucional",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_BasicaMedia",
+          "carpeta": "",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_CAM",
+          "carpeta": "Empresarial",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_Comites",
+          "carpeta": "",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_Comunidad_Otros",
+          "carpeta": "",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_Empresa",
+          "carpeta": "Empresarial",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_HogarSeguro",
+          "carpeta": "",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_Mesas",
+          "carpeta": "Institucional",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_PlanesAyudaMutua",
+          "carpeta": "Empresarial",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_PrimeraInfancia",
+          "carpeta": "",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_PropiedadHorizontal",
+          "carpeta": "Empresarial",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_SATC",
+          "carpeta": "",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_Semilleros",
+          "carpeta": "",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_Simulacro_Empresarial",
+          "carpeta": "",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Actividades_Superior",
+          "carpeta": "",
+          "categoría": "Actividades",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Articulacion_Institucional",
+          "carpeta": "",
+          "categoría": "Institucional",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Base_Impacto_Indirecto",
+          "carpeta": "",
+          "categoría": "Impacto",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Base_Simulacros",
+          "carpeta": "",
+          "categoría": "Otra",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Base_Simulacros_Personas",
+          "carpeta": "",
+          "categoría": "Simulacros",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Cobertura_Global",
+          "carpeta": "",
+          "categoría": "Cobertura",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Cobertura_Total",
+          "carpeta": "",
+          "categoría": "Cobertura",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_Adulto",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_AdultoMayor",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_Afrodescendiente",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_Campesino",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_Discapacidad",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_Indigena",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_Juventud",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_LGTBI",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_Migrante",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_NinoAdolescente",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_PrimeraInfancia",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_Rom",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Dem_Victimas",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Edu_Acomp_PlanesEscolares_GRD",
+          "carpeta": "",
+          "categoría": "Educación",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Eje_AnioMes",
+          "carpeta": "",
+          "categoría": "Otra",
+          "uso": "Función auxiliar"
+        },
+        {
+          "nombre": "Entidades_en_Simulacros",
+          "carpeta": "",
+          "categoría": "Otra",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Comunitaria_Participaciones",
+          "carpeta": "",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Edu_Instituciones_Media",
+          "carpeta": "",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Edu_Instituciones_PrimeraInfancia",
+          "carpeta": "",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Edu_Instituciones_Superior",
+          "carpeta": "",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Edu_Instituciones_Totales",
+          "carpeta": "",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Edu_Instituciones_Unicas",
+          "carpeta": "",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Educativa_Participaciones",
+          "carpeta": "",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Empresarial_Actividades",
+          "carpeta": "Empresarial",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Empresarial_Impacto",
+          "carpeta": "Empresarial",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Empresarial_Participaciones",
+          "carpeta": "",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Institucional_Actividades",
+          "carpeta": "Institucional",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Institucional_Impacto",
+          "carpeta": "Institucional",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Institucional_Participaciones",
+          "carpeta": "",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Total_Actividades",
+          "carpeta": "",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "GenF_Total_Participaciones",
+          "carpeta": "",
+          "categoría": "General",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Impacto_Indirecto_Comunidad",
+          "carpeta": "",
+          "categoría": "Impacto",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Impacto_Indirecto_Educacion",
+          "carpeta": "",
+          "categoría": "Impacto",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Lista_Comites_Comisiones_Filtrados",
+          "carpeta": "Comunidad/Detalle",
+          "categoría": "Listas/Detalle",
+          "uso": "Función auxiliar"
+        },
+        {
+          "nombre": "Lista_Instituciones_BasicaMedia",
+          "carpeta": "",
+          "categoría": "Listas/Detalle",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Lista_Instituciones_Educativas_Filtradas",
+          "carpeta": "",
+          "categoría": "Listas/Detalle",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Lista_Instituciones_PrimeraInfancia",
+          "carpeta": "",
+          "categoría": "Listas/Detalle",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Lista_Instituciones_Superior",
+          "carpeta": "",
+          "categoría": "Listas/Detalle",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Lista_SATC_Filtrados",
+          "carpeta": "Comunidad/Detalle",
+          "categoría": "Listas/Detalle",
+          "uso": "Función auxiliar"
+        },
+        {
+          "nombre": "Lista_Semilleros_Filtrados",
+          "carpeta": "Comunidad/Detalle",
+          "categoría": "Listas/Detalle",
+          "uso": "Función auxiliar"
+        },
+        {
+          "nombre": "Mesas_Interinstitucionalidad",
+          "carpeta": "",
+          "categoría": "Institucional",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Num_Comites_Comisiones",
+          "carpeta": "",
+          "categoría": "Otra",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participaciones_Institucionales",
+          "carpeta": "",
+          "categoría": "Otra",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_Acciones_Conjuntas",
+          "carpeta": "Institucional",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_Articulacion",
+          "carpeta": "Institucional",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_BasicaMedia",
+          "carpeta": "",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_CAM",
+          "carpeta": "Empresarial",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_Comites",
+          "carpeta": "",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_Empresa",
+          "carpeta": "Empresarial",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_HogarSeguro",
+          "carpeta": "",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_Mesas",
+          "carpeta": "Institucional",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_PlanesAyudaMutua",
+          "carpeta": "Empresarial",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_PrimeraInfancia",
+          "carpeta": "",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_PropiedadHorizontal",
+          "carpeta": "Empresarial",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_SATC",
+          "carpeta": "",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_Semilleros",
+          "carpeta": "",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_Simulacros_Empresariales",
+          "carpeta": "",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Participantes_Superior",
+          "carpeta": "",
+          "categoría": "Participantes",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Sim_Empresarial_Personas",
+          "carpeta": "Empresarial",
+          "categoría": "Otra",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Sim_Empresarial_Registros",
+          "carpeta": "Empresarial",
+          "categoría": "Otra",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Simulacros_Empresariales",
+          "carpeta": "",
+          "categoría": "Simulacros",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Simulacros_Institucionales",
+          "carpeta": "",
+          "categoría": "Simulacros",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Simulacros_Registrados_Total",
+          "carpeta": "",
+          "categoría": "Simulacros",
+          "uso": "Componente de par VAL"
+        },
+        {
+          "nombre": "Total_Dem_Valor",
+          "carpeta": "",
+          "categoría": "Demografía",
+          "uso": "Componente de par VAL"
+        }
+      ]
+    },
+    "HUÉRFANAS": {
+      "descripción": "Medidas no usadas en ningún visual y no referenciadas por otras",
+      "count": 2,
+      "medidas": [
+        {
+          "nombre": "Ctl_Referencia_Actividades_OK",
+          "carpeta": "",
+          "categoría": "Control/Validación"
+        },
+        {
+          "nombre": "Ctl_Referencia_Participaciones_OK",
+          "carpeta": "",
+          "categoría": "Control/Validación"
+        }
+      ]
+    },
+    "DUPLICADAS": {
+      "descripción": "Múltiples versiones de la misma medida (diferentes nombres para el mismo cálculo)",
+      "count": 0,
+      "medidas": []
+    },
+    "QUEBRADAS": {
+      "descripción": "Medidas con errores potenciales en DAX",
+      "count": 0,
+      "medidas": []
+    },
+    "OBSOLETAS": {
+      "descripción": "Medidas con patrones de nombre que sugieren ser antigua/descontinuada",
+      "count": 0,
+      "medidas": []
+    }
+  },
+  "sugerencias_limpieza": [
+    "HUÉRFANAS (2): Considerar eliminar medidas no usadas. Crear tabla con estas para validar antes de eliminar.",
+    "NOTA: 83 medidas '_VAL' (backing measures) encontradas. Estas son soporte para medidas formateadas y no deben ser borradas."
+  ]
+}

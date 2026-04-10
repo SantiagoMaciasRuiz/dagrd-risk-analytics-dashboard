@@ -1,0 +1,29 @@
+// ============================================
+// MEDIDAS PARA SEMILLEROS
+// Generadas: 2026-03-18
+// Fuente: Dim_Semilleros (20 semilleros confiables)
+// ============================================
+
+Total_Semilleros = 
+DISTINCTCOUNT(
+    FILTER(
+        Dim_Semilleros,
+        Dim_Semilleros[Comuna] IN VALUES(Hecho_Participacion_General[comuna_cod])
+    )[Semillero]
+)
+// Resultado: Dinámico (20 sin filtro, reduce al filtrar Comuna)
+
+Semilleros_por_Comuna = DISTINCTCOUNT(Dim_Semilleros[Comuna])
+// Resultado: 9 comunas con presencia de semilleros
+
+Semilleros_Activos = CALCULATE(
+    DISTINCTCOUNT(Dim_Semilleros[Semillero]),
+    FILTER(Hecho_Participacion_General, Hecho_Participacion_General[bloque_comunidad] = "Semilleros")
+)
+// Semilleros con participación registrada
+
+Comuna_Seleccionada_Semilleros = IFERROR(
+    VALUES(Dim_Semilleros[Comuna_Nombre]),
+    "Seleccionar"
+)
+// Para usar en slicers de comunas con semilleros

@@ -1,0 +1,635 @@
+table Hecho_Participacion_General
+	lineageTag: 30b7b840-9e09-4ac8-8f80-20b78e4533cd
+
+	column id_actividad
+		dataType: int64
+		formatString: 0
+		lineageTag: 791dc8db-24a9-445d-b83d-317070b57292
+		summarizeBy: sum
+		sourceColumn: id_actividad
+
+		annotation SummarizationSetBy = Automatic
+
+	column fila_origen
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: de0bf003-c7e7-42b2-989d-1bbc04854aec
+		summarizeBy: sum
+		sourceColumn: fila_origen
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: d116b2d8-9d0f-4b9a-9966-3c257f759a0f
+		summarizeBy: none
+		sourceColumn: fecha
+
+		variation Variación
+			isDefault
+			relationship: 34cdf927-3128-41a2-8cdc-ee86950156b3
+			defaultHierarchy: LocalDateTable_8db77276-1d8a-4c80-9ec7-937e69de8c4f.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 2b93d226-6062-4b16-8480-9a2c7988b65f
+		summarizeBy: sum
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes_num
+		dataType: int64
+		formatString: 0
+		lineageTag: eb1a7614-cead-4b98-8f8b-21fbfaaba693
+		summarizeBy: sum
+		sourceColumn: mes_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes_nombre
+		dataType: string
+		lineageTag: 36314a79-699f-463f-937c-df7625a2f752
+		summarizeBy: none
+		sourceColumn: mes_nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_cod
+		dataType: int64
+		formatString: 0
+		lineageTag: c0080ef1-60dd-480f-bd93-08fded44a7a9
+		summarizeBy: none
+		sourceColumn: comuna_cod
+
+		annotation SummarizationSetBy = Automatic
+
+	column instancia
+		dataType: string
+		lineageTag: 5184f437-4b7b-408f-9a2c-1418accb268e
+		summarizeBy: none
+		sourceColumn: instancia
+
+		annotation SummarizationSetBy = Automatic
+
+	column seccion_tablero
+		dataType: string
+		lineageTag: 99bfa991-f952-48b9-a8bb-736652812f44
+		summarizeBy: none
+		sourceColumn: seccion_tablero
+
+		annotation SummarizationSetBy = Automatic
+
+	column publico_comunidad
+		dataType: string
+		lineageTag: 12b637eb-707d-45e0-a5f0-b2af58098a0d
+		summarizeBy: none
+		sourceColumn: publico_comunidad
+
+		annotation SummarizationSetBy = Automatic
+
+	column semillero_grd
+		dataType: string
+		lineageTag: 06e627fb-f7bd-420e-b125-87a3f76bfd28
+		summarizeBy: none
+		sourceColumn: semillero_grd
+
+		annotation SummarizationSetBy = Automatic
+
+	column actividad_semillero
+		dataType: string
+		lineageTag: a6b8fc3b-3409-4d2b-a510-54380b0a241c
+		summarizeBy: none
+		sourceColumn: actividad_semillero
+
+		annotation SummarizationSetBy = Automatic
+
+	column nombre_satc
+		dataType: string
+		lineageTag: 522faa26-1aef-433a-aa7e-4ea2fd2674b7
+		summarizeBy: none
+		sourceColumn: nombre_satc
+
+		annotation SummarizationSetBy = Automatic
+
+	column actividad_comunitaria
+		dataType: string
+		lineageTag: a82a777c-61c1-42ee-b436-34299ea2c573
+		summarizeBy: none
+		sourceColumn: actividad_comunitaria
+
+		annotation SummarizationSetBy = Automatic
+
+	column publico_primera_infancia
+		dataType: string
+		lineageTag: 11c1b40e-01ba-4f71-b0a4-ff26ac40a86a
+		summarizeBy: none
+		sourceColumn: publico_primera_infancia
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_bc
+		dataType: string
+		lineageTag: 764824c1-3c93-4a35-9b9f-5bdbef1f009f
+		summarizeBy: none
+		sourceColumn: comuna_bc
+
+		annotation SummarizationSetBy = Automatic
+
+	column actividad_primera_infancia
+		dataType: string
+		lineageTag: 11f35f86-b5e1-4098-86b5-99b2d0ff3689
+		summarizeBy: none
+		sourceColumn: actividad_primera_infancia
+
+		annotation SummarizationSetBy = Automatic
+
+	column actividad_institucional
+		dataType: string
+		lineageTag: 4402d7e1-9b3d-4030-96c3-71ea08e53e72
+		summarizeBy: none
+		sourceColumn: actividad_institucional
+
+		annotation SummarizationSetBy = Automatic
+
+	column mesa_institucional
+		dataType: string
+		lineageTag: 7266c449-c55b-48b0-b546-41e92aaab5ad
+		summarizeBy: none
+		sourceColumn: mesa_institucional
+
+		annotation SummarizationSetBy = Automatic
+
+	column publico_empresarial
+		dataType: string
+		lineageTag: 552246b5-649f-4f22-be9f-07a28902a646
+		summarizeBy: none
+		sourceColumn: publico_empresarial
+
+		annotation SummarizationSetBy = Automatic
+
+	column nombre_cosegrd
+		dataType: string
+		lineageTag: 2e30eded-78ce-4493-b51a-fe97cacb14be
+		summarizeBy: none
+		sourceColumn: nombre_cosegrd
+
+		annotation SummarizationSetBy = Automatic
+
+	column actividad_empresarial
+		dataType: string
+		lineageTag: 08d9cc05-8f95-446d-b4e9-cb6af5a5bb70
+		summarizeBy: none
+		sourceColumn: actividad_empresarial
+
+		annotation SummarizationSetBy = Automatic
+
+	column actividad_pdl_pp
+		dataType: string
+		lineageTag: 17bab8da-8e2e-4ead-be4f-9663e3d710ef
+		summarizeBy: none
+		sourceColumn: actividad_pdl_pp
+
+		annotation SummarizationSetBy = Automatic
+
+	column actividad_gestion_interna
+		dataType: string
+		lineageTag: d37a5dd1-c4dc-4b49-a496-6e5f0a5e9541
+		summarizeBy: none
+		sourceColumn: actividad_gestion_interna
+
+		annotation SummarizationSetBy = Automatic
+
+	column publico_educacion
+		dataType: string
+		lineageTag: 1f047ef4-9d44-45bc-aa36-3bed5dc12c91
+		summarizeBy: none
+		sourceColumn: publico_educacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_educacion
+		dataType: string
+		lineageTag: b0d42251-6d05-437e-b229-91a8db58a61a
+		summarizeBy: none
+		sourceColumn: comuna_educacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column actividad_educacion
+		dataType: string
+		lineageTag: 68e5ac39-c1d8-4b68-9b22-629681fc1933
+		summarizeBy: none
+		sourceColumn: actividad_educacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column rel_meta_pdd
+		dataType: string
+		lineageTag: 4cca458b-05db-4dd1-9118-1256d9a0d3d4
+		summarizeBy: none
+		sourceColumn: rel_meta_pdd
+
+		annotation SummarizationSetBy = Automatic
+
+	column entidades_asociadas
+		dataType: string
+		lineageTag: 07280347-bbaf-4390-9dac-65f2579e6fdd
+		summarizeBy: none
+		sourceColumn: entidades_asociadas
+
+		annotation SummarizationSetBy = Automatic
+
+	column modalidad
+		dataType: string
+		lineageTag: b11eab58-0eb7-4519-ab8a-691091ead826
+		summarizeBy: none
+		sourceColumn: modalidad
+
+		annotation SummarizationSetBy = Automatic
+
+	column otros_profesionales
+		dataType: string
+		lineageTag: 12a70f50-b78e-487d-9fb8-1079e54dadbe
+		summarizeBy: none
+		sourceColumn: otros_profesionales
+
+		annotation SummarizationSetBy = Automatic
+
+	column participantes
+		dataType: int64
+		formatString: 0
+		lineageTag: 39dfaad0-d96b-431c-a28a-21986037eb55
+		summarizeBy: sum
+		sourceColumn: participantes
+
+		annotation SummarizationSetBy = Automatic
+
+	column impacto_indirecto
+		dataType: int64
+		formatString: 0
+		lineageTag: fb6cc466-bce0-4b5b-bf5a-38e8657f7de6
+		summarizeBy: sum
+		sourceColumn: impacto_indirecto
+
+		annotation SummarizationSetBy = Automatic
+
+	column mujeres
+		dataType: int64
+		formatString: 0
+		lineageTag: d50f5a68-8bed-4dab-885d-1d4d884daeeb
+		summarizeBy: sum
+		sourceColumn: mujeres
+
+		annotation SummarizationSetBy = Automatic
+
+	column hombres
+		dataType: int64
+		formatString: 0
+		lineageTag: edcb9a84-b1f7-4335-b811-e4da42349b6a
+		summarizeBy: sum
+		sourceColumn: hombres
+
+		annotation SummarizationSetBy = Automatic
+
+	column ninos
+		dataType: int64
+		formatString: 0
+		lineageTag: d61d4286-2357-4569-9925-9829a4b5de54
+		summarizeBy: sum
+		sourceColumn: ninos
+
+		annotation SummarizationSetBy = Automatic
+
+	column pri_infanc
+		dataType: int64
+		formatString: 0
+		lineageTag: 643ada62-5d30-4b24-8076-e1b14f8e0be5
+		summarizeBy: sum
+		sourceColumn: pri_infanc
+
+		annotation SummarizationSetBy = Automatic
+
+	column nino_adole
+		dataType: int64
+		formatString: 0
+		lineageTag: 8460ce49-5299-4bc1-b8ea-1bee30ae36fb
+		summarizeBy: sum
+		sourceColumn: nino_adole
+
+		annotation SummarizationSetBy = Automatic
+
+	column juventud
+		dataType: int64
+		formatString: 0
+		lineageTag: c4114f8f-22fd-4bf6-980c-79997861f4c6
+		summarizeBy: sum
+		sourceColumn: juventud
+
+		annotation SummarizationSetBy = Automatic
+
+	column adulto
+		dataType: int64
+		formatString: 0
+		lineageTag: 4d077033-43cb-48b0-9e1a-70d610c2d62f
+		summarizeBy: sum
+		sourceColumn: adulto
+
+		annotation SummarizationSetBy = Automatic
+
+	column adulto_may
+		dataType: int64
+		formatString: 0
+		lineageTag: ca71c116-ba31-4ba7-bdd1-80795148e793
+		summarizeBy: sum
+		sourceColumn: adulto_may
+
+		annotation SummarizationSetBy = Automatic
+
+	column discapacid
+		dataType: int64
+		formatString: 0
+		lineageTag: 8b400f70-8558-4cfa-992d-49518b92b56c
+		summarizeBy: sum
+		sourceColumn: discapacid
+
+		annotation SummarizationSetBy = Automatic
+
+	column afrodescen
+		dataType: int64
+		formatString: 0
+		lineageTag: c2ad3b86-c0b0-4884-a28f-366db1d0b764
+		summarizeBy: sum
+		sourceColumn: afrodescen
+
+		annotation SummarizationSetBy = Automatic
+
+	column campesino
+		dataType: int64
+		formatString: 0
+		lineageTag: 6696e841-3da1-49e8-8b99-959b84346614
+		summarizeBy: sum
+		sourceColumn: campesino
+
+		annotation SummarizationSetBy = Automatic
+
+	column pob_victim
+		dataType: int64
+		formatString: 0
+		lineageTag: eca3f99d-95d6-48d7-812d-bc6b756a572e
+		summarizeBy: sum
+		sourceColumn: pob_victim
+
+		annotation SummarizationSetBy = Automatic
+
+	column pob_migran
+		dataType: int64
+		formatString: 0
+		lineageTag: d8a4b41e-c9bf-4e4a-b31b-b796634fdfec
+		summarizeBy: sum
+		sourceColumn: pob_migran
+
+		annotation SummarizationSetBy = Automatic
+
+	column pob_lgtbi
+		dataType: int64
+		formatString: 0
+		lineageTag: b4030d42-3a9b-48e7-959d-63cb4c036b9c
+		summarizeBy: sum
+		sourceColumn: pob_lgtbi
+
+		annotation SummarizationSetBy = Automatic
+
+	column pob_indige
+		dataType: int64
+		formatString: 0
+		lineageTag: 2fc4bc2a-a121-4dd0-8ece-bbe4d372630a
+		summarizeBy: sum
+		sourceColumn: pob_indige
+
+		annotation SummarizationSetBy = Automatic
+
+	column pob_rom
+		dataType: int64
+		formatString: 0
+		lineageTag: 2de2268a-334b-45b6-b216-a883f17957ea
+		summarizeBy: sum
+		sourceColumn: pob_rom
+
+		annotation SummarizationSetBy = Automatic
+
+	column procesos
+		dataType: string
+		lineageTag: b8fa69e1-e40c-4c79-ba2a-1d26ce4280f9
+		summarizeBy: none
+		sourceColumn: procesos
+
+		annotation SummarizationSetBy = Automatic
+
+	column nivel_educativo
+		dataType: string
+		lineageTag: be2db749-dddd-4c51-9773-a71b0f01c5cf
+		summarizeBy: none
+		sourceColumn: nivel_educativo
+
+		annotation SummarizationSetBy = Automatic
+
+	column fuente_archivo
+		dataType: string
+		isHidden
+		lineageTag: 9f53531e-0d08-4318-a4f9-d712ba69068a
+		summarizeBy: none
+		sourceColumn: fuente_archivo
+
+		annotation SummarizationSetBy = Automatic
+
+	column fuente_hoja
+		dataType: string
+		isHidden
+		lineageTag: c26d763c-5e27-41dc-ada7-6bd975b6187d
+		summarizeBy: none
+		sourceColumn: fuente_hoja
+
+		annotation SummarizationSetBy = Automatic
+
+	column bloque_comunidad
+		dataType: string
+		lineageTag: 994eca98-f488-4f6e-9f1e-180a1062494b
+		summarizeBy: none
+		sourceColumn: bloque_comunidad
+
+		annotation SummarizationSetBy = Automatic
+
+	column bloque_educacion
+		dataType: string
+		lineageTag: 97f71d02-1f54-4ca5-8551-4aa87e675103
+		summarizeBy: none
+		sourceColumn: bloque_educacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column bloque_empresarial
+		dataType: string
+		lineageTag: 70687a1f-587a-4296-806b-8e1b4c5ac64b
+		summarizeBy: none
+		sourceColumn: bloque_empresarial
+
+		annotation SummarizationSetBy = Automatic
+
+	column bloque_institucional
+		dataType: string
+		lineageTag: b9b39045-432c-47c9-9698-2fa9807c1f05
+		summarizeBy: none
+		sourceColumn: bloque_institucional
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha_date = VAR f = Hecho_Participacion_General[fecha] RETURN IF(ISBLANK(f) || f < 2, BLANK(), DATE(1899,12,30) + f)
+		dataType: dateTime
+		isHidden
+		lineageTag: 4fb82aa7-8071-4cda-bcae-69882ef8807f
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column ambito_institucional
+		dataType: string
+		lineageTag: 289a21c7-967e-47f9-9257-e9498bb866ff
+		summarizeBy: none
+		sourceColumn: ambito_institucional
+
+		annotation SummarizationSetBy = Automatic
+
+	column subbloque_institucional
+		dataType: string
+		lineageTag: 1929bf2a-fd06-4da5-9e84-67b79b14f08a
+		summarizeBy: none
+		sourceColumn: subbloque_institucional
+
+		annotation SummarizationSetBy = Automatic
+
+	column grupo_ambito_comparacion
+		dataType: string
+		lineageTag: f15503ce-be8b-48c3-97f9-b6d16686b259
+		summarizeBy: none
+		sourceColumn: grupo_ambito_comparacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column institucion_educativa_norm
+		dataType: string
+		lineageTag: b1e10a30-c394-4624-bf52-ceb28f69e1c6
+		summarizeBy: none
+		sourceColumn: institucion_educativa_norm
+
+	column comuna_institucion_educativa_cod
+		dataType: int64
+		lineageTag: 6556b4c1-92ae-4b24-a120-7aadaccb7eba
+		summarizeBy: none
+		sourceColumn: comuna_institucion_educativa_cod
+
+	column comuna_bc_cod
+		dataType: int64
+		formatString: 0
+		lineageTag: 98288240-ac0c-4f21-9112-a64256d5d4c8
+		summarizeBy: sum
+		sourceColumn: comuna_bc_cod
+
+		annotation SummarizationSetBy = Automatic
+
+	column sede_bc
+		dataType: string
+		lineageTag: 25701f82-c4ed-4824-8444-a1d78875b5b3
+		summarizeBy: none
+		sourceColumn: sede_bc
+
+		annotation SummarizationSetBy = Automatic
+
+	column sede_bc_norm
+		dataType: string
+		lineageTag: 6108417e-b8bd-4f04-9e4e-5bdc2b656083
+		summarizeBy: none
+		sourceColumn: sede_bc_norm
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_educacion_cod
+		dataType: int64
+		formatString: 0
+		lineageTag: 4e7c35e8-3fc3-4719-884b-7db8910d4985
+		summarizeBy: sum
+		sourceColumn: comuna_educacion_cod
+
+		annotation SummarizationSetBy = Automatic
+
+	column establecimiento_educativo
+		dataType: string
+		lineageTag: 7cc4c82a-45dd-4a0f-9e16-10a0dce60d3b
+		summarizeBy: none
+		sourceColumn: establecimiento_educativo
+
+		annotation SummarizationSetBy = Automatic
+
+	column establecimiento_educativo_norm
+		dataType: string
+		lineageTag: 362e5881-b1c3-4ab4-9847-d99578e2773a
+		summarizeBy: none
+		sourceColumn: establecimiento_educativo_norm
+
+		annotation SummarizationSetBy = Automatic
+
+	column institucion_educativa
+		dataType: string
+		lineageTag: e93739ed-1ac4-4b8e-9144-129ab68bac69
+		summarizeBy: none
+		sourceColumn: institucion_educativa
+
+		annotation SummarizationSetBy = Automatic
+
+	column institucion_educativa_es_agregada
+		dataType: string
+		lineageTag: b1709442-17d9-4b14-8377-0bf18fc2e560
+		summarizeBy: none
+		sourceColumn: institucion_educativa_es_agregada
+
+		annotation SummarizationSetBy = Automatic
+
+	column satc_id
+		dataType: string
+		lineageTag: 0ce9a15a-f043-490f-8607-d6067b018a91
+		summarizeBy: none
+		sourceColumn: satc_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column nombre_satc_original
+		dataType: string
+		lineageTag: 13ae626f-5568-4670-a9bc-23f5543883ca
+		summarizeBy: none
+		sourceColumn: nombre_satc_original
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Hecho_Participacion_General = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\Modelo_Reporte_Paginas_2026.xlsx"), null, true),
+				    Hecho_Participacion_General_Sheet = Origen{[Item="Hecho_Participacion_General",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Hecho_Participacion_General_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"id_actividad", Int64.Type}, {"fila_origen", Int64.Type}, {"fecha", type date}, {"anio", Int64.Type}, {"mes_num", Int64.Type}, {"mes_nombre", type text}, {"comuna_cod", Int64.Type}, {"instancia", type text}, {"seccion_tablero", type text}, {"publico_comunidad", type any}, {"semillero_grd", type any}, {"actividad_semillero", type any}, {"nombre_satc", type any}, {"actividad_comunitaria", type text}, {"publico_primera_infancia", type any}, {"comuna_bc", type any}, {"comuna_bc_cod", Int64.Type}, {"sede_bc", type any}, {"sede_bc_norm", type text}, {"actividad_primera_infancia", type any}, {"actividad_institucional", type any}, {"mesa_institucional", type any}, {"publico_empresarial", type any}, {"nombre_cosegrd", type any}, {"actividad_empresarial", type text}, {"actividad_pdl_pp", type text}, {"actividad_gestion_interna", type text}, {"publico_educacion", type any}, {"comuna_educacion", type any}, {"comuna_educacion_cod", Int64.Type}, {"establecimiento_educativo", type any}, {"establecimiento_educativo_norm", type text}, {"institucion_educativa", type any}, {"institucion_educativa_norm", type text}, {"comuna_institucion_educativa_cod", Int64.Type}, {"actividad_educacion", type text}, {"rel_meta_pdd", type text}, {"entidades_asociadas", type text}, {"modalidad", type text}, {"otros_profesionales", type text}, {"participantes", Int64.Type}, {"impacto_indirecto", Int64.Type}, {"mujeres", Int64.Type}, {"hombres", Int64.Type}, {"ninos", Int64.Type}, {"pri_infanc", Int64.Type}, {"nino_adole", Int64.Type}, {"juventud", Int64.Type}, {"adulto", Int64.Type}, {"adulto_may", Int64.Type}, {"discapacid", Int64.Type}, {"afrodescen", Int64.Type}, {"campesino", Int64.Type}, {"pob_victim", Int64.Type}, {"pob_migran", Int64.Type}, {"pob_lgtbi", Int64.Type}, {"pob_indige", Int64.Type}, {"pob_rom", Int64.Type}, {"procesos", type text}, {"nivel_educativo", type text}, {"fuente_archivo", type text}, {"fuente_hoja", type text}, {"bloque_comunidad", type text}, {"bloque_educacion", type text}, {"bloque_empresarial", type text}, {"bloque_institucional", type text}, {"ambito_institucional", type text}, {"subbloque_institucional", type text}, {"grupo_ambito_comparacion", type text}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegación
+

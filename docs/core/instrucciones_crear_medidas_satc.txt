@@ -1,0 +1,20 @@
+PASO 1: Refrescar datos
+1. Ejecuta actualizar_37_satc_final.py
+2. Ejecuta regenerar_puente_37.py
+3. En Power BI, da Actualizar (Refresh)
+
+PASO 2: Mantener nombres de medidas existentes
+1. Total_SATC_Unicos
+2. SATC_Principales
+3. Actividades_por_SATC
+4. Participantes_por_SATC
+5. Cobertura_SATC_Porcentaje
+
+PASO 3: Validar resultados esperados
+1. Total_SATC_Unicos: 37
+2. SATC_Principales: 37
+3. Actividades_por_SATC: 172
+
+NOTA
+- No se crean nombres nuevos de medidas.
+- El ajuste principal está en datos (Dim_SATC + normalización de Hecho_Participacion_General[nombre_satc]).

@@ -1,0 +1,40 @@
+LISTA FINAL: 37 SATC (Confirmado)
+================================================================================
+
+ 1. C1 - La Base
+ 2. C2 - Playón de los Comuneros
+ 3. C4 - La Bermejala (El Hueco)
+ 4. C4 - San Isidro (Chocó Chiquito)
+ 5. C6 - Kennedy Cantera Norte
+ 6. C6 - Kennedy Cantera Sur
+ 7. C7 - El Chorro- El Guayabo -Aures 1
+ 8. C7 - El Chispero-Aures 2
+ 9. C7 - Nueva Villa de La Iguaná
+10. C7 - Olaya Herrera 1 (La Arenera)
+11. C8 - Altos de la Torre
+12. C8 - Colinas de Enciso Parte Alta
+13. C8 - La Estrechura
+14. C8 - Las Estancias (Caicedo)
+15. C8 - La Paz
+16. C8 - Santa Lucía-barrio Las Estancias
+17. C8 - Unión de Cristo
+18. C8 - Villa Esperanza
+19. C9 - Barrio Alejandro Echavarría
+20. C13 - El Pesebre
+21. C16 - El Hoyo-barrio Las Violetas
+22. C16 - Barrio Las Violetas
+23. C60 - Vereda La Palma
+24. C60 - La Honda - sector Caracolí
+25. C70 - Las Playitas-vereda San Pablo
+26. C70 - Guanteros
+27. C70 - Manzanillo
+28. C70 - Barrio Nuevo
+29. C70 - Buga
+30. C70 - Aguas Frías Parte Alta
+31. C70 - Manzanares
+32. C70 - El Guamo
+33. C70 - San Vicente
+34. C80 - El Paraíso-vereda El Salado
+35. C80 - Las Playas-vereda El Salado
+36. C80 - Santa Rita-vereda La Verde
+37. C80 - Palo Blanco

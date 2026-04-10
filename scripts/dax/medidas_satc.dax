@@ -1,0 +1,43 @@
+// ============================================
+// MEDIDAS PARA SAT-C
+// Generadas: 2026-03-18
+// Fuente: Dim_SATC (37 SAT-C)
+// ============================================
+
+Total_SATC_Unicos = 
+DISTINCTCOUNT(
+    FILTER(
+        Dim_SATC,
+        Dim_SATC[Comuna_Cod] IN VALUES(Hecho_Participacion_General[comuna_cod])
+    )[SATC_Nombre]
+)
+// Resultado: Dinámico (27 sin filtro, reduce al filtrar Comuna)
+
+Num_SATC = 
+DISTINCTCOUNT(
+    FILTER(
+        Dim_SATC,
+        Dim_SATC[Comuna_Cod] IN VALUES(Hecho_Participacion_General[comuna_cod])
+    )[SATC_Nombre]
+)
+// Resultado: 37 sin filtro, DINÁMICO al filtrar Comuna (IGUAL a Total_SATC_Unicos)
+
+Actividades_por_SATC = CALCULATE(
+    COUNTROWS(Hecho_Participacion_General),
+    FILTER(Hecho_Participacion_General, Hecho_Participacion_General[bloque_comunidad] = "SAT-C")
+)
+// Conteo total de actividades SAT-C
+
+Participantes_por_SATC = CALCULATE(
+    SUM(Hecho_Participacion_General[participantes]),
+    FILTER(Hecho_Participacion_General, Hecho_Participacion_General[bloque_comunidad] = "SAT-C")
+)
+// Suma de participantes en actividades SAT-C
+
+Cobertura_SATC_Porcentaje = DIVIDE(
+    CALCULATE(DISTINCTCOUNT(Hecho_Participacion_General[satc_id]), 
+              FILTER(Hecho_Participacion_General, Hecho_Participacion_General[bloque_comunidad] = "SAT-C")),
+    DISTINCTCOUNT(Dim_SATC[SATC_ID]),
+    0
+)
+// Porcentaje de cobertura: SAT-C con datos / Total de SAT-C

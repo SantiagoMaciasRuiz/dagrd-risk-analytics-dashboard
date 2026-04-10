@@ -1,0 +1,34 @@
+-- Medidas SATC con nombres existentes (compatibles con visuales ya creados)
+
+-- Total SAT-C del catalogo oficial (37)
+Total_SATC_Unicos =
+DISTINCTCOUNT(Dim_SATC[SATC_Nombre])
+
+-- Total SAT-C en actividades comunitarias (debe quedar 37 con datos normalizados)
+SATC_Principales =
+CALCULATE(
+  DISTINCTCOUNT(Hecho_Participacion_General[nombre_satc]),
+  Hecho_Participacion_General[bloque_comunidad] = "SAT-C"
+)
+
+-- Actividades SAT-C
+Actividades_por_SATC =
+CALCULATE(
+  COALESCE(COUNTROWS(Hecho_Participacion_General), 0),
+  Hecho_Participacion_General[bloque_comunidad] = "SAT-C"
+)
+
+-- Participantes SAT-C
+Participantes_por_SATC =
+CALCULATE(
+  COALESCE(SUM(Hecho_Participacion_General[participantes]), 0),
+  Hecho_Participacion_General[bloque_comunidad] = "SAT-C"
+)
+
+-- Cobertura entre actividades SAT-C y catalogo oficial
+Cobertura_SATC_Porcentaje =
+DIVIDE(
+  [SATC_Principales],
+  [Total_SATC_Unicos],
+  0
+)

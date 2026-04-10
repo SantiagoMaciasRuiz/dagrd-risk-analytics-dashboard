@@ -1,0 +1,39 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temporary scripts and logs
+.tmp_*.py
+*.tmp
+*.log
+
+# Excel lock and backup files
+~$*.xlsx
+~$*.xls
+*_BACKUP.xlsx
+
+# Power BI temporary extract artifacts
+Tableros/_pbix_extract/
+Tableros/_pbix_extract_temp/
+Tableros/**/AnalysisServicesWorkspace*/
+
+# Power BI binaries (keep source scripts/TMDL in repo)
+*.pbix
+
+# Large local deliverables/generated bundles
+entregables/publicacion_nube_2026-03-20/01_pbix/
+
+# Optional local data dumps (uncomment if needed)
+# data/raw/
+# data/source/

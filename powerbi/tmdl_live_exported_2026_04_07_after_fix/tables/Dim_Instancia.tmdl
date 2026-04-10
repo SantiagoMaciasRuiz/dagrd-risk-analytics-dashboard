@@ -1,0 +1,13 @@
+table Dim_Instancia
+	lineageTag: a0b6c24f-d44a-4c1c-9ebb-eefcb8ce4d89
+
+	column instancia
+		lineageTag: a2115a10-eb21-40dc-9938-de11eba0f1d4
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [instancia]
+
+	partition Dim_Instancia = calculated
+		mode: import
+		source = DISTINCT(SELECTCOLUMNS(FILTER(Hecho_Participacion_General, NOT ISBLANK(Hecho_Participacion_General[instancia])), "instancia", Hecho_Participacion_General[instancia]))
+

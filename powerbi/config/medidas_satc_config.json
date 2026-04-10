@@ -1,0 +1,43 @@
+{
+  "fecha_creacion": "2026-03-18T15:15:42.387829",
+  "power_bi_version": "Latest",
+  "tabla_destino": "_Medidas",
+  "carpeta": "SATC",
+  "medidas": [
+    {
+      "nombre": "Total_SATC_Unicos",
+      "expresion": "DISTINCTCOUNT(Dim_SATC[SATC_ID])",
+      "descripcion": "Número total de SATC únicos en el modelo",
+      "carpeta": "SATC",
+      "tipo": "Básica"
+    },
+    {
+      "nombre": "SATC_Principales",
+      "expresion": "DISTINCTCOUNT(Hecho_Participacion_General[satc_id])",
+      "descripcion": "SATC que tienen datos en Hecho_Participacion_General",
+      "carpeta": "SATC",
+      "tipo": "Básica"
+    },
+    {
+      "nombre": "Actividades_por_SATC",
+      "expresion": "COALESCE(COUNTROWS(Hecho_Participacion_General), 0)",
+      "descripcion": "Conteo de actividades asociadas a SATC",
+      "carpeta": "SATC",
+      "tipo": "Derivada"
+    },
+    {
+      "nombre": "Participantes_por_SATC",
+      "expresion": "COALESCE(SUM(Hecho_Participacion_General[participantes]), 0)",
+      "descripcion": "Suma de participantes en actividades de SATC",
+      "carpeta": "SATC",
+      "tipo": "Derivada"
+    },
+    {
+      "nombre": "Cobertura_SATC_Porcentaje",
+      "expresion": "DIVIDE(DISTINCTCOUNT(Hecho_Participacion_General[satc_id]), DISTINCTCOUNT(Dim_SATC[SATC_ID]), 0)",
+      "descripcion": "% de SATC que tienen datos",
+      "carpeta": "SATC",
+      "tipo": "Avanzada"
+    }
+  ]
+}

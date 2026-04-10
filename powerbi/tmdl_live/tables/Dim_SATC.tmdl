@@ -1,0 +1,79 @@
+table Dim_SATC
+	lineageTag: 3a9f656a-fe10-4e4a-904d-7f5e4462d097
+
+	column SATC_ID
+		dataType: string
+		lineageTag: 50020e78-fb63-4824-b896-96245c0b1737
+		summarizeBy: none
+		sourceColumn: SATC_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SATC_Nombre
+		dataType: string
+		lineageTag: 7179e880-8d4f-49f4-93e6-2ed7cbfbefed
+		summarizeBy: none
+		sourceColumn: SATC_Nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column Comuna_Cod
+		dataType: int64
+		formatString: 0
+		lineageTag: e8da6834-6b3f-4554-ba7a-dfca319a15c4
+		summarizeBy: none
+		sourceColumn: Comuna_Cod
+
+		annotation SummarizationSetBy = Automatic
+
+	column Talleres
+		dataType: int64
+		formatString: 0
+		lineageTag: edd11362-daf1-4201-8064-04d88cc54e51
+		summarizeBy: sum
+		sourceColumn: Talleres
+
+		annotation SummarizationSetBy = Automatic
+
+	column Comites
+		dataType: int64
+		formatString: 0
+		lineageTag: 256dedd1-abdd-4fc1-aa12-0e5a0bd243cb
+		summarizeBy: sum
+		sourceColumn: Comites
+
+		annotation SummarizationSetBy = Automatic
+
+	column Activo
+		dataType: string
+		lineageTag: 298de724-648d-477a-b824-1d53c254e730
+		summarizeBy: none
+		sourceColumn: Activo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_SATC = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\Modelo_Reporte_Paginas_2026.xlsx"), null, true),
+				    Dim_SATC_Sheet = Origen{[Item="Dim_SATC",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Dim_SATC_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"SATC_ID", type text}, {"SATC_Nombre", type text}, {"Comuna_Cod", Int64.Type}, {"Talleres", Int64.Type}, {"Comites", Int64.Type}, {"Activo", type text}})
+				in
+				    #"Tipo cambiado"
+
+	measure Num_SATC
+		formatString: 0
+		expression: CALCULATE(DISTINCTCOUNT(Dim_SATC[SATC_Nombre]), ALLSELECTED(Dim_SATC), KEEPFILTERS(Hecho_Participacion_General[comuna_cod]))
+		lineageTag: 2a8a125b-cad5-4ccf-be30-2719a57eecc8
+
+	measure Total_SATC_Unicos
+		formatString: 0
+		expression: VAR _v = CALCULATE(DISTINCTCOUNT(Dim_SATC[SATC_Nombre]), ALLSELECTED(Dim_SATC), KEEPFILTERS(Hecho_Participacion_General[comuna_cod])) RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
+		lineageTag: ffd76c64-6d6a-40a5-ad02-7ae2382f05bf
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegación
+
