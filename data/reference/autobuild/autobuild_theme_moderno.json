@@ -1,0 +1,22 @@
+{
+  "name": "AutoBuild Moderno",
+  "foreground": "#1F2937",
+  "background": "#F7F8FA",
+  "tableAccent": "#0E7490",
+  "dataColors": ["#0E7490", "#2563EB", "#0F766E", "#DC2626", "#CA8A04", "#7C3AED", "#475569", "#0891B2"],
+  "textClasses": {
+    "title": { "fontFace": "Segoe UI Semibold", "fontSize": 14 },
+    "callout": { "fontFace": "Segoe UI", "fontSize": 28 },
+    "header": { "fontFace": "Segoe UI Semibold", "fontSize": 12 },
+    "label": { "fontFace": "Segoe UI", "fontSize": 10 }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "title": [{ "show": true, "color": { "solid": { "color": "#111827" } }, "fontSize": 12 }],
+        "background": [{ "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }],
+        "border": [{ "show": true, "radius": 6, "color": { "solid": { "color": "#E5E7EB" } } }]
+      }
+    }
+  }
+}

@@ -2,4 +2,9 @@
 -- Requiere tabla importada: Dim_Comites_Comisiones_2026
 
 Num_Comites_Comisiones =
-DISTINCTCOUNT(Dim_Comites_Comisiones_2026[comite_comision_nombre])
+CALCULATE(
+	DISTINCTCOUNT(Dim_Comites_Comisiones_2026[comite_comision_nombre]),
+	KEEPFILTERS(TREATAS(VALUES(Dim_Comuna[comuna_cod]), Dim_Comites_Comisiones_2026[comuna_cod])),
+	KEEPFILTERS(Dim_Comites_Comisiones_2026[comite_comision_nombre] <> "TODOS LOS COMITES Y COMISIONES"),
+	KEEPFILTERS(NOT ISBLANK(Dim_Comites_Comisiones_2026[comite_comision_nombre]))
+)

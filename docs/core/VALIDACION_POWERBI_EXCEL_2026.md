@@ -6,8 +6,8 @@ Fuente principal: data/source/Reporte de actividades equipo social 2026 (1).xlsx
 - data/reference/powerbi_medidas_mapeo_2026.csv
 - data/reference/powerbi_consultas_visuales_2026.csv
 
-Total medidas encontradas: 80
-Total visuales encontradas en layout: 189
+Total medidas encontradas: 267
+Total visuales encontradas en layout: 107
 
 ## Mapeo rapido modelo -> columna Excel
 - participantes -> Sheet1 -> Indique el numero de personas participantes

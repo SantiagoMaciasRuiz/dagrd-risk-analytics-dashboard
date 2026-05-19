@@ -3,16 +3,25 @@ from __future__ import annotations
 
 import re
 import unicodedata
+import os
 import zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
+import runpy
 
 import pandas as pd
 
 
 BASE_DIR = Path(r"c:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard")
-REPORT_FILE = BASE_DIR / "data" / "source" / "Reporte de actividades equipo social 2026 (1).xlsx"
+# Support filenames with or without the ' (1)' suffix — pick the first matching candidate.
+source_dir = BASE_DIR / "data" / "source"
+candidates = list(source_dir.glob("Reporte de actividades equipo social 2026*.xlsx"))
+if not candidates:
+    REPORT_FILE = source_dir / "Reporte de actividades equipo social 2026 (1).xlsx"
+else:
+    REPORT_FILE = candidates[0]
+
 OUTPUT_FILE = BASE_DIR / "data" / "model" / "Modelo_Reporte_Paginas_2026.xlsx"
 
 SHEET_DETALLE = "Sheet1"
@@ -119,7 +128,10 @@ def _to_int(value: object) -> int | None:
 
 
 def _to_float(value: object) -> float | None:
-    text = str(value or "").strip()
+    if value is None or pd.isna(value):
+        return None
+
+    text = str(value).strip()
     if not text:
         return None
     text = text.replace(",", ".")
@@ -217,7 +229,20 @@ def _get_sheet_xml_target(zf: zipfile.ZipFile, sheet_name: str) -> str:
             target = rel_map.get(rel_id, "")
             if not target:
                 break
-            return target if target.startswith("xl/") else f"xl/{target}"
+            targ = target.lstrip('/')
+            return targ if targ.startswith("xl/") else f"xl/{targ}"
+
+    # Fallback: buscar hoja cuyo nombre contenga o empiece por el patrón solicitado (ignora mayúsculas/acentos)
+    norm_target = sheet_name.lower()
+    for sheet in sheets.findall("m:sheet", NS_MAIN):
+        name = sheet.attrib.get("name", "")
+        if norm_target in name.lower() or name.lower().startswith(norm_target):
+            rel_id = sheet.attrib.get(RID_NS)
+            target = rel_map.get(rel_id, "")
+            if not target:
+                break
+            targ = target.lstrip('/')
+            return targ if targ.startswith("xl/") else f"xl/{targ}"
 
     raise RuntimeError(f"No se encontró la hoja '{sheet_name}'.")
 
@@ -277,6 +302,17 @@ def _find_col(headers: Dict[int, str], contains_all: List[str], contains_any: Li
             if not contains_any or any(term in normalized for term in contains_any):
                 return idx
     raise RuntimeError(f"No se encontró columna para criterio: all={contains_all}, any={contains_any}")
+
+
+def _find_col_optional(headers: Dict[int, str], contains_all: List[str], contains_any: List[str] | None = None) -> int | None:
+    """Find column but return None if not found (instead of raising error)."""
+    contains_any = contains_any or []
+    for idx, name in headers.items():
+        normalized = _normalize_text(name)
+        if all(term in normalized for term in contains_all):
+            if not contains_any or any(term in normalized for term in contains_any):
+                return idx
+    return None
 
 
 def _find_educacion_establecimiento_cols(headers: Dict[int, str]) -> Dict[int, int]:
@@ -730,6 +766,37 @@ def _normalize_gender_to_participantes(fact_df: pd.DataFrame) -> pd.DataFrame:
     return fact_df
 
 
+def _read_sheet3_simulacros_openpyxl() -> List[Tuple[int, Dict[int, str]]]:
+    """Fallback: Leer Simulacros con openpyxl cuando XML parsing falla."""
+    try:
+        df_raw = pd.read_excel(REPORT_FILE, sheet_name=SHEET_SIMULACROS, header=None, engine='openpyxl')
+        df_clean = df_raw.dropna(how='all')
+
+        if df_clean.empty:
+            return []
+
+        header_row = df_clean.iloc[0]
+        df_data = df_clean.iloc[1:].reset_index(drop=True)
+
+        sheet3_rows: List[Tuple[int, Dict[int, str]]] = []
+        header_map = {i + 1: str(col).strip() for i, col in enumerate(header_row)}
+        sheet3_rows.append((1, header_map))
+
+        for idx, row in df_data.iterrows():
+            row_num = idx + 2
+            row_map: Dict[int, str] = {}
+            for col_idx, value in enumerate(row, 1):
+                if pd.notna(value):
+                    str_val = str(value).strip()
+                    if str_val and str_val.lower() != 'nan':
+                        row_map[col_idx] = str_val
+            if row_map:
+                sheet3_rows.append((row_num, row_map))
+
+        return sheet3_rows
+    except Exception:
+        return []
+
 def _extract_fact_and_queries() -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame], pd.DataFrame]:
     if not REPORT_FILE.exists():
         raise FileNotFoundError(f"No existe archivo: {REPORT_FILE}")
@@ -738,7 +805,13 @@ def _extract_fact_and_queries() -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame], 
         shared = _read_shared_strings(zf)
         sheet1_rows = _read_sheet_rows(zf, _get_sheet_xml_target(zf, SHEET_DETALLE), shared)
         sheet2_rows = _read_sheet_rows(zf, _get_sheet_xml_target(zf, SHEET_PIVOT), shared)
-        sheet3_rows = _read_sheet_rows(zf, _get_sheet_xml_target(zf, SHEET_SIMULACROS), shared)
+        try:
+            sheet3_rows = _read_sheet_rows(zf, _get_sheet_xml_target(zf, SHEET_SIMULACROS), shared)
+        except Exception:
+            sheet3_rows = []
+
+    if not sheet3_rows:
+        sheet3_rows = _read_sheet3_simulacros_openpyxl()
 
     if not sheet1_rows:
         raise RuntimeError("No se encontraron filas en Sheet1.")
@@ -797,8 +870,8 @@ def _extract_fact_and_queries() -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame], 
     idx_lgtbi = _find_col(header_map, ["poblacion", "lgtbi"])
     idx_indig = _find_col(header_map, ["poblacion", "indigena"])
     idx_rom = _find_col(header_map, ["poblacion", "rom"])
-    idx_procesos = _find_col(header_map, ["procesos"])
-    idx_nivel_educativo = _find_col(header_map, ["nivel educativo"])
+    idx_procesos = _find_col_optional(header_map, ["procesos"])  # Optional column
+    idx_nivel_educativo = _find_col_optional(header_map, ["nivel educativo"])  # Optional column
 
     fact_rows: List[Dict[str, object]] = []
     for row_num, row in sheet1_rows[1:]:
@@ -889,8 +962,8 @@ def _extract_fact_and_queries() -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame], 
                 "pob_lgtbi": _to_int(row.get(idx_lgtbi, "")),
                 "pob_indige": _to_int(row.get(idx_indig, "")),
                 "pob_rom": _to_int(row.get(idx_rom, "")),
-                "procesos": _clean_text(row.get(idx_procesos, "")),
-                "nivel_educativo": _clean_text(row.get(idx_nivel_educativo, "")),
+                "procesos": _clean_text(row.get(idx_procesos, "")) if idx_procesos is not None else "",
+                "nivel_educativo": _clean_text(row.get(idx_nivel_educativo, "")) if idx_nivel_educativo is not None else "",
                 "fuente_archivo": REPORT_FILE.name,
                 "fuente_hoja": SHEET_DETALLE,
             }
@@ -987,35 +1060,34 @@ def _extract_fact_and_queries() -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame], 
     simulacros_df = pd.DataFrame()
     if sheet3_rows:
         sim_header_num, sim_header_map = sheet3_rows[0]
-        if sim_header_num == 1:
-            idx_sim_fecha = _find_col(sim_header_map, ["marca temporal"])
-            idx_sim_nombre = _find_col(sim_header_map, ["nombre completo"])
-            idx_sim_comuna = _find_col(sim_header_map, ["comuna", "pertenece"])
-            idx_sim_sector = _find_col(sim_header_map, ["sector pertenece"])
-            idx_sim_personas = _find_col(sim_header_map, ["personas", "participaron"])
+        idx_sim_fecha = _find_col(sim_header_map, ["marca temporal"])
+        idx_sim_nombre = _find_col(sim_header_map, ["nombre completo"])
+        idx_sim_comuna = _find_col(sim_header_map, ["comuna", "pertenece"])
+        idx_sim_sector = _find_col(sim_header_map, ["sector pertenece"])
+        idx_sim_personas = _find_col(sim_header_map, ["personas", "participaron"])
 
-            sim_rows: List[Dict[str, object]] = []
-            for row_num, row in sheet3_rows[1:]:
-                fecha = _parse_excel_date(row.get(idx_sim_fecha, ""))
-                sector_origen = _clean_text(row.get(idx_sim_sector, ""))
-                sim_rows.append(
-                    {
-                        "fila_origen": row_num,
-                        "fecha": fecha,
-                        "anio": int(fecha.year) if pd.notna(fecha) else None,
-                        "mes_num": int(fecha.month) if pd.notna(fecha) else None,
-                        "mes_nombre": MONTHS_ES.get(int(fecha.month), None) if pd.notna(fecha) else None,
-                        "nombre_entidad": _clean_text(row.get(idx_sim_nombre, "")),
-                        "comuna_texto": _clean_text(row.get(idx_sim_comuna, "")),
-                        "comuna_cod": _parse_comuna_text_to_code(row.get(idx_sim_comuna, "")),
-                        "sector_origen": sector_origen,
-                        "sector_tablero": _map_simulacro_sector(sector_origen),
-                        "personas_participantes": _to_int(row.get(idx_sim_personas, "")),
-                        "fuente_archivo": REPORT_FILE.name,
-                        "fuente_hoja": SHEET_SIMULACROS,
-                    }
-                )
-            simulacros_df = pd.DataFrame(sim_rows)
+        sim_rows: List[Dict[str, object]] = []
+        for row_num, row in sheet3_rows[1:]:
+            fecha = _parse_excel_date(row.get(idx_sim_fecha, ""))
+            sector_origen = _clean_text(row.get(idx_sim_sector, ""))
+            sim_rows.append(
+                {
+                    "fila_origen": row_num,
+                    "fecha": fecha,
+                    "anio": int(fecha.year) if pd.notna(fecha) else None,
+                    "mes_num": int(fecha.month) if pd.notna(fecha) else None,
+                    "mes_nombre": MONTHS_ES.get(int(fecha.month), None) if pd.notna(fecha) else None,
+                    "nombre_entidad": _clean_text(row.get(idx_sim_nombre, "")),
+                    "comuna_texto": _clean_text(row.get(idx_sim_comuna, "")),
+                    "comuna_cod": _parse_comuna_text_to_code(row.get(idx_sim_comuna, "")),
+                    "sector_origen": sector_origen,
+                    "sector_tablero": _map_simulacro_sector(sector_origen),
+                    "personas_participantes": _to_int(row.get(idx_sim_personas, "")),
+                    "fuente_archivo": REPORT_FILE.name,
+                    "fuente_hoja": SHEET_SIMULACROS,
+                }
+            )
+        simulacros_df = pd.DataFrame(sim_rows)
 
     if simulacros_df.empty:
         simulacros_por_sector = pd.DataFrame(columns=["sector_tablero", "registros", "personas_participantes"])
@@ -1094,6 +1166,10 @@ def main() -> None:
             df.to_excel(writer, sheet_name=sheet_name, index=False)
 
     temp_output.replace(OUTPUT_FILE)
+
+    repair_script = BASE_DIR / "scripts" / "etl" / "reparar_hojas_modelo_para_powerbi.py"
+    if repair_script.exists() and os.getenv("RUN_MODEL_REPAIR", "0") == "1":
+        runpy.run_path(str(repair_script), run_name="__main__")
 
     print(f"OK: archivo generado en {OUTPUT_FILE}")
     for name, df in outputs.items():

@@ -1,0 +1,228 @@
+table Hecho_IxR
+	lineageTag: 82e0d03c-ed62-44f8-a842-41661bbf8cc0
+
+	column evento_id
+		dataType: int64
+		lineageTag: 5988b866-d625-4c63-b546-519ee17ccb36
+		summarizeBy: sum
+		sourceColumn: evento_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 20fbfb84-8400-4a89-8a2e-ec0d963ce8d8
+		summarizeBy: none
+		sourceColumn: fecha
+
+		variation Variación
+			isDefault
+			relationship: 65d1deee-6d18-44d7-969a-4d8f6638cb06
+			defaultHierarchy: LocalDateTable_a863f791-f138-400c-b8fd-670007b6f6ae.'Jerarquía de fechas'
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 0c5a9f6a-a9c6-4892-a165-625b12f39372
+		summarizeBy: none
+		sourceColumn: fecha_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column numero_lesionados
+		dataType: int64
+		lineageTag: 29d05796-8a7f-43dc-a518-042159a4f795
+		summarizeBy: sum
+		sourceColumn: numero_lesionados
+
+		annotation SummarizationSetBy = Automatic
+
+	column numero_muertos
+		dataType: int64
+		lineageTag: c9835219-bd08-449f-a45d-3c92dc427768
+		summarizeBy: sum
+		sourceColumn: numero_muertos
+
+		annotation SummarizationSetBy = Automatic
+
+	column evac_temporal
+		dataType: int64
+		lineageTag: f70b7ee8-6174-4ad8-bce5-134624d3e6e0
+		summarizeBy: sum
+		sourceColumn: evac_temporal
+
+		annotation SummarizationSetBy = Automatic
+
+	column evac_definitiva
+		dataType: int64
+		lineageTag: 3b7764c8-745a-453f-afa0-2334c2272afa
+		summarizeBy: sum
+		sourceColumn: evac_definitiva
+
+		annotation SummarizationSetBy = Automatic
+
+	column origen
+		dataType: string
+		lineageTag: ea5db672-c88e-4374-9f82-63cee47f1e8a
+		summarizeBy: none
+		sourceColumn: origen
+
+		annotation SummarizationSetBy = Automatic
+
+	column escenario_riesgo
+		dataType: string
+		lineageTag: 2fef1af1-48d3-49ff-bba9-52a670c8f5d3
+		summarizeBy: none
+		sourceColumn: escenario_riesgo
+
+		annotation SummarizationSetBy = Automatic
+
+	column fenomeno_amenazante
+		dataType: string
+		lineageTag: 53193955-800f-4d94-af67-a01a58c13ee6
+		summarizeBy: none
+		sourceColumn: fenomeno_amenazante
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo_incidente
+		dataType: string
+		lineageTag: b6f67752-cf33-47cc-a50f-cac641f3c31f
+		summarizeBy: none
+		sourceColumn: tipo_incidente
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo_recepcion
+		dataType: string
+		lineageTag: a96ed09e-f760-49ec-a598-0daa842de946
+		summarizeBy: none
+		sourceColumn: tipo_recepcion
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_corregimiento
+		dataType: string
+		lineageTag: d1990ec1-9c57-4b36-8003-5353c8da5389
+		summarizeBy: none
+		sourceColumn: comuna_corregimiento
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_cod
+		dataType: int64
+		lineageTag: b754ce00-6b64-44fa-9bbd-0ad24d18ca1a
+		summarizeBy: none
+		sourceColumn: comuna_cod
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fecha registro'
+		dataType: string
+		lineageTag: dfc604f0-6601-4f9f-845e-7972ff67aa12
+		summarizeBy: none
+		sourceColumn: Fecha registro
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fecha visita'
+		dataType: string
+		lineageTag: c15e8e61-69cd-4d5b-ab6f-72dc5e622c99
+		summarizeBy: none
+		sourceColumn: Fecha visita
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Evento materializado'
+		dataType: string
+		lineageTag: c636be06-a4e1-46c7-aa23-bde069055aa1
+		summarizeBy: none
+		sourceColumn: Evento materializado
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Elementos expuestos'
+		dataType: string
+		lineageTag: d01cd85e-6b14-41b7-ba3d-17593ea47d37
+		summarizeBy: none
+		sourceColumn: Elementos expuestos
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Calif Amenaza'
+		dataType: string
+		lineageTag: d98db571-181f-40ae-a6e8-5bfd40da1bfe
+		summarizeBy: none
+		sourceColumn: Calif Amenaza
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Calif Vulnerabilidad'
+		dataType: string
+		lineageTag: f14f5369-1171-4a50-829b-88e43f72ebcb
+		summarizeBy: none
+		sourceColumn: Calif Vulnerabilidad
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Calif Riesgo'
+		dataType: string
+		lineageTag: 473ad333-9380-4ada-9279-2c204a0645b4
+		summarizeBy: none
+		sourceColumn: Calif Riesgo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vereda/barrio
+		dataType: string
+		lineageTag: 35bdd537-bb53-464b-b52f-3648b27e9f9d
+		summarizeBy: none
+		sourceColumn: Vereda/barrio
+
+		annotation SummarizationSetBy = Automatic
+
+	column Direccion
+		dataType: string
+		lineageTag: 4914c95b-1989-466d-a511-3e14acc75a62
+		summarizeBy: none
+		sourceColumn: Direccion
+
+		annotation SummarizationSetBy = Automatic
+
+	column Latitud
+		dataType: string
+		lineageTag: af557664-bad9-49c9-be0d-c41be872efb6
+		summarizeBy: none
+		sourceColumn: Latitud
+
+		annotation SummarizationSetBy = Automatic
+
+	column Longitud
+		dataType: string
+		lineageTag: 714ba3a6-e3c3-475e-aac8-03cb204648c6
+		summarizeBy: none
+		sourceColumn: Longitud
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Hecho_IxR = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\IxR_2024-2026.xlsx"), null, true),
+				    IxR = Origen{[Item="ixr_filtrado",Kind="Sheet"]}[Data],
+				    Encabezados = Table.PromoteHeaders(IxR, [PromoteAllScalars=true]),
+				    Renombradas = Table.RenameColumns(Encabezados, {{"Evento ID", "evento_id"}, {"Fecha ocurrencia", "fecha"}, {"Numero lesionados", "numero_lesionados"}, {"Numero muertos", "numero_muertos"}, {"Evac Temporal", "evac_temporal"}, {"Evac Definitiva", "evac_definitiva"}, {"Origen", "origen"}, {"Escenario Riesgo", "escenario_riesgo"}, {"Fenomeno amenazante", "fenomeno_amenazante"}, {"Tipo incidente", "tipo_incidente"}, {"Tipo recepción", "tipo_recepcion"}, {"Comuna/Corregimiento", "comuna_corregimiento"}}),
+				    Tipos = Table.TransformColumnTypes(Renombradas, {{"evento_id", Int64.Type}, {"fecha", type date}, {"numero_lesionados", Int64.Type}, {"numero_muertos", Int64.Type}, {"evac_temporal", Int64.Type}, {"evac_definitiva", Int64.Type}, {"origen", type text}, {"escenario_riesgo", type text}, {"fenomeno_amenazante", type text}, {"tipo_incidente", type text}, {"tipo_recepcion", type text}, {"comuna_corregimiento", type text}}),
+				    ComunaCod = Table.AddColumn(Tipos, "comuna_cod", each let txt = Text.Upper(Text.Trim(Text.From([comuna_corregimiento]))), digits = Text.Select(txt, {"0".."9"}) in if digits <> "" then Number.FromText(digits) else if Text.Contains(txt, "ALTAVISTA") then 70 else if Text.Contains(txt, "SAN CRIST") then 60 else if Text.Contains(txt, "SAN ANTONIO DE PRADO") then 80 else if Text.Contains(txt, "SANTA ELENA") then 90 else if Text.Contains(txt, "PALMITAS") then 50 else null, Int64.Type),
+				    FechaDate = Table.AddColumn(ComunaCod, "fecha_date", each [fecha], type date)
+				in
+				    FechaDate
+

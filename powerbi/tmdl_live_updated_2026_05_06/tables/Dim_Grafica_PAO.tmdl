@@ -1,0 +1,31 @@
+table Dim_Grafica_PAO
+	lineageTag: f05dbc92-8faf-4535-8da4-e3c534ab1eac
+
+	column Grupo
+		lineageTag: c6d5e2c5-34a0-4b65-bf17-9faa6413cb57
+		isNameInferred
+		sourceColumn: [Grupo]
+		sortByColumn: OrdenGrupo
+
+	column Segmentacion
+		lineageTag: 9214cc14-4954-4011-a79e-3f74562ff0a6
+		isNameInferred
+		sourceColumn: [Segmentacion]
+		sortByColumn: OrdenSegmentacion
+
+	column OrdenGrupo
+		isHidden
+		lineageTag: 88407927-79d4-4c94-a9d8-89852e35b591
+		isNameInferred
+		sourceColumn: [OrdenGrupo]
+
+	column OrdenSegmentacion
+		isHidden
+		lineageTag: 3f2a34ed-f194-46a6-b07c-f728851eeea0
+		isNameInferred
+		sourceColumn: [OrdenSegmentacion]
+
+	partition Dim_Grafica_PAO = calculated
+		mode: import
+		source = DATATABLE("Grupo", STRING, "Segmentacion", STRING, "OrdenGrupo", INTEGER, "OrdenSegmentacion", INTEGER, { {"Género", "Hombre", 1, 1}, {"Género", "Mujer", 1, 2}, {"Género", "Intersexual", 1, 3}, {"Grupo etario", "Menor de edad", 2, 1}, {"Grupo etario", "Adulto", 2, 2}, {"Grupo etario", "Adulto mayor", 2, 3}, {"Étnico", "Ninguna", 3, 1}, {"Étnico", "Afrodescendiente", 3, 2}, {"Étnico", "Indígena", 3, 3}, {"Étnico", "Negro", 3, 4}, {"Étnico", "Sin dato", 3, 5}, {"Discapacidad", "No tiene", 4, 1}, {"Discapacidad", "Física", 4, 2}, {"Discapacidad", "Psicosocial", 4, 3}, {"Discapacidad", "Intelectual", 4, 4}, {"Discapacidad", "Múltiple", 4, 5}, {"Discapacidad", "Visual", 4, 6}, {"Discapacidad", "Auditiva", 4, 7}, {"Discapacidad", "Desconocida", 4, 8}, {"Discapacidad", "Sin dato", 4, 9} })
+

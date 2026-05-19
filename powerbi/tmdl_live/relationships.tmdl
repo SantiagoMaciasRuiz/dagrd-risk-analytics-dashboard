@@ -10,6 +10,10 @@ relationship R_DimFecha_HS
 	fromColumn: Hecho_Simulacros.fecha_date
 	toColumn: Dim_Fecha.fecha
 
+relationship R_DimFecha_HPAO
+	fromColumn: Hecho_Personas_Atendidas_Ordinario.fecha_date
+	toColumn: Dim_Fecha.fecha
+
 relationship R_DimComuna_HPG
 	fromColumn: Hecho_Participacion_General.comuna_cod
 	toColumn: Dim_Comuna.comuna_cod
@@ -83,4 +87,25 @@ relationship d0c01280-ea33-e563-9f9e-1d1483561b6a
 	fromCardinality: one
 	fromColumn: Hecho_Simulacros.fila_origen
 	toColumn: Hecho_Participacion_General.fila_origen
+
+relationship R_DimComuna_DimComites
+	fromColumn: Dim_Comites_Comisiones_2026.comuna_cod
+	toColumn: Dim_Comuna.comuna_cod
+
+relationship R_DimComuna_HPAO
+	fromColumn: Hecho_Personas_Atendidas_Ordinario.comuna_cod
+	toColumn: Dim_Comuna.comuna_cod
+
+relationship R_DimComuna_HIxR
+	fromColumn: Hecho_IxR.comuna_cod
+	toColumn: Dim_Comuna.comuna_cod
+
+relationship R_DimFecha_HIxR
+	fromColumn: Hecho_IxR.fecha_date
+	toColumn: Dim_Fecha.fecha
+
+relationship 65d1deee-6d18-44d7-969a-4d8f6638cb06
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Hecho_IxR.fecha
+	toColumn: LocalDateTable_a863f791-f138-400c-b8fd-670007b6f6ae.Date
 

@@ -524,19 +524,81 @@ table Hecho_Participacion_General
 
 		annotation SummarizationSetBy = Automatic
 
-	column satc_id
+	column institucion_educativa_norm
 		dataType: string
-		lineageTag: 3ef692a3-646a-4902-a6da-cbb3941c4c15
+		lineageTag: b1e10a30-c394-4624-bf52-ceb28f69e1c6
 		summarizeBy: none
-		sourceColumn: satc_id
+		sourceColumn: institucion_educativa_norm
+
+	column comuna_institucion_educativa_cod
+		dataType: int64
+		lineageTag: 6556b4c1-92ae-4b24-a120-7aadaccb7eba
+		summarizeBy: none
+		sourceColumn: comuna_institucion_educativa_cod
+
+	column comuna_bc_cod
+		dataType: int64
+		formatString: 0
+		lineageTag: 98288240-ac0c-4f21-9112-a64256d5d4c8
+		summarizeBy: sum
+		sourceColumn: comuna_bc_cod
 
 		annotation SummarizationSetBy = Automatic
 
-	column nombre_satc_original
+	column sede_bc
 		dataType: string
-		lineageTag: 22454d48-480c-4840-ac4b-2aea14120a57
+		lineageTag: 25701f82-c4ed-4824-8444-a1d78875b5b3
 		summarizeBy: none
-		sourceColumn: nombre_satc_original
+		sourceColumn: sede_bc
+
+		annotation SummarizationSetBy = Automatic
+
+	column sede_bc_norm
+		dataType: string
+		lineageTag: 6108417e-b8bd-4f04-9e4e-5bdc2b656083
+		summarizeBy: none
+		sourceColumn: sede_bc_norm
+
+		annotation SummarizationSetBy = Automatic
+
+	column comuna_educacion_cod
+		dataType: int64
+		formatString: 0
+		lineageTag: 4e7c35e8-3fc3-4719-884b-7db8910d4985
+		summarizeBy: sum
+		sourceColumn: comuna_educacion_cod
+
+		annotation SummarizationSetBy = Automatic
+
+	column establecimiento_educativo
+		dataType: string
+		lineageTag: 7cc4c82a-45dd-4a0f-9e16-10a0dce60d3b
+		summarizeBy: none
+		sourceColumn: establecimiento_educativo
+
+		annotation SummarizationSetBy = Automatic
+
+	column establecimiento_educativo_norm
+		dataType: string
+		lineageTag: 362e5881-b1c3-4ab4-9847-d99578e2773a
+		summarizeBy: none
+		sourceColumn: establecimiento_educativo_norm
+
+		annotation SummarizationSetBy = Automatic
+
+	column institucion_educativa
+		dataType: string
+		lineageTag: e93739ed-1ac4-4b8e-9144-129ab68bac69
+		summarizeBy: none
+		sourceColumn: institucion_educativa
+
+		annotation SummarizationSetBy = Automatic
+
+	column institucion_educativa_es_agregada
+		dataType: string
+		lineageTag: b1709442-17d9-4b14-8377-0bf18fc2e560
+		summarizeBy: none
+		sourceColumn: institucion_educativa_es_agregada
 
 		annotation SummarizationSetBy = Automatic
 
@@ -547,7 +609,7 @@ table Hecho_Participacion_General
 				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\Modelo_Reporte_Paginas_2026.xlsx"), null, true),
 				    Hecho_Participacion_General_Sheet = Origen{[Item="Hecho_Participacion_General",Kind="Sheet"]}[Data],
 				    #"Encabezados promovidos" = Table.PromoteHeaders(Hecho_Participacion_General_Sheet, [PromoteAllScalars=true]),
-				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"id_actividad", Int64.Type}, {"fila_origen", Int64.Type}, {"fecha", type date}, {"anio", Int64.Type}, {"mes_num", Int64.Type}, {"mes_nombre", type text}, {"comuna_cod", Int64.Type}, {"instancia", type text}, {"seccion_tablero", type text}, {"publico_comunidad", type any}, {"semillero_grd", type any}, {"actividad_semillero", type any}, {"nombre_satc", type any}, {"actividad_comunitaria", type text}, {"publico_primera_infancia", type any}, {"comuna_bc", type any}, {"actividad_primera_infancia", type any}, {"actividad_institucional", type any}, {"mesa_institucional", type any}, {"publico_empresarial", type any}, {"nombre_cosegrd", type any}, {"actividad_empresarial", type text}, {"actividad_pdl_pp", type text}, {"actividad_gestion_interna", type text}, {"publico_educacion", type any}, {"comuna_educacion", type any}, {"actividad_educacion", type text}, {"rel_meta_pdd", type text}, {"entidades_asociadas", type text}, {"modalidad", type text}, {"otros_profesionales", type text}, {"participantes", Int64.Type}, {"impacto_indirecto", Int64.Type}, {"mujeres", Int64.Type}, {"hombres", Int64.Type}, {"ninos", Int64.Type}, {"pri_infanc", Int64.Type}, {"nino_adole", Int64.Type}, {"juventud", Int64.Type}, {"adulto", Int64.Type}, {"adulto_may", Int64.Type}, {"discapacid", Int64.Type}, {"afrodescen", Int64.Type}, {"campesino", Int64.Type}, {"pob_victim", Int64.Type}, {"pob_migran", Int64.Type}, {"pob_lgtbi", Int64.Type}, {"pob_indige", Int64.Type}, {"pob_rom", Int64.Type}, {"procesos", type text}, {"nivel_educativo", type text}, {"fuente_archivo", type text}, {"fuente_hoja", type text}, {"bloque_comunidad", type text}, {"bloque_educacion", type text}, {"bloque_empresarial", type text}, {"bloque_institucional", type text}})
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"id_actividad", Int64.Type}, {"fila_origen", Int64.Type}, {"fecha", type date}, {"anio", Int64.Type}, {"mes_num", Int64.Type}, {"mes_nombre", type text}, {"comuna_cod", Int64.Type}, {"instancia", type text}, {"seccion_tablero", type text}, {"publico_comunidad", type any}, {"semillero_grd", type any}, {"actividad_semillero", type any}, {"nombre_satc", type any}, {"actividad_comunitaria", type text}, {"publico_primera_infancia", type any}, {"comuna_bc", type any}, {"comuna_bc_cod", Int64.Type}, {"sede_bc", type any}, {"sede_bc_norm", type text}, {"actividad_primera_infancia", type any}, {"actividad_institucional", type any}, {"mesa_institucional", type any}, {"publico_empresarial", type any}, {"nombre_cosegrd", type any}, {"actividad_empresarial", type text}, {"actividad_pdl_pp", type text}, {"actividad_gestion_interna", type text}, {"publico_educacion", type any}, {"comuna_educacion", type any}, {"comuna_educacion_cod", Int64.Type}, {"establecimiento_educativo", type any}, {"establecimiento_educativo_norm", type text}, {"institucion_educativa", type any}, {"institucion_educativa_norm", type text}, {"comuna_institucion_educativa_cod", Int64.Type}, {"actividad_educacion", type text}, {"rel_meta_pdd", type text}, {"entidades_asociadas", type text}, {"modalidad", type text}, {"otros_profesionales", type text}, {"participantes", Int64.Type}, {"impacto_indirecto", Int64.Type}, {"mujeres", Int64.Type}, {"hombres", Int64.Type}, {"ninos", Int64.Type}, {"pri_infanc", Int64.Type}, {"nino_adole", Int64.Type}, {"juventud", Int64.Type}, {"adulto", Int64.Type}, {"adulto_may", Int64.Type}, {"discapacid", Int64.Type}, {"afrodescen", Int64.Type}, {"campesino", Int64.Type}, {"pob_victim", Int64.Type}, {"pob_migran", Int64.Type}, {"pob_lgtbi", Int64.Type}, {"pob_indige", Int64.Type}, {"pob_rom", Int64.Type}, {"procesos", type text}, {"nivel_educativo", type text}, {"fuente_archivo", type text}, {"fuente_hoja", type text}, {"bloque_comunidad", type text}, {"bloque_educacion", type text}, {"bloque_empresarial", type text}, {"bloque_institucional", type text}, {"ambito_institucional", type text}, {"subbloque_institucional", type text}, {"grupo_ambito_comparacion", type text}})
 				in
 				    #"Tipo cambiado"
 

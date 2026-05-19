@@ -1,7 +1,7 @@
-﻿"ruta_relativa","tamano_bytes","fecha_modificacion"
-"01_pbix\Tablero Equipo Social DAGRD.pbix","5286580","2026-03-20 15:33:17"
-"02_datos_modelo\Dim_Comites_Comisiones_2026.csv","9565","2026-03-27 08:51:53"
-"02_datos_modelo\Modelo_Reporte_Paginas_2026.xlsx","1197466","2026-03-27 08:52:49"
-"03_fuente_original\Reporte de actividades equipo social 2026 (1).xlsx","3460670","2026-03-27 08:42:57"
-"05_documentacion\GUIA_PUBLICACION_NUBE_PASO_A_PASO.md","2943","2026-03-20 13:57:25"
-"README_ENTREGA_PUBLICACION.md","1136","2026-03-27 09:08:19"
+ruta_relativa,tamano_bytes,fecha_modificacion
+01_pbix\tableroDAGRD.pbix,5259556,2026-04-14 13:19:10
+02_datos_modelo\Dim_Comites_Comisiones_2026.csv,9565,2026-03-27 08:51:53
+02_datos_modelo\Modelo_Reporte_Paginas_2026.xlsx,1221265,2026-04-14 12:48:22
+03_fuente_original\Reporte de actividades equipo social 2026 (1).xlsx,1781942,2026-04-14 12:40:14
+05_documentacion\GUIA_PUBLICACION_NUBE_PASO_A_PASO.md,2943,2026-03-20 13:57:25
+README_ENTREGA_PUBLICACION.md,1530,2026-04-14 14:22:24

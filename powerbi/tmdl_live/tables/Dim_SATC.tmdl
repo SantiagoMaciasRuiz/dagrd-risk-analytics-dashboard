@@ -1,6 +1,24 @@
 table Dim_SATC
 	lineageTag: 3a9f656a-fe10-4e4a-904d-7f5e4462d097
 
+	/// Numero de SATC distintos (dinámico por Comuna)
+	measure Num_SATC =
+			VAR FilteredComunas = VALUES(Hecho_Participacion_General[comuna_cod])
+			RETURN
+			CALCULATE(
+			    DISTINCTCOUNT(Dim_SATC[SATC_Nombre]),
+			    FILTER(ALL(Dim_SATC), Dim_SATC[Comuna_Cod] IN FilteredComunas)
+			)
+		formatString: 0
+		lineageTag: 2a8a125b-cad5-4ccf-be30-2719a57eecc8
+
+	/// Total de SATC únicos (dinámico por Comuna)
+	measure Total_SATC_Unicos =
+			VAR _v = CALCULATE(DISTINCTCOUNT(Dim_SATC[SATC_Nombre]), FILTER(ALL(Dim_SATC), Dim_SATC[Comuna_Cod] IN VALUES(Hecho_Participacion_General[comuna_cod])))
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
+		formatString: 0
+		lineageTag: ffd76c64-6d6a-40a5-ad02-7ae2382f05bf
+
 	column SATC_ID
 		dataType: string
 		lineageTag: 50020e78-fb63-4824-b896-96245c0b1737
@@ -62,16 +80,6 @@ table Dim_SATC
 				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"SATC_ID", type text}, {"SATC_Nombre", type text}, {"Comuna_Cod", Int64.Type}, {"Talleres", Int64.Type}, {"Comites", Int64.Type}, {"Activo", type text}})
 				in
 				    #"Tipo cambiado"
-
-	measure Num_SATC
-		formatString: 0
-		expression: CALCULATE(DISTINCTCOUNT(Dim_SATC[SATC_Nombre]), ALLSELECTED(Dim_SATC), KEEPFILTERS(Hecho_Participacion_General[comuna_cod]))
-		lineageTag: 2a8a125b-cad5-4ccf-be30-2719a57eecc8
-
-	measure Total_SATC_Unicos
-		formatString: 0
-		expression: VAR _v = CALCULATE(DISTINCTCOUNT(Dim_SATC[SATC_Nombre]), ALLSELECTED(Dim_SATC), KEEPFILTERS(Hecho_Participacion_General[comuna_cod])) RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
-		lineageTag: ffd76c64-6d6a-40a5-ad02-7ae2382f05bf
 
 	annotation PBI_ResultType = Table
 

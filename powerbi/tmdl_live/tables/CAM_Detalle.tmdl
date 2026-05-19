@@ -25,6 +25,22 @@ table CAM_Detalle
 		summarizeBy: none
 		sourceColumn: empresa_normalizada
 
+	column fuente_archivo
+		dataType: string
+		lineageTag: f7c522b1-e7ea-4d9b-9954-190f9641f978
+		summarizeBy: none
+		sourceColumn: fuente_archivo
+
+		annotation SummarizationSetBy = Automatic
+
+	column fuente_hoja
+		dataType: string
+		lineageTag: 9c03dc8e-f285-4ed3-bfff-2d79b8fbef58
+		summarizeBy: none
+		sourceColumn: fuente_hoja
+
+		annotation SummarizationSetBy = Automatic
+
 	partition CAM_Detalle = m
 		mode: import
 		source =

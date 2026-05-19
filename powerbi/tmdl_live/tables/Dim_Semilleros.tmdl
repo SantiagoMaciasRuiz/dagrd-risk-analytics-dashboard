@@ -1,6 +1,24 @@
 table Dim_Semilleros
 	lineageTag: d7607a0b-cd8a-4b8b-9605-e58c1bcdf91f
 
+	/// Numero de Semilleros distintos (dinámico por Comuna)
+	measure Num_Semilleros =
+			VAR FilteredComunas = VALUES(Hecho_Participacion_General[comuna_cod])
+			RETURN
+			CALCULATE(
+			    DISTINCTCOUNT(Dim_Semilleros[Semillero]),
+			    FILTER(ALL(Dim_Semilleros), Dim_Semilleros[Comuna] IN FilteredComunas)
+			)
+		formatString: 0
+		lineageTag: 2dec133a-4a53-4519-90c9-78f62c153194
+
+	/// Total de Semilleros únicos (dinámico por Comuna)
+	measure Total_Semilleros =
+			VAR _v = CALCULATE(DISTINCTCOUNT(Dim_Semilleros[Semillero]), FILTER(ALL(Dim_Semilleros), Dim_Semilleros[Comuna] IN VALUES(Hecho_Participacion_General[comuna_cod])))
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
+		formatString: 0
+		lineageTag: 6f74b7f9-81f0-4a90-9770-cddd13c0a095
+
 	column N°
 		dataType: int64
 		formatString: 0
@@ -53,16 +71,6 @@ table Dim_Semilleros
 				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"N°", Int64.Type}, {"Semillero", type text}, {"Comuna", Int64.Type}, {"Comuna_Nombre", type text}, {"Barrio_Organización", type text}})
 				in
 				    #"Tipo cambiado"
-
-	measure Num_Semilleros
-		formatString: 0
-		expression: CALCULATE(DISTINCTCOUNT(Dim_Semilleros[Semillero]), ALLSELECTED(Dim_Semilleros), KEEPFILTERS(Hecho_Participacion_General[comuna_cod]))
-		lineageTag: 2dec133a-4a53-4519-90c9-78f62c153194
-
-	measure Total_Semilleros
-		formatString: 0
-		expression: VAR _v = CALCULATE(DISTINCTCOUNT(Dim_Semilleros[Semillero]), ALLSELECTED(Dim_Semilleros), KEEPFILTERS(Hecho_Participacion_General[comuna_cod])) RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
-		lineageTag: 6f74b7f9-81f0-4a90-9770-cddd13c0a095
 
 	annotation PBI_ResultType = Table
 

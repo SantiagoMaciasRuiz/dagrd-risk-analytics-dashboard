@@ -1,409 +1,306 @@
 table _Medidas
 	lineageTag: b1f93f08-da6d-496c-9a96-414b9e4b2c9e
 
-	measure GenF_Total_Actividades = IF(ISBLANK([GenF_Total_Actividades_VAL]), "N/A", FORMAT([GenF_Total_Actividades_VAL], "#,##0"))
+	measure GenF_Total_Actividades = COUNTROWS(Hecho_Participacion_General)
 		lineageTag: 6614757e-d0bd-4634-8d56-c2aa4335d7e8
 
-	measure GenF_Total_Actividades_VAL = COUNTROWS(Hecho_Participacion_General)
-		isHidden
-	measure GenF_Total_Participaciones = IF(ISBLANK([GenF_Total_Participaciones_VAL]), "N/A", FORMAT([GenF_Total_Participaciones_VAL], "#,##0"))
+	measure GenF_Total_Participaciones = SUM(Hecho_Participacion_General[participantes])
 		lineageTag: f4a73d11-1599-437b-aadb-03ab3dd78249
 
-	measure GenF_Total_Participaciones_VAL = SUM(Hecho_Participacion_General[participantes])
-		isHidden
-	measure Base_Impacto_Indirecto = IF(ISBLANK([Base_Impacto_Indirecto_VAL]), "N/A", FORMAT([Base_Impacto_Indirecto_VAL], "#,##0"))
+	measure Base_Impacto_Indirecto =
+			VAR _v = SUM(Hecho_Participacion_General[impacto_indirecto])
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		lineageTag: c5caf45c-2254-4048-b447-42f5101d37cb
 
-	measure Base_Impacto_Indirecto_VAL = SUM(Hecho_Participacion_General[impacto_indirecto])
-		isHidden
-	measure Base_Simulacros = IF(ISBLANK([Base_Simulacros_VAL]), "N/A", FORMAT([Base_Simulacros_VAL], "#,##0"))
+	measure Base_Simulacros =
+			VAR _v = COUNTROWS(Hecho_Simulacros)
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		lineageTag: abaa5719-dea7-45b1-921e-6f010f9a717e
 
-	measure Base_Simulacros_VAL = COUNTROWS(Hecho_Simulacros)
-		isHidden
-	measure Base_Simulacros_Personas = IF(ISBLANK([Base_Simulacros_Personas_VAL]), "N/A", FORMAT([Base_Simulacros_Personas_VAL], "#,##0"))
+	measure Base_Simulacros_Personas = SUM(Hecho_Simulacros[personas_participantes])
 		lineageTag: 29229a13-8c10-445b-91f7-d3c064cc3689
 
-	measure Base_Simulacros_Personas_VAL = SUM(Hecho_Simulacros[personas_participantes])
-		isHidden
-	measure GenF_Comunitaria_Participaciones = IF(ISBLANK([GenF_Comunitaria_Participaciones_VAL]), "N/A", FORMAT([GenF_Comunitaria_Participaciones_VAL], "#,##0"))
+	measure GenF_Comunitaria_Participaciones = CALCULATE([GenF_Total_Participaciones], Dim_Seccion[seccion_tablero] = "Comunitaria")
 		lineageTag: fe1f0f52-70b2-4aad-8f0c-dc6f51e4b32d
 
-	measure GenF_Comunitaria_Participaciones_VAL = CALCULATE([GenF_Total_Participaciones_VAL], Dim_Seccion[seccion_tablero] = "Comunitaria")
-		isHidden
-	measure GenF_Educativa_Participaciones = IF(ISBLANK([GenF_Educativa_Participaciones_VAL]), "N/A", FORMAT([GenF_Educativa_Participaciones_VAL], "#,##0"))
+	measure GenF_Educativa_Participaciones = CALCULATE([GenF_Total_Participaciones], Dim_Seccion[seccion_tablero] = "Educativa")
 		lineageTag: 4f613d19-2ad5-4b4a-9e5d-357e0b40397e
 
-	measure GenF_Educativa_Participaciones_VAL = CALCULATE([GenF_Total_Participaciones_VAL], Dim_Seccion[seccion_tablero] = "Educativa")
-		isHidden
-	measure GenF_Empresarial_Participaciones = IF(ISBLANK([GenF_Empresarial_Participaciones_VAL]), "N/A", FORMAT([GenF_Empresarial_Participaciones_VAL], "#,##0"))
+	measure GenF_Empresarial_Participaciones = CALCULATE([GenF_Total_Participaciones], Dim_Seccion[seccion_tablero] = "Empresarial")
 		lineageTag: 0ce5d729-8bb6-412c-9d47-d97b0e842a34
 
-	measure GenF_Empresarial_Participaciones_VAL = CALCULATE([GenF_Total_Participaciones_VAL], Dim_Seccion[seccion_tablero] = "Empresarial")
-		isHidden
-	measure GenF_Institucional_Participaciones = IF(ISBLANK([GenF_Institucional_Participaciones_VAL]), "N/A", FORMAT([GenF_Institucional_Participaciones_VAL], "#,##0"))
+	measure GenF_Institucional_Participaciones = CALCULATE([GenF_Total_Participaciones], Dim_Seccion[seccion_tablero] = "Institucional")
 		lineageTag: 540be670-cc3f-4469-a2ae-afbaa786a0fb
 
-	measure GenF_Institucional_Participaciones_VAL = CALCULATE([GenF_Total_Participaciones_VAL], Dim_Seccion[seccion_tablero] = "Institucional")
-		isHidden
-	measure Articulacion_Institucional = IF(ISBLANK([Articulacion_Institucional_VAL]), "N/A", FORMAT([Articulacion_Institucional_VAL], "#,##0"))
+	measure Ctl_Referencia_Actividades_OK = IF([GenF_Total_Actividades] = 3202, "SI", "NO")
+		lineageTag: 66e5e4ef-241b-4237-a77c-e2f2a7cb8a77
+
+	measure Ctl_Referencia_Participaciones_OK = IF([GenF_Total_Participaciones] = 111694, "SI", "NO")
+		lineageTag: c4e08b5a-a876-4d3d-9da3-ba38de5736aa
+
+	measure Articulacion_Institucional = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_institucional] = "Articulacion Institucional")
 		lineageTag: f8d79608-efd0-47a8-9a9f-f1d302047240
 
-	measure Articulacion_Institucional_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_institucional] = "Articulacion Institucional")
-		isHidden
-	measure Mesas_Interinstitucionalidad = IF(ISBLANK([Mesas_Interinstitucionalidad_VAL]), "N/A", FORMAT([Mesas_Interinstitucionalidad_VAL], "#,##0"))
+	measure Mesas_Interinstitucionalidad =
+			VAR _v = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_institucional] = "Mesas Interinstitucionalidad en el territorio")
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		lineageTag: 354577c7-269a-4976-9e3a-d72228edba27
 
-	measure Mesas_Interinstitucionalidad_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_institucional] = "Mesas Interinstitucionalidad en el territorio")
-		isHidden
-	measure Acciones_Conjuntas = IF(ISBLANK([Acciones_Conjuntas_VAL]), "N/A", FORMAT([Acciones_Conjuntas_VAL], "#,##0"))
+	measure Acciones_Conjuntas = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_institucional] = "Acciones Conjuntas")
 		lineageTag: 33041afa-6a0a-4521-8f7d-76c53f61ef5a
 
-	measure Acciones_Conjuntas_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_institucional] = "Acciones Conjuntas")
-		isHidden
-	measure Simulacros_Registrados_Total = IF(ISBLANK([Simulacros_Registrados_Total_VAL]), "N/A", FORMAT([Simulacros_Registrados_Total_VAL], "#,##0"))
+	measure Simulacros_Registrados_Total = COUNTROWS(Hecho_Simulacros)
 		lineageTag: 79e5c3d2-1dd5-4d17-ab30-c683626542a7
 
-	measure Simulacros_Registrados_Total_VAL = COUNTROWS(Hecho_Simulacros)
-		isHidden
-	measure Cobertura_Total = IF(ISBLANK([Cobertura_Total_VAL]), "N/A", FORMAT([Cobertura_Total_VAL], "#,##0"))
+	measure Cobertura_Total =
+			VAR _v = [GenF_Total_Participaciones] + [Base_Impacto_Indirecto]
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		lineageTag: f76a7b9f-79e9-487d-98c9-1d1ace0fe697
 
-	measure Cobertura_Total_VAL = [GenF_Total_Participaciones_VAL] + [Base_Impacto_Indirecto_VAL]
-		isHidden
-	measure Participaciones_Institucionales = IF(ISBLANK([Participaciones_Institucionales_VAL]), "N/A", FORMAT([Participaciones_Institucionales_VAL], "#,##0"))
+	measure Participaciones_Institucionales = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[seccion_tablero] = "Institucional")
 		lineageTag: de75b43e-83d3-463d-8254-397bec7780f9
 
-	measure Participaciones_Institucionales_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[seccion_tablero] = "Institucional")
-		isHidden
-	measure Participantes_Articulacion = IF(ISBLANK([Participantes_Articulacion_VAL]), "N/A", FORMAT([Participantes_Articulacion_VAL], "#,##0"))
+	measure Participantes_Articulacion =
+			VAR _v = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Articulacion Institucional")
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		displayFolder: Institucional
 		lineageTag: d4b18fac-b741-4997-bdd8-e1e9775e2ca3
 
-	measure Participantes_Articulacion_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Articulacion Institucional")
-		isHidden
-	measure Participantes_Mesas = IF(ISBLANK([Participantes_Mesas_VAL]), "N/A", FORMAT([Participantes_Mesas_VAL], "#,##0"))
+	measure Participantes_Mesas =
+			VAR _v = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Mesas Interinstitucionalidad en el territorio")
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		displayFolder: Institucional
 		lineageTag: 7d46477a-c6f5-4db1-8ecf-32aa0a0a232c
 
-	measure Participantes_Mesas_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Mesas Interinstitucionalidad en el territorio")
-		isHidden
-	measure Participantes_Acciones_Conjuntas = IF(ISBLANK([Participantes_Acciones_Conjuntas_VAL]), "N/A", FORMAT([Participantes_Acciones_Conjuntas_VAL], "#,##0"))
+	measure Participantes_Acciones_Conjuntas = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Acciones Conjuntas")
 		displayFolder: Institucional
 		lineageTag: 2e33dbca-50dc-46e1-83bd-024f083b0cb0
 
-	measure Participantes_Acciones_Conjuntas_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Acciones Conjuntas")
-		isHidden
-	measure Entidades_en_Simulacros = IF(ISBLANK([Entidades_en_Simulacros_VAL]), "N/A", FORMAT([Entidades_en_Simulacros_VAL], "#,##0"))
+	measure Entidades_en_Simulacros = DISTINCTCOUNT(Hecho_Simulacros[nombre_entidad])
 		lineageTag: 20def80c-b469-4bd3-8812-d7b1adbff52c
 
-	measure Entidades_en_Simulacros_VAL = DISTINCTCOUNT(Hecho_Simulacros[nombre_entidad])
-		isHidden
-	measure Simulacros_Institucionales = IF(ISBLANK([Simulacros_Institucionales_VAL]), "N/A", FORMAT([Simulacros_Institucionales_VAL], "#,##0"))
+	measure Simulacros_Institucionales = CALCULATE(COUNTROWS(Hecho_Simulacros), Hecho_Simulacros[sector_tablero] = "Institucional")
 		lineageTag: 751bf8b1-5e52-4293-8c32-205a5d82e6b4
 
-	measure Simulacros_Institucionales_VAL = CALCULATE(COUNTROWS(Hecho_Simulacros), Hecho_Simulacros[sector_tablero] = "Institucional")
-		isHidden
-	measure Actividades_Comites = IF(ISBLANK([Actividades_Comites_VAL]), "N/A", FORMAT([Actividades_Comites_VAL], "#,##0"))
+	measure Actividades_Comites = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_comunidad] = "Comisiones y comites")
 		lineageTag: f67d4e2d-7de4-47b6-8a04-41c26207bf0f
 
-	measure Actividades_Comites_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_comunidad] = "Comisiones y comites")
-		isHidden
-	measure Actividades_Semilleros = IF(ISBLANK([Actividades_Semilleros_VAL]), "N/A", FORMAT([Actividades_Semilleros_VAL], "#,##0"))
+	measure Actividades_Semilleros = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_comunidad] = "Semilleros")
 		lineageTag: 19a0b33d-a088-466c-b2bf-f2f162fd4404
 
-	measure Actividades_Semilleros_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_comunidad] = "Semilleros")
-		isHidden
-	measure Actividades_SATC = IF(ISBLANK([Actividades_SATC_VAL]), "N/A", FORMAT([Actividades_SATC_VAL], "#,##0"))
+	measure Actividades_SATC = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_comunidad] = "SAT-C")
 		lineageTag: b8aa7e02-4ac3-4ceb-a016-ec821001c303
 
-	measure Actividades_SATC_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_comunidad] = "SAT-C")
-		isHidden
-	measure Actividades_HogarSeguro = IF(ISBLANK([Actividades_HogarSeguro_VAL]), "N/A", FORMAT([Actividades_HogarSeguro_VAL], "#,##0"))
+	measure Actividades_HogarSeguro = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_comunidad] = "Hogares - Planes Familiares/Hogar Seguro")
 		lineageTag: cc83bd04-a630-48ab-8329-a807a61203c1
 
-	measure Actividades_HogarSeguro_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_comunidad] = "Hogares - Planes Familiares/Hogar Seguro")
-		isHidden
-	measure Actividades_Comunidad_Otros = IF(ISBLANK([Actividades_Comunidad_Otros_VAL]), "N/A", FORMAT([Actividades_Comunidad_Otros_VAL], "#,##0"))
+	measure Actividades_Comunidad_Otros = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_comunidad] = "Otros Procesos Organizativos")
 		lineageTag: 43c59168-859a-4b58-9cc0-c044fcef4a69
 
-	measure Actividades_Comunidad_Otros_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_comunidad] = "Otros Procesos Organizativos")
-		isHidden
-	measure Participantes_Comites = IF(ISBLANK([Participantes_Comites_VAL]), "N/A", FORMAT([Participantes_Comites_VAL], "#,##0"))
+	measure Participantes_Comites = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_comunidad] = "Comisiones y comites")
 		lineageTag: 43e33c67-88b8-458f-9791-6e409f9eb5c2
 
-	measure Participantes_Comites_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_comunidad] = "Comisiones y comites")
-		isHidden
-	measure Participantes_Semilleros = IF(ISBLANK([Participantes_Semilleros_VAL]), "N/A", FORMAT([Participantes_Semilleros_VAL], "#,##0"))
+	measure Participantes_Semilleros = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_comunidad] = "Semilleros")
 		lineageTag: 50e3c726-6d75-4c7e-b22a-0f359d878311
 
-	measure Participantes_Semilleros_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_comunidad] = "Semilleros")
-		isHidden
-	measure Participantes_SATC = IF(ISBLANK([Participantes_SATC_VAL]), "N/A", FORMAT([Participantes_SATC_VAL], "#,##0"))
+	measure Participantes_SATC = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_comunidad] = "SAT-C")
 		lineageTag: 0f80ecb4-8222-4076-bb22-d2d1302f1d66
 
-	measure Participantes_SATC_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_comunidad] = "SAT-C")
-		isHidden
-	measure Participantes_HogarSeguro = IF(ISBLANK([Participantes_HogarSeguro_VAL]), "N/A", FORMAT([Participantes_HogarSeguro_VAL], "#,##0"))
+	measure Participantes_HogarSeguro = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_comunidad] = "Hogares - Planes Familiares/Hogar Seguro")
 		lineageTag: 739bcabd-2daf-41ed-a718-c7179cfebe39
 
-	measure Participantes_HogarSeguro_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_comunidad] = "Hogares - Planes Familiares/Hogar Seguro")
-		isHidden
-	measure Impacto_Indirecto_Comunidad = IF(ISBLANK([Impacto_Indirecto_Comunidad_VAL]), "N/A", FORMAT([Impacto_Indirecto_Comunidad_VAL], "#,##0"))
+	measure Impacto_Indirecto_Comunidad =
+			VAR _v = CALCULATE(SUM(Hecho_Participacion_General[impacto_indirecto]), Hecho_Participacion_General[seccion_tablero] = "Comunitaria")
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		lineageTag: b7102063-6a86-462f-b8bd-4256da0895cb
 
-	measure Impacto_Indirecto_Comunidad_VAL = CALCULATE(SUM(Hecho_Participacion_General[impacto_indirecto]), Hecho_Participacion_General[seccion_tablero] = "Comunitaria")
-		isHidden
-	measure Actividades_PrimeraInfancia = IF(ISBLANK([Actividades_PrimeraInfancia_VAL]), "N/A", FORMAT([Actividades_PrimeraInfancia_VAL], "#,##0"))
+	measure Actividades_PrimeraInfancia = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_educacion] = "Instituciones Primera Infancia")
 		lineageTag: e5651a48-83ea-4d91-ade3-227482a7e56f
 
-	measure Actividades_PrimeraInfancia_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_educacion] = "Instituciones Primera Infancia")
-		isHidden
-	measure Actividades_BasicaMedia = IF(ISBLANK([Actividades_BasicaMedia_VAL]), "N/A", FORMAT([Actividades_BasicaMedia_VAL], "#,##0"))
+	measure Actividades_BasicaMedia = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_educacion] = "Basica Media")
 		lineageTag: dcec11f6-f3f1-4e1b-a38e-98d23355483d
 
-	measure Actividades_BasicaMedia_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_educacion] = "Basica Media")
-		isHidden
-	measure Actividades_Superior = IF(ISBLANK([Actividades_Superior_VAL]), "N/A", FORMAT([Actividades_Superior_VAL], "#,##0"))
+	measure Actividades_Superior = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_educacion] = "Educacion Superior")
 		lineageTag: f834f68c-4e68-4b5e-b5bd-04748dceb94e
 
-	measure Actividades_Superior_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Hecho_Participacion_General[bloque_educacion] = "Educacion Superior")
-		isHidden
-	measure Participantes_PrimeraInfancia = IF(ISBLANK([Participantes_PrimeraInfancia_VAL]), "N/A", FORMAT([Participantes_PrimeraInfancia_VAL], "#,##0"))
+	measure Participantes_PrimeraInfancia = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_educacion] = "Instituciones Primera Infancia")
 		lineageTag: d3b27293-ba6e-49f4-a6e7-d44f0c8333ba
 
-	measure Participantes_PrimeraInfancia_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_educacion] = "Instituciones Primera Infancia")
-		isHidden
-	measure Participantes_BasicaMedia = IF(ISBLANK([Participantes_BasicaMedia_VAL]), "N/A", FORMAT([Participantes_BasicaMedia_VAL], "#,##0"))
+	measure Participantes_BasicaMedia = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_educacion] = "Basica Media")
 		lineageTag: f2483028-99c7-4528-8ca9-75158298e691
 
-	measure Participantes_BasicaMedia_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_educacion] = "Basica Media")
-		isHidden
-	measure Participantes_Superior = IF(ISBLANK([Participantes_Superior_VAL]), "N/A", FORMAT([Participantes_Superior_VAL], "#,##0"))
+	measure Participantes_Superior = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_educacion] = "Educacion Superior")
 		lineageTag: c0aabfa6-13d8-4776-ac0b-d2e77da5acd1
 
-	measure Participantes_Superior_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Hecho_Participacion_General[bloque_educacion] = "Educacion Superior")
-		isHidden
-	measure Impacto_Indirecto_Educacion = IF(ISBLANK([Impacto_Indirecto_Educacion_VAL]), "N/A", FORMAT([Impacto_Indirecto_Educacion_VAL], "#,##0"))
+	measure Impacto_Indirecto_Educacion =
+			VAR _v = CALCULATE(SUM(Hecho_Participacion_General[impacto_indirecto]), Hecho_Participacion_General[seccion_tablero] = "Educativa")
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		lineageTag: 1305b9c1-ab4d-40cd-b6c5-e373e4560b35
 
-	measure Impacto_Indirecto_Educacion_VAL = CALCULATE(SUM(Hecho_Participacion_General[impacto_indirecto]), Hecho_Participacion_General[seccion_tablero] = "Educativa")
-		isHidden
-	measure Actividades_CAM = IF(ISBLANK([Actividades_CAM_VAL]), "N/A", FORMAT([Actividades_CAM_VAL], "#,##0"))
+	measure Actividades_CAM =
+			VAR _v = MAX(CAM_Control[cam_activos_total])
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		displayFolder: Empresarial
 		lineageTag: 231c3af5-e1d8-4945-ba9a-1db76c247351
 
-	measure Actividades_CAM_VAL = MAX(CAM_Control[cam_activos_total])
-		isHidden
-	measure Actividades_PropiedadHorizontal = IF(ISBLANK([Actividades_PropiedadHorizontal_VAL]), "N/A", FORMAT([Actividades_PropiedadHorizontal_VAL], "#,##0"))
+	measure Actividades_PropiedadHorizontal =
+			VAR _v = CALCULATE(COUNTROWS(Hecho_Participacion_General), Dim_Seccion[seccion_tablero] = "Empresarial", Hecho_Participacion_General[bloque_empresarial] = "Propiedades Horizontales")
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		displayFolder: Empresarial
 		lineageTag: 41af3518-bf13-4104-a322-a836bfe34824
 
-	measure Actividades_PropiedadHorizontal_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Dim_Seccion[seccion_tablero] = "Empresarial", Hecho_Participacion_General[bloque_empresarial] = "Propiedades Horizontales")
-		isHidden
-	measure Actividades_Empresa = IF(ISBLANK([Actividades_Empresa_VAL]), "N/A", FORMAT([Actividades_Empresa_VAL], "#,##0"))
+	measure Actividades_Empresa =
+			VAR _v = MAX(CAM_Control[empresas_unicas_global])
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		displayFolder: Empresarial
 		lineageTag: 2cf53097-1300-4f94-bd72-f2b411e62b8a
 
-	measure Actividades_Empresa_VAL = MAX(CAM_Control[empresas_unicas_global])
-		isHidden
-	measure Actividades_Simulacro_Empresarial = IF(ISBLANK([Actividades_Simulacro_Empresarial_VAL]), "N/A", FORMAT([Actividades_Simulacro_Empresarial_VAL], "#,##0"))
+	measure Actividades_Simulacro_Empresarial = CALCULATE(COUNTROWS(Hecho_Simulacros), Hecho_Simulacros[sector_tablero] = "Empresarial")
 		lineageTag: 3176b2da-dc7c-4f5e-a6be-daec099cfa8e
 
-	measure Actividades_Simulacro_Empresarial_VAL = CALCULATE(COUNTROWS(Hecho_Simulacros), Hecho_Simulacros[sector_tablero] = "Empresarial")
-		isHidden
-	measure Participantes_CAM = IF(ISBLANK([Participantes_CAM_VAL]), "N/A", FORMAT([Participantes_CAM_VAL], "#,##0"))
+	measure Participantes_CAM = "N/A"
 		displayFolder: Empresarial
-		lineageTag: 0e2d7a9d-7b55-4d3b-8c5f-4f2f2d9c7f71
+		lineageTag: b897c91e-81a6-49fa-bc77-928879ce7c25
 
-	measure Participantes_CAM_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Empresarial", Hecho_Participacion_General[bloque_empresarial] = "CAM")
-		isHidden
-	measure Participantes_PropiedadHorizontal = IF(ISBLANK([Participantes_PropiedadHorizontal_VAL]), "N/A", FORMAT([Participantes_PropiedadHorizontal_VAL], "#,##0"))
+	measure Participantes_PropiedadHorizontal =
+			VAR _v = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Empresarial", Hecho_Participacion_General[bloque_empresarial] = "Propiedades Horizontales")
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		displayFolder: Empresarial
 		lineageTag: 10ce6574-d587-46e5-8ccf-fc41eb77fa77
 
-	measure Participantes_PropiedadHorizontal_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Empresarial", Hecho_Participacion_General[bloque_empresarial] = "Propiedades Horizontales")
-		isHidden
-	measure Participantes_Empresa = IF(ISBLANK([Participantes_Empresa_VAL]), "N/A", FORMAT([Participantes_Empresa_VAL], "#,##0"))
+	measure Participantes_Empresa =
+			VAR _v = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Empresarial", Hecho_Participacion_General[bloque_empresarial] = "Empresas")
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		displayFolder: Empresarial
 		lineageTag: 13242fbd-7302-4ffe-863d-c5bff7090dce
 
-	measure Participantes_Empresa_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Empresarial", Hecho_Participacion_General[bloque_empresarial] = "Empresas")
-		isHidden
-	measure Simulacros_Empresariales = IF(ISBLANK([Simulacros_Empresariales_VAL]), "N/A", FORMAT([Simulacros_Empresariales_VAL], "#,##0"))
+	measure Simulacros_Empresariales = CALCULATE(COUNTROWS(Hecho_Simulacros), Hecho_Simulacros[sector_tablero] = "Empresarial")
 		lineageTag: f0db8d82-9ac2-454f-a476-356c5ae19267
 
-	measure Simulacros_Empresariales_VAL = CALCULATE(COUNTROWS(Hecho_Simulacros), Hecho_Simulacros[sector_tablero] = "Empresarial")
-		isHidden
-	measure Participantes_Simulacros_Empresariales = IF(ISBLANK([Participantes_Simulacros_Empresariales_VAL]), "N/A", FORMAT([Participantes_Simulacros_Empresariales_VAL], "#,##0"))
+	measure Participantes_Simulacros_Empresariales = CALCULATE(SUM(Hecho_Simulacros[personas_participantes]), Hecho_Simulacros[sector_tablero] = "Empresarial")
 		lineageTag: 4b14988e-9b11-4ad7-8d41-2eb00c051666
 
-	measure Participantes_Simulacros_Empresariales_VAL = CALCULATE(SUM(Hecho_Simulacros[personas_participantes]), Hecho_Simulacros[sector_tablero] = "Empresarial")
-		isHidden
-	measure Dem_PrimeraInfancia = IF(ISBLANK([Dem_PrimeraInfancia_VAL]), "N/A", FORMAT([Dem_PrimeraInfancia_VAL], "#,##0"))
+	measure Dem_PrimeraInfancia = SUM(Hecho_Participacion_General[pri_infanc])
 		lineageTag: 9da52db0-2e38-4cfb-b602-8594cd6e5bbe
 
-	measure Dem_PrimeraInfancia_VAL = SUM(Hecho_Participacion_General[pri_infanc])
-		isHidden
-	measure Dem_NinoAdolescente = IF(ISBLANK([Dem_NinoAdolescente_VAL]), "N/A", FORMAT([Dem_NinoAdolescente_VAL], "#,##0"))
+	measure Dem_NinoAdolescente = SUM(Hecho_Participacion_General[nino_adole])
 		lineageTag: 920e4f9f-36b4-4cb4-ac64-805f14a8492c
 
-	measure Dem_NinoAdolescente_VAL = SUM(Hecho_Participacion_General[nino_adole])
-		isHidden
-	measure Dem_Juventud = IF(ISBLANK([Dem_Juventud_VAL]), "N/A", FORMAT([Dem_Juventud_VAL], "#,##0"))
+	measure Dem_Juventud = SUM(Hecho_Participacion_General[juventud])
 		lineageTag: 394cc7de-35b9-43fa-a59c-0c76f644fc93
 
-	measure Dem_Juventud_VAL = SUM(Hecho_Participacion_General[juventud])
-		isHidden
-	measure Dem_Adulto = IF(ISBLANK([Dem_Adulto_VAL]), "N/A", FORMAT([Dem_Adulto_VAL], "#,##0"))
+	measure Dem_Adulto = SUM(Hecho_Participacion_General[adulto])
 		lineageTag: 8582bc90-0ab7-4cc1-b5e5-1a78d84052e6
 
-	measure Dem_Adulto_VAL = SUM(Hecho_Participacion_General[adulto])
-		isHidden
-	measure Dem_AdultoMayor = IF(ISBLANK([Dem_AdultoMayor_VAL]), "N/A", FORMAT([Dem_AdultoMayor_VAL], "#,##0"))
+	measure Dem_AdultoMayor = SUM(Hecho_Participacion_General[adulto_may])
 		lineageTag: 60939ee8-e080-44ea-93c8-757cef4a3a4f
 
-	measure Dem_AdultoMayor_VAL = SUM(Hecho_Participacion_General[adulto_may])
-		isHidden
-	measure Dem_Discapacidad = IF(ISBLANK([Dem_Discapacidad_VAL]), "N/A", FORMAT([Dem_Discapacidad_VAL], "#,##0"))
+	measure Dem_Discapacidad = SUM(Hecho_Participacion_General[discapacid])
 		lineageTag: d43641e4-7545-414d-8ca5-76261f5d95de
 
-	measure Dem_Discapacidad_VAL = SUM(Hecho_Participacion_General[discapacid])
-		isHidden
-	measure Dem_Afrodescendiente = IF(ISBLANK([Dem_Afrodescendiente_VAL]), "N/A", FORMAT([Dem_Afrodescendiente_VAL], "#,##0"))
+	measure Dem_Afrodescendiente = SUM(Hecho_Participacion_General[afrodescen])
 		lineageTag: a3d769fe-a24f-4fd4-9262-6b281f9fbf5b
 
-	measure Dem_Afrodescendiente_VAL = SUM(Hecho_Participacion_General[afrodescen])
-		isHidden
-	measure Dem_Campesino = IF(ISBLANK([Dem_Campesino_VAL]), "N/A", FORMAT([Dem_Campesino_VAL], "#,##0"))
+	measure Dem_Campesino = SUM(Hecho_Participacion_General[campesino])
 		lineageTag: 2aeaf2db-8765-4ef5-ad98-b5925ccd198f
 
-	measure Dem_Campesino_VAL = SUM(Hecho_Participacion_General[campesino])
-		isHidden
-	measure Dem_Indigena = IF(ISBLANK([Dem_Indigena_VAL]), "N/A", FORMAT([Dem_Indigena_VAL], "#,##0"))
+	measure Dem_Indigena = SUM(Hecho_Participacion_General[pob_indige])
 		lineageTag: 66b70248-7a91-4fcb-a489-07e8ae90da7b
 
-	measure Dem_Indigena_VAL = SUM(Hecho_Participacion_General[pob_indige])
-		isHidden
-	measure Dem_Rom = IF(ISBLANK([Dem_Rom_VAL]), "N/A", FORMAT([Dem_Rom_VAL], "#,##0"))
+	measure Dem_Rom = SUM(Hecho_Participacion_General[pob_rom])
 		lineageTag: 612b2322-60be-4b3f-af59-68e950eb9bdb
 
-	measure Dem_Rom_VAL = SUM(Hecho_Participacion_General[pob_rom])
-		isHidden
-	measure Dem_Victimas = IF(ISBLANK([Dem_Victimas_VAL]), "N/A", FORMAT([Dem_Victimas_VAL], "#,##0"))
+	measure Dem_Victimas = SUM(Hecho_Participacion_General[pob_victim])
 		lineageTag: 71bf6166-d60d-4a8e-ab57-7a5ba9bf3756
 
-	measure Dem_Victimas_VAL = SUM(Hecho_Participacion_General[pob_victim])
-		isHidden
-	measure Dem_Migrante = IF(ISBLANK([Dem_Migrante_VAL]), "N/A", FORMAT([Dem_Migrante_VAL], "#,##0"))
+	measure Dem_Migrante = SUM(Hecho_Participacion_General[pob_migran])
 		lineageTag: 1707e1be-3011-4310-b2e9-af0a438d062d
 
-	measure Dem_Migrante_VAL = SUM(Hecho_Participacion_General[pob_migran])
-		isHidden
-	measure Dem_LGTBI = IF(ISBLANK([Dem_LGTBI_VAL]), "N/A", FORMAT([Dem_LGTBI_VAL], "#,##0"))
+	measure Dem_LGTBI = SUM(Hecho_Participacion_General[pob_lgtbi])
 		lineageTag: dfd31b1e-97d8-4b05-bc0c-2fae96cf94ac
 
-	measure Dem_LGTBI_VAL = SUM(Hecho_Participacion_General[pob_lgtbi])
-		isHidden
-	measure Total_Dem_Valor = IF(ISBLANK([Total_Dem_Valor_VAL]), "N/A", FORMAT([Total_Dem_Valor_VAL], "#,##0"))
+	measure Total_Dem_Valor = SUM(Hecho_Demografia[valor])
 		lineageTag: 16207a98-d6c0-4f15-9718-6077d02f521e
 
-	measure Total_Dem_Valor_VAL = SUM(Hecho_Demografia[valor])
-		isHidden
 	/// Numero de comites y comisiones distintos (excluye valor generico TODOS LOS COMITES Y COMISIONES).
-	measure Num_Comites_Comisiones = IF(ISBLANK([Num_Comites_Comisiones_VAL]), "N/A", FORMAT([Num_Comites_Comisiones_VAL], "#,##0"))
+	measure Num_Comites_Comisiones =
+			VAR _n =
+			    CALCULATE(
+			        DISTINCTCOUNT(Dim_Comites_Comisiones_2026[comite_comision_nombre]),
+			        KEEPFILTERS(TREATAS(VALUES(Dim_Comuna[comuna_cod]), Dim_Comites_Comisiones_2026[comuna_cod])),
+			        KEEPFILTERS(Dim_Comites_Comisiones_2026[comite_comision_nombre] <> "TODOS LOS COMITES Y COMISIONES"),
+			        KEEPFILTERS(NOT ISBLANK(Dim_Comites_Comisiones_2026[comite_comision_nombre]))
+			    )
+			RETURN
+			    IF(ISBLANK(_n), "N/A", FORMAT(_n, "#,##0"))
 		formatString: 0
 		lineageTag: 78a5d1f2-0699-4be0-aeb9-d8984308c586
 
-	measure Num_Comites_Comisiones_VAL = DISTINCTCOUNT(Dim_Comites_Comisiones_2026[comite_comision_nombre])
-		isHidden
 	/// Etiqueta año-mes para eje de tendencia (ej: 2024-07)
 	measure Eje_AnioMes = FORMAT(MIN(Dim_Fecha[anio]), "0000") & "-" & FORMAT(MIN(Dim_Fecha[mes_num]), "00")
 		lineageTag: dfb22f1c-7009-4afd-8c24-271ccc1e2e34
 
 	/// Participaciones directas + personas simulacros + impacto indirecto
-	measure Cobertura_Global = IF(ISBLANK([Cobertura_Global_VAL]), "N/A", FORMAT([Cobertura_Global_VAL], "#,##0"))
-
-	measure Cobertura_Global_VAL = 
+	measure Cobertura_Global =
 			SUMX(
 			    VALUES(Hecho_Participacion_General[seccion_tablero]),
-			    [GenF_Total_Participaciones_VAL]
-			) + [Base_Simulacros_Personas_VAL]
+			    [GenF_Total_Participaciones]
+			) + [Base_Simulacros_Personas]
 		formatString: #,##0
 		lineageTag: 3100b730-cfb0-48d9-ab4d-6cfc5b80a8a4
-		isHidden
-	measure GenF_Empresarial_Actividades = IF(ISBLANK([GenF_Empresarial_Actividades_VAL]), "N/A", FORMAT([GenF_Empresarial_Actividades_VAL], "#,##0"))
+
+	measure GenF_Empresarial_Actividades = CALCULATE([GenF_Total_Actividades], Dim_Seccion[seccion_tablero] = "Empresarial")
 		displayFolder: Empresarial
 		lineageTag: 659177d1-226e-472a-acfe-a4f23df02515
 
-	measure GenF_Empresarial_Actividades_VAL = CALCULATE([GenF_Total_Actividades_VAL], Dim_Seccion[seccion_tablero] = "Empresarial")
-		isHidden
-	measure GenF_Empresarial_Impacto = IF(ISBLANK([GenF_Empresarial_Impacto_VAL]), "N/A", FORMAT([GenF_Empresarial_Impacto_VAL], "#,##0"))
+	measure GenF_Empresarial_Impacto = CALCULATE([Base_Impacto_Indirecto], Dim_Seccion[seccion_tablero] = "Empresarial")
 		displayFolder: Empresarial
 		lineageTag: ea76f394-ccd2-43ee-be67-f87335b723e2
 
-	measure GenF_Empresarial_Impacto_VAL = CALCULATE([Base_Impacto_Indirecto_VAL], Dim_Seccion[seccion_tablero] = "Empresarial")
-		isHidden
-	measure Actividades_PlanesAyudaMutua = IF(ISBLANK([Actividades_PlanesAyudaMutua_VAL]), "N/A", FORMAT([Actividades_PlanesAyudaMutua_VAL], "#,##0"))
+	measure Actividades_PlanesAyudaMutua = 1
 		displayFolder: Empresarial
 		lineageTag: 88802f32-9f2e-440a-b554-cd7bc83d5951
 
-	measure Actividades_PlanesAyudaMutua_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Dim_Seccion[seccion_tablero] = "Empresarial", Hecho_Participacion_General[bloque_empresarial] = "Planes de ayuda mutua/Acuerdo de voluntades")
-		isHidden
-	measure Participantes_PlanesAyudaMutua = IF(ISBLANK([Participantes_PlanesAyudaMutua_VAL]), "N/A", FORMAT([Participantes_PlanesAyudaMutua_VAL], "#,##0"))
+	measure Participantes_PlanesAyudaMutua =
+			VAR _v = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Empresarial", Hecho_Participacion_General[bloque_empresarial] = "Planes de ayuda mutua/Acuerdo de voluntades")
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		displayFolder: Empresarial
 		lineageTag: 09e3fbcb-d86a-4084-a9cd-692770a21251
 
-	measure Participantes_PlanesAyudaMutua_VAL = CALCULATE(SUM(Hecho_Participacion_General[participantes]), Dim_Seccion[seccion_tablero] = "Empresarial", Hecho_Participacion_General[bloque_empresarial] = "Planes de ayuda mutua/Acuerdo de voluntades")
-		isHidden
-	measure Sim_Empresarial_Registros = IF(ISBLANK([Sim_Empresarial_Registros_VAL]), "N/A", FORMAT([Sim_Empresarial_Registros_VAL], "#,##0"))
+	measure Sim_Empresarial_Registros = CALCULATE([Base_Simulacros], Hecho_Simulacros[sector_tablero] = "Empresarial")
 		displayFolder: Empresarial
 		lineageTag: a5b9c71d-a691-42ae-8c74-c374e2681461
 
-	measure Sim_Empresarial_Registros_VAL = CALCULATE([Base_Simulacros_VAL], Hecho_Simulacros[sector_tablero] = "Empresarial")
-		isHidden
-	measure Sim_Empresarial_Personas = IF(ISBLANK([Sim_Empresarial_Personas_VAL]), "N/A", FORMAT([Sim_Empresarial_Personas_VAL], "#,##0"))
+	measure Sim_Empresarial_Personas = CALCULATE([Base_Simulacros_Personas], Hecho_Simulacros[sector_tablero] = "Empresarial")
 		displayFolder: Empresarial
 		lineageTag: d98080ed-293b-419e-be55-584bba6c9e80
 
-	measure Sim_Empresarial_Personas_VAL = CALCULATE([Base_Simulacros_Personas_VAL], Hecho_Simulacros[sector_tablero] = "Empresarial")
-		isHidden
-	measure GenF_Institucional_Impacto = IF(ISBLANK([GenF_Institucional_Impacto_VAL]), "N/A", FORMAT([GenF_Institucional_Impacto_VAL], "#,##0"))
+	measure GenF_Institucional_Impacto = CALCULATE([Base_Impacto_Indirecto], Dim_Seccion[seccion_tablero] = "Institucional")
 		displayFolder: Institucional
 		lineageTag: 5d63581a-896e-4862-84d7-e178756153a5
 
-	measure GenF_Institucional_Impacto_VAL = CALCULATE([Base_Impacto_Indirecto_VAL], Dim_Seccion[seccion_tablero] = "Institucional")
-		isHidden
-	measure Actividades_Mesas = IF(ISBLANK([Actividades_Mesas_VAL]), "N/A", FORMAT([Actividades_Mesas_VAL], "#,##0"))
+	measure Actividades_Mesas = CALCULATE(COUNTROWS(Hecho_Participacion_General), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Mesas Interinstitucionalidad en el territorio")
 		displayFolder: Institucional
 		lineageTag: 39a99364-1740-48f5-bc85-eebd1b113a4e
 
-	measure Actividades_Mesas_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Mesas Interinstitucionalidad en el territorio")
-		isHidden
-	measure Actividades_AccionesConjuntas = IF(ISBLANK([Actividades_AccionesConjuntas_VAL]), "N/A", FORMAT([Actividades_AccionesConjuntas_VAL], "#,##0"))
+	measure Actividades_AccionesConjuntas = CALCULATE(COUNTROWS(Hecho_Participacion_General), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Acciones Conjuntas")
 		displayFolder: Institucional
 		lineageTag: 062c4d0c-a494-44fb-9fe4-f64dfa477489
 
-	measure Actividades_AccionesConjuntas_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Acciones Conjuntas")
-		isHidden
-	measure Actividades_ArticulacionInstitucional = IF(ISBLANK([Actividades_ArticulacionInstitucional_VAL]), "N/A", FORMAT([Actividades_ArticulacionInstitucional_VAL], "#,##0"))
+	measure Actividades_ArticulacionInstitucional =
+			VAR _v = CALCULATE(COUNTROWS(Hecho_Participacion_General), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Articulacion Institucional")
+			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
 		displayFolder: Institucional
 		lineageTag: 671188ab-cf56-4ce0-a3d4-5057d2353b27
 
-	measure Actividades_ArticulacionInstitucional_VAL = CALCULATE(COUNTROWS(Hecho_Participacion_General), Dim_Seccion[seccion_tablero] = "Institucional", Hecho_Participacion_General[bloque_institucional] = "Articulacion Institucional")
-		isHidden
-	measure GenF_Institucional_Actividades = IF(ISBLANK([GenF_Institucional_Actividades_VAL]), "N/A", FORMAT([GenF_Institucional_Actividades_VAL], "#,##0"))
+	measure GenF_Institucional_Actividades = CALCULATE([GenF_Total_Actividades], Dim_Seccion[seccion_tablero] = "Institucional")
 		displayFolder: Institucional
 		lineageTag: 71171d20-7181-4dda-a581-9dd5d1791aac
 
-	measure GenF_Institucional_Actividades_VAL = CALCULATE([GenF_Total_Actividades_VAL], Dim_Seccion[seccion_tablero] = "Institucional")
-		isHidden
 	/// Número de instituciones educativas únicas con las que se ha trabajado
-	measure GenF_Edu_Instituciones_Unicas = IF(ISBLANK([GenF_Edu_Instituciones_Unicas_VAL]), "N/A", FORMAT([GenF_Edu_Instituciones_Unicas_VAL], "#,##0"))
-
-	measure GenF_Edu_Instituciones_Unicas_VAL = 
+	measure GenF_Edu_Instituciones_Unicas =
 			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
-			RETURN
+			VAR _v =
 			    CALCULATE(
 			        DISTINCTCOUNT(Hecho_Participacion_General[institucion_educativa_norm]),
 			        Hecho_Participacion_General[seccion_tablero] = "Educativa",
@@ -411,13 +308,13 @@ table _Medidas
 			        REMOVEFILTERS(Hecho_Participacion_General[comuna_cod]),
 			        KEEPFILTERS(TREATAS(_ComunasSeleccionadas, Hecho_Participacion_General[comuna_institucion_educativa_cod]))
 			    )
+			RETURN
+			    IF(ISBLANK(_v) || _v = 0, "N/A", FORMAT(_v, "#,##0"))
 		displayFolder: Educativa/Instituciones
 		lineageTag: a22a77ec-46e0-44d9-b540-8d2da138910b
-		isHidden
-	/// Cantidad de actividades de acompanamiento a planes escolares de gestion del riesgo en educativa; ignora filtros estructurales de seccion/instancia institucional para evitar blancos
-	measure Edu_Acomp_PlanesEscolares_GRD = IF(ISBLANK([Edu_Acomp_PlanesEscolares_GRD_VAL]), "N/A", FORMAT([Edu_Acomp_PlanesEscolares_GRD_VAL], "#,##0"))
 
-	measure Edu_Acomp_PlanesEscolares_GRD_VAL = 
+	/// Cantidad de actividades de acompanamiento a planes escolares de gestion del riesgo en educativa; ignora filtros estructurales de seccion/instancia institucional para evitar blancos
+	measure Edu_Acomp_PlanesEscolares_GRD =
 			VAR _valor =
 			    CALCULATE(
 			        COUNTROWS(Hecho_Participacion_General),
@@ -437,10 +334,8 @@ table _Medidas
 			    COALESCE(_valor, 0)
 		displayFolder: Educativa
 		lineageTag: 113de143-b958-4f09-bce4-6bd6131c4315
-		isHidden
-	measure GenF_Edu_Instituciones_Media = IF(ISBLANK([GenF_Edu_Instituciones_Media_VAL]), "N/A", FORMAT([GenF_Edu_Instituciones_Media_VAL], "#,##0"))
 
-	measure GenF_Edu_Instituciones_Media_VAL = 
+	measure GenF_Edu_Instituciones_Media =
 			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
 			RETURN
 			    CALCULATE(
@@ -453,12 +348,10 @@ table _Medidas
 			    )
 		displayFolder: Educativa/Instituciones
 		lineageTag: a08a43f2-d861-44b0-a10a-2c3614f52d1f
-		isHidden
-	measure GenF_Edu_Instituciones_Superior = IF(ISBLANK([GenF_Edu_Instituciones_Superior_VAL]), "N/A", FORMAT([GenF_Edu_Instituciones_Superior_VAL], "#,##0"))
 
-	measure GenF_Edu_Instituciones_Superior_VAL = 
+	measure GenF_Edu_Instituciones_Superior =
 			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
-			RETURN
+			VAR _v =
 			    CALCULATE(
 			        DISTINCTCOUNT(Hecho_Participacion_General[institucion_educativa_norm]),
 			        Hecho_Participacion_General[seccion_tablero] = "Educativa",
@@ -467,12 +360,12 @@ table _Medidas
 			        REMOVEFILTERS(Hecho_Participacion_General[comuna_cod]),
 			        KEEPFILTERS(TREATAS(_ComunasSeleccionadas, Hecho_Participacion_General[comuna_institucion_educativa_cod]))
 			    )
+			RETURN
+			    IF(ISBLANK(_v) || _v = 0, "N/A", FORMAT(_v, "#,##0"))
 		displayFolder: Educativa/Instituciones
 		lineageTag: 92b1311b-3b1c-4ee9-9065-183914c3ba0b
-		isHidden
-	measure GenF_Edu_Instituciones_PrimeraInfancia = IF(ISBLANK([GenF_Edu_Instituciones_PrimeraInfancia_VAL]), "N/A", FORMAT([GenF_Edu_Instituciones_PrimeraInfancia_VAL], "#,##0"))
 
-	measure GenF_Edu_Instituciones_PrimeraInfancia_VAL = 
+	measure GenF_Edu_Instituciones_PrimeraInfancia =
 			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
 			RETURN
 			    CALCULATE(
@@ -485,87 +378,8 @@ table _Medidas
 			    )
 		displayFolder: Educativa/Instituciones
 		lineageTag: 16af2ef7-f148-4fe8-9edd-4957c65cda1a
-		isHidden
-	measure Lista_Instituciones_BasicaMedia = IF(ISBLANK([Lista_Instituciones_BasicaMedia_VAL]), "N/A", [Lista_Instituciones_BasicaMedia_VAL])
 
-	measure Lista_Instituciones_BasicaMedia_VAL = 
-			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
-			VAR _Instituciones =
-			    CALCULATETABLE(
-			        VALUES(Hecho_Participacion_General[institucion_educativa_norm]),
-			        Hecho_Participacion_General[seccion_tablero] = "Educativa",
-			        Hecho_Participacion_General[bloque_educacion] = "Basica Media",
-			        NOT(ISBLANK(Hecho_Participacion_General[institucion_educativa_norm])),
-			        REMOVEFILTERS(Hecho_Participacion_General[comuna_cod]),
-			        KEEPFILTERS(TREATAS(_ComunasSeleccionadas, Hecho_Participacion_General[comuna_institucion_educativa_cod]))
-			    )
-			VAR _Lista =
-			    CONCATENATEX(
-			        _Instituciones,
-			        Hecho_Participacion_General[institucion_educativa_norm],
-			        UNICHAR(10),
-			        Hecho_Participacion_General[institucion_educativa_norm],
-			        ASC
-			    )
-			RETURN
-			    _Lista
-		displayFolder: Educativa/Instituciones
-		lineageTag: 1f4ef0d5-7a3d-4a17-a4d2-8ff94ac9f0b1
-		isHidden
-	measure Lista_Instituciones_Superior = IF(ISBLANK([Lista_Instituciones_Superior_VAL]), "N/A", [Lista_Instituciones_Superior_VAL])
-
-	measure Lista_Instituciones_Superior_VAL = 
-			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
-			VAR _Instituciones =
-			    CALCULATETABLE(
-			        VALUES(Hecho_Participacion_General[institucion_educativa_norm]),
-			        Hecho_Participacion_General[seccion_tablero] = "Educativa",
-			        Hecho_Participacion_General[bloque_educacion] = "Educacion Superior",
-			        NOT(ISBLANK(Hecho_Participacion_General[institucion_educativa_norm])),
-			        REMOVEFILTERS(Hecho_Participacion_General[comuna_cod]),
-			        KEEPFILTERS(TREATAS(_ComunasSeleccionadas, Hecho_Participacion_General[comuna_institucion_educativa_cod]))
-			    )
-			VAR _Lista =
-			    CONCATENATEX(
-			        _Instituciones,
-			        Hecho_Participacion_General[institucion_educativa_norm],
-			        UNICHAR(10),
-			        Hecho_Participacion_General[institucion_educativa_norm],
-			        ASC
-			    )
-			RETURN
-			    _Lista
-		displayFolder: Educativa/Instituciones
-		lineageTag: 2f05f3d9-5d6f-4fd3-b3d2-d6cb4cf24f2f
-		isHidden
-	measure Lista_Instituciones_PrimeraInfancia = IF(ISBLANK([Lista_Instituciones_PrimeraInfancia_VAL]), "N/A", [Lista_Instituciones_PrimeraInfancia_VAL])
-
-	measure Lista_Instituciones_PrimeraInfancia_VAL = 
-			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
-			VAR _Instituciones =
-			    CALCULATETABLE(
-			        VALUES(Hecho_Participacion_General[institucion_educativa_norm]),
-			        Hecho_Participacion_General[seccion_tablero] = "Educativa",
-			        Hecho_Participacion_General[bloque_educacion] = "Instituciones Primera Infancia",
-			        NOT(ISBLANK(Hecho_Participacion_General[institucion_educativa_norm])),
-			        REMOVEFILTERS(Hecho_Participacion_General[comuna_cod]),
-			        KEEPFILTERS(TREATAS(_ComunasSeleccionadas, Hecho_Participacion_General[comuna_institucion_educativa_cod]))
-			    )
-			VAR _Lista =
-			    CONCATENATEX(
-			        _Instituciones,
-			        Hecho_Participacion_General[institucion_educativa_norm],
-			        UNICHAR(10),
-			        Hecho_Participacion_General[institucion_educativa_norm],
-			        ASC
-			    )
-			RETURN
-			    _Lista
-		displayFolder: Educativa/Instituciones
-		lineageTag: 4e3e65ec-7d1f-4eb9-a43f-4bf7dfbc0196
-		isHidden
-	/// Lista de nombres de comites/comisiones respetando filtros de comuna
-	measure Lista_Comites_Comisiones_Filtrados = 
+	measure Lista_Comites_Comisiones_Filtrados =
 			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
 			VAR _NombresFiltrados =
 			    CALCULATETABLE(
@@ -587,9 +401,9 @@ table _Medidas
 			RETURN
 			    IF(_Lista = "", "N/A", _Lista)
 		displayFolder: Comunidad/Detalle
+		lineageTag: 8f0d1c71-cf95-45ac-81e5-e8d3c68701ee
 
-	/// Lista de nombres SATC respetando filtros activos del reporte (comuna/anio/mes)
-	measure Lista_SATC_Filtrados = 
+	measure Lista_SATC_Filtrados =
 			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
 			VAR _NombresSATC =
 			    CALCULATETABLE(
@@ -607,9 +421,9 @@ table _Medidas
 			RETURN
 			    IF(_Lista = "", "N/A", _Lista)
 		displayFolder: Comunidad/Detalle
+		lineageTag: 3b7144c3-c5cd-498c-82de-1154b73e0593
 
-	/// Lista de nombres de semilleros respetando filtros de comuna
-	measure Lista_Semilleros_Filtrados = 
+	measure Lista_Semilleros_Filtrados =
 			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
 			VAR _NombresSemilleros =
 			    CALCULATETABLE(
@@ -627,6 +441,1144 @@ table _Medidas
 			RETURN
 			    IF(_Lista = "", "N/A", _Lista)
 		displayFolder: Comunidad/Detalle
+		lineageTag: 1a4ccb18-322e-4e9b-861e-7dbe1edf10d0
+
+	measure GenF_Edu_Instituciones_Totales_VAL =
+			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+			RETURN
+			    CALCULATE(
+			        DISTINCTCOUNT(Hecho_Participacion_General[institucion_educativa_norm]),
+			        Hecho_Participacion_General[seccion_tablero] = "Educativa",
+			        Hecho_Participacion_General[bloque_educacion] IN {"Basica Media", "Educacion Superior", "Instituciones Primera Infancia"},
+			        NOT(ISBLANK(Hecho_Participacion_General[institucion_educativa_norm])),
+			        REMOVEFILTERS(Hecho_Participacion_General[comuna_cod]),
+			        KEEPFILTERS(TREATAS(_ComunasSeleccionadas, Hecho_Participacion_General[comuna_institucion_educativa_cod]))
+			    )
+		displayFolder: Educativa/Instituciones
+		lineageTag: 898e0149-d5b9-49f7-9110-1fbb5c56c0ea
+
+	measure GenF_Edu_Instituciones_Totales = IF(ISBLANK([GenF_Edu_Instituciones_Totales_VAL]), "N/A", FORMAT([GenF_Edu_Instituciones_Totales_VAL], "#,##0"))
+		displayFolder: Educativa/Instituciones
+		lineageTag: 50b6fa12-34e0-4a32-8301-bdb9b30a5eb6
+
+	measure Lista_Instituciones_Educativas_Filtradas_VAL =
+			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+			VAR _Instituciones =
+			    CALCULATETABLE(
+			        VALUES(Hecho_Participacion_General[institucion_educativa_norm]),
+			        Hecho_Participacion_General[seccion_tablero] = "Educativa",
+			        Hecho_Participacion_General[bloque_educacion] IN {"Basica Media", "Educacion Superior", "Instituciones Primera Infancia"},
+			        NOT(ISBLANK(Hecho_Participacion_General[institucion_educativa_norm])),
+			        REMOVEFILTERS(Hecho_Participacion_General[comuna_cod]),
+			        KEEPFILTERS(TREATAS(_ComunasSeleccionadas, Hecho_Participacion_General[comuna_institucion_educativa_cod]))
+			    )
+			VAR _Lista =
+			    CONCATENATEX(
+			        _Instituciones,
+			        Hecho_Participacion_General[institucion_educativa_norm],
+			        UNICHAR(10),
+			        Hecho_Participacion_General[institucion_educativa_norm],
+			        ASC
+			    )
+			RETURN
+			    _Lista
+		displayFolder: Educativa/Instituciones
+		lineageTag: 3330952f-8f8b-43e5-b24b-40d38d829743
+
+	measure Lista_Instituciones_Educativas_Filtradas = IF(ISBLANK([Lista_Instituciones_Educativas_Filtradas_VAL]), "N/A", [Lista_Instituciones_Educativas_Filtradas_VAL])
+		displayFolder: Educativa/Instituciones
+		lineageTag: f9b9e841-a0c4-4a16-93ec-2ab68df44bcb
+
+	measure Lista_Instituciones_BasicaMedia_VAL =
+			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+			VAR _Instituciones =
+			    CALCULATETABLE(
+			        VALUES(Hecho_Participacion_General[institucion_educativa_norm]),
+			        Hecho_Participacion_General[seccion_tablero] = "Educativa",
+			        Hecho_Participacion_General[bloque_educacion] = "Basica Media",
+			        NOT(ISBLANK(Hecho_Participacion_General[institucion_educativa_norm])),
+			        REMOVEFILTERS(Hecho_Participacion_General[comuna_cod]),
+			        KEEPFILTERS(TREATAS(_ComunasSeleccionadas, Hecho_Participacion_General[comuna_institucion_educativa_cod]))
+			    )
+			VAR _Lista =
+			    CONCATENATEX(
+			        _Instituciones,
+			        Hecho_Participacion_General[institucion_educativa_norm],
+			        UNICHAR(10),
+			        Hecho_Participacion_General[institucion_educativa_norm],
+			        ASC
+			    )
+			RETURN
+			    _Lista
+		displayFolder: Educativa/Instituciones
+		lineageTag: 12b8bf7e-6b94-45ce-acdf-d020a416a9fd
+
+	measure Lista_Instituciones_BasicaMedia = IF(ISBLANK([Lista_Instituciones_BasicaMedia_VAL]), "N/A", [Lista_Instituciones_BasicaMedia_VAL])
+		displayFolder: Educativa/Instituciones
+		lineageTag: ceaf3cfc-73ae-4b02-b176-64fc06a26dcd
+
+	measure Lista_Instituciones_Superior_VAL =
+			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+			VAR _Instituciones =
+			    CALCULATETABLE(
+			        VALUES(Hecho_Participacion_General[institucion_educativa_norm]),
+			        Hecho_Participacion_General[seccion_tablero] = "Educativa",
+			        Hecho_Participacion_General[bloque_educacion] = "Educacion Superior",
+			        NOT(ISBLANK(Hecho_Participacion_General[institucion_educativa_norm])),
+			        REMOVEFILTERS(Hecho_Participacion_General[comuna_cod]),
+			        KEEPFILTERS(TREATAS(_ComunasSeleccionadas, Hecho_Participacion_General[comuna_institucion_educativa_cod]))
+			    )
+			VAR _Lista =
+			    CONCATENATEX(
+			        _Instituciones,
+			        Hecho_Participacion_General[institucion_educativa_norm],
+			        UNICHAR(10),
+			        Hecho_Participacion_General[institucion_educativa_norm],
+			        ASC
+			    )
+			RETURN
+			    _Lista
+		displayFolder: Educativa/Instituciones
+		lineageTag: 82783593-e499-491c-85bd-ef633fdf3058
+
+	measure Lista_Instituciones_Superior = IF(ISBLANK([Lista_Instituciones_Superior_VAL]), "N/A", [Lista_Instituciones_Superior_VAL])
+		displayFolder: Educativa/Instituciones
+		lineageTag: ee23d4fb-3079-4502-97c0-66309caf7f87
+
+	measure Lista_Instituciones_PrimeraInfancia_VAL =
+			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+			VAR _Instituciones =
+			    CALCULATETABLE(
+			        VALUES(Hecho_Participacion_General[institucion_educativa_norm]),
+			        Hecho_Participacion_General[seccion_tablero] = "Educativa",
+			        Hecho_Participacion_General[bloque_educacion] = "Instituciones Primera Infancia",
+			        NOT(ISBLANK(Hecho_Participacion_General[institucion_educativa_norm])),
+			        REMOVEFILTERS(Hecho_Participacion_General[comuna_cod]),
+			        KEEPFILTERS(TREATAS(_ComunasSeleccionadas, Hecho_Participacion_General[comuna_institucion_educativa_cod]))
+			    )
+			VAR _Lista =
+			    CONCATENATEX(
+			        _Instituciones,
+			        Hecho_Participacion_General[institucion_educativa_norm],
+			        UNICHAR(10),
+			        Hecho_Participacion_General[institucion_educativa_norm],
+			        ASC
+			    )
+			RETURN
+			    _Lista
+		displayFolder: Educativa/Instituciones
+		lineageTag: aef63df5-03d8-4032-80c9-397bd06ee5cd
+
+	measure Lista_Instituciones_PrimeraInfancia = IF(ISBLANK([Lista_Instituciones_PrimeraInfancia_VAL]), "N/A", [Lista_Instituciones_PrimeraInfancia_VAL])
+		displayFolder: Educativa/Instituciones
+		lineageTag: 2e0f3ff1-5268-486e-b643-a628e8beb127
+
+	measure Lista_Nombres_Empresas_Filtradas =
+			VAR _Nombres =
+			    CALCULATETABLE(
+			        VALUES(Hecho_Participacion_General[publico_empresarial]),
+			        KEEPFILTERS(Hecho_Participacion_General[seccion_tablero] = "Empresarial"),
+			        KEEPFILTERS(Hecho_Participacion_General[bloque_empresarial] = "Empresas")
+			    )
+			VAR _Lista =
+			    CONCATENATEX(
+			        FILTER(
+			            _Nombres,
+			            NOT(ISBLANK(Hecho_Participacion_General[publico_empresarial]))
+			                && TRIM(Hecho_Participacion_General[publico_empresarial]) <> ""
+			        ),
+			        Hecho_Participacion_General[publico_empresarial],
+			        UNICHAR(10),
+			        Hecho_Participacion_General[publico_empresarial],
+			        ASC
+			    )
+			RETURN
+			    IF(_Lista = "", "N/A", _Lista)
+		displayFolder: Empresarial/Detalle
+		lineageTag: fdde7e7f-1856-4f18-a88b-948b07ade2b8
+
+	measure Lista_Nombres_Propiedades_Privadas_Filtradas =
+			VAR _Nombres =
+			    CALCULATETABLE(
+			        VALUES(Hecho_Participacion_General[publico_empresarial]),
+			        KEEPFILTERS(Hecho_Participacion_General[seccion_tablero] = "Empresarial"),
+			        KEEPFILTERS(Hecho_Participacion_General[bloque_empresarial] = "Propiedades Horizontales")
+			    )
+			VAR _Lista =
+			    CONCATENATEX(
+			        FILTER(
+			            _Nombres,
+			            NOT(ISBLANK(Hecho_Participacion_General[publico_empresarial]))
+			                && TRIM(Hecho_Participacion_General[publico_empresarial]) <> ""
+			        ),
+			        Hecho_Participacion_General[publico_empresarial],
+			        UNICHAR(10),
+			        Hecho_Participacion_General[publico_empresarial],
+			        ASC
+			    )
+			RETURN
+			    IF(_Lista = "", "N/A", _Lista)
+		displayFolder: Empresarial/Detalle
+		lineageTag: d04f3104-1677-49f7-a88a-0ecc001560de
+
+	measure Lista_Nombres_CAM_Filtrados =
+			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+			VAR _MapaZonaComuna =
+			    DATATABLE(
+			        "zona_cam", STRING,
+			        "comuna_cod", INTEGER,
+			        {
+			            {"Carabobo Norte", 4},
+			            {"Carabobo Norte", 10},
+			            {"Centro Oriental", 10},
+			            {"Alpujarra", 10},
+			            {"Belen Olaya", 15},
+			            {"Belen Olaya", 16},
+			            {"Guayabal Sur", 15},
+			            {"Guayabal Norte", 15},
+			            {"Robledo IES", 7},
+			            {"Robledo IPS", 5},
+			            {"Robledo IPS", 7},
+			            {"Robledo IPS", 60}
+			        }
+			    )
+			VAR _ZonasPermitidas =
+			    SELECTCOLUMNS(
+			        FILTER(_MapaZonaComuna, [comuna_cod] IN _ComunasSeleccionadas),
+			        "zona_cam", [zona_cam]
+			    )
+			VAR _Nombres =
+			    CALCULATETABLE(
+			        VALUES(CAM_Detalle[empresa_normalizada]),
+			        KEEPFILTERS(TREATAS(_ZonasPermitidas, CAM_Detalle[zona_cam]))
+			    )
+			VAR _Lista =
+			    CONCATENATEX(
+			        FILTER(
+			            _Nombres,
+			            NOT(ISBLANK(CAM_Detalle[empresa_normalizada]))
+			                && TRIM(CAM_Detalle[empresa_normalizada]) <> ""
+			        ),
+			        CAM_Detalle[empresa_normalizada],
+			        UNICHAR(10),
+			        CAM_Detalle[empresa_normalizada],
+			        ASC
+			    )
+			RETURN
+			    IF(_Lista = "", "N/A", _Lista)
+		displayFolder: Empresarial/Detalle
+		lineageTag: caddbd84-fcfa-478d-97ee-ffb567ef91af
+
+	measure GenF_Edu_Institucional =
+			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+			VAR _v =
+			    CALCULATE(
+			        DISTINCTCOUNT(Hecho_Participacion_General[institucion_educativa_norm]),
+			        Hecho_Participacion_General[seccion_tablero] = "Educativa",
+			        Hecho_Participacion_General[bloque_educacion] = "Educacion Superior",
+			        NOT(ISBLANK(Hecho_Participacion_General[institucion_educativa_norm])),
+			        REMOVEFILTERS(Hecho_Participacion_General[comuna_cod]),
+			        KEEPFILTERS(TREATAS(_ComunasSeleccionadas, Hecho_Participacion_General[comuna_institucion_educativa_cod]))
+			    )
+			RETURN
+			    IF(ISBLANK(_v) || _v = 0, "N/A", FORMAT(_v, "#,##0"))
+		displayFolder: Educativa/Instituciones
+		lineageTag: 5a30eba4-bb6b-462c-927a-56c8151a4423
+
+	measure Empresas_Detalle_Filtro_Comuna =
+			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+			VAR _MapaZonaComuna =
+			    DATATABLE(
+			        "zona_cam", STRING,
+			        "comuna_cod", INTEGER,
+			        {
+			            {"Carabobo Norte", 4},
+			            {"Carabobo Norte", 10},
+			            {"Centro Oriental", 10},
+			            {"Alpujarra", 10},
+			            {"Belen Olaya", 15},
+			            {"Belen Olaya", 16},
+			            {"Guayabal Sur", 15},
+			            {"Guayabal Norte", 15},
+			            {"Robledo IES", 7},
+			            {"Robledo IPS", 5},
+			            {"Robledo IPS", 7},
+			            {"Robledo IPS", 60}
+			        }
+			    )
+			VAR _ZonasPermitidas =
+			    SELECTCOLUMNS(
+			        FILTER(_MapaZonaComuna, [comuna_cod] IN _ComunasSeleccionadas),
+			        "zona_cam", [zona_cam]
+			    )
+			VAR _EmpresaActual = SELECTEDVALUE(CAM_Detalle[empresa_normalizada])
+			VAR _Visible =
+			    CALCULATE(
+			        COUNTROWS(CAM_Detalle),
+			        KEEPFILTERS(CAM_Detalle[empresa_normalizada] = _EmpresaActual),
+			        KEEPFILTERS(TREATAS(_ZonasPermitidas, CAM_Detalle[zona_cam]))
+			    )
+			RETURN
+			    IF(
+			        NOT(HASONEVALUE(CAM_Detalle[empresa_normalizada])),
+			        1,
+			        IF(NOT(ISBLANK(_EmpresaActual)) && _Visible > 0, 1, BLANK())
+			    )
+		displayFolder: Empresarial/Detalle
+		lineageTag: 53813fc3-2022-4bbd-a1fd-1060e556d541
+
+	measure Empresas_Detalle =
+			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+			VAR _MapaZonaComuna =
+			    DATATABLE(
+			        "zona_cam", STRING,
+			        "comuna_cod", INTEGER,
+			        {
+			            {"Carabobo Norte", 4},
+			            {"Carabobo Norte", 10},
+			            {"Centro Oriental", 10},
+			            {"Alpujarra", 10},
+			            {"Belen Olaya", 15},
+			            {"Belen Olaya", 16},
+			            {"Guayabal Sur", 15},
+			            {"Guayabal Norte", 15},
+			            {"Robledo IES", 7},
+			            {"Robledo IPS", 5},
+			            {"Robledo IPS", 7},
+			            {"Robledo IPS", 60}
+			        }
+			    )
+			VAR _ZonasPermitidas =
+			    SELECTCOLUMNS(
+			        FILTER(_MapaZonaComuna, [comuna_cod] IN _ComunasSeleccionadas),
+			        "zona_cam", [zona_cam]
+			    )
+			VAR _EmpresasFiltradas =
+			    CALCULATETABLE(
+			        VALUES(CAM_Detalle[empresa_normalizada]),
+			        KEEPFILTERS(TREATAS(_ZonasPermitidas, CAM_Detalle[zona_cam]))
+			    )
+			VAR _EmpresaActual = SELECTEDVALUE(CAM_Detalle[empresa_normalizada])
+			RETURN
+			    IF(
+			        HASONEVALUE(CAM_Detalle[empresa_normalizada]),
+			        IF([Empresas_Detalle_Filtro_Comuna] = 1, _EmpresaActual, BLANK()),
+			        IF(
+			            ISEMPTY(_EmpresasFiltradas),
+			            "N/A",
+			            CONCATENATEX(
+			                _EmpresasFiltradas,
+			                CAM_Detalle[empresa_normalizada],
+			                UNICHAR(10),
+			                CAM_Detalle[empresa_normalizada],
+			                ASC
+			            )
+			        )
+			    )
+		displayFolder: Empresarial/Detalle
+		lineageTag: 399f8c90-5918-44e7-b9f5-77c2816241b5
+
+	measure 'Planes Comunales' = 21
+		formatString: 0
+		displayFolder: Institucional
+		lineageTag: 74f13c47-1440-4ac5-b100-a0a22a28028b
+
+	/// Personas Atendidas Ordinario - Filtrado explícito por Dim_Fecha
+	measure PAO_Total_Personas_VAL =
+		VAR FechasSeleccionadas = VALUES(Dim_Fecha[fecha])
+		RETURN
+			CALCULATE(
+				DISTINCTCOUNT(Hecho_Personas_Atendidas_Ordinario[idintegrante]),
+				TREATAS(FechasSeleccionadas, Hecho_Personas_Atendidas_Ordinario[fecha_date])
+			)
+		isHidden
+		lineageTag: 516707ac-66f1-4890-99fa-83761e1f6482
+
+	measure PAO_Hombre_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[sexo] = "HOMBRE")
+		isHidden
+		lineageTag: ec5ef28c-6c06-43cc-922b-432f97730077
+
+	measure PAO_Mujer_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[sexo] = "MUJER")
+		isHidden
+		lineageTag: b961c6a2-dc26-4f8a-92bf-60c41e9eef2f
+
+	measure PAO_Intersexual_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[sexo] = "INTERSEXUAL")
+		isHidden
+		lineageTag: 4d9ad367-d902-4ffd-9223-5dd743432971
+
+	measure PAO_Menor_Edad_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[tipo_edad] = "MENOR DE EDAD")
+		isHidden
+		lineageTag: 737c3bd0-5c6a-4b24-a31f-bba61fdef27a
+
+	measure PAO_Adulto_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[tipo_edad] = "ADULTO")
+		isHidden
+		lineageTag: f57b8086-1b7b-45dc-b785-30e8e94ee8ac
+
+	measure PAO_Adulto_Mayor_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[tipo_edad] = "ADULTO MAYOR")
+		isHidden
+		lineageTag: dceac811-2f35-43cf-8fce-c86c556e674c
+
+	measure PAO_Etnia_Ninguna_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[etnia] = "NINGUNA")
+		isHidden
+		lineageTag: 9a3c71f5-dd55-4744-9725-e812445e0e27
+
+	measure PAO_Etnia_Afrodescendiente_VAL = CALCULATE([PAO_Total_Personas_VAL], FILTER(Hecho_Personas_Atendidas_Ordinario, CONTAINSSTRING(UPPER(COALESCE(Hecho_Personas_Atendidas_Ordinario[etnia], "")), "AFRO")))
+		isHidden
+		lineageTag: 51e06a88-b31b-4f66-bc05-0f166b647e93
+
+	measure PAO_Etnia_Indigena_VAL = CALCULATE([PAO_Total_Personas_VAL], FILTER(Hecho_Personas_Atendidas_Ordinario, CONTAINSSTRING(UPPER(COALESCE(Hecho_Personas_Atendidas_Ordinario[etnia], "")), "INDIG")))
+		isHidden
+		lineageTag: 5e9ac4c1-d9f9-4673-b3a9-92ac4b0a58a1
+
+	measure PAO_Etnia_Negro_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[etnia] = "NEGRO")
+		isHidden
+		lineageTag: 0aaf7463-a3ff-42d0-9b26-2de906effef2
+
+	measure PAO_Etnia_Sin_Dato_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[etnia] = "SIN DATO")
+		isHidden
+		lineageTag: 39f870f9-9552-45d6-a82d-e32035f2c2dd
+
+	measure PAO_Discapacidad_No_Tiene_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[discapacidad] = "NO TIENE DISCAPACIDAD")
+		isHidden
+		lineageTag: d7447995-775b-47dc-946a-5a7d361ffec1
+
+	measure PAO_Discapacidad_Fisica_VAL = CALCULATE([PAO_Total_Personas_VAL], FILTER(Hecho_Personas_Atendidas_Ordinario, CONTAINSSTRING(UPPER(COALESCE(Hecho_Personas_Atendidas_Ordinario[discapacidad], "")), "FIS")))
+		isHidden
+		lineageTag: 023fa065-0178-4750-8eff-94086bd90cc2
+
+	measure PAO_Discapacidad_Psicosocial_VAL = CALCULATE([PAO_Total_Personas_VAL], FILTER(Hecho_Personas_Atendidas_Ordinario, CONTAINSSTRING(UPPER(COALESCE(Hecho_Personas_Atendidas_Ordinario[discapacidad], "")), "PSICOSOCIAL")))
+		isHidden
+		lineageTag: e51403d5-52af-4af7-8639-74b34910f254
+
+	measure PAO_Discapacidad_Intelectual_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[discapacidad] = "INTELECTUAL")
+		isHidden
+		lineageTag: b022a7f0-cc41-4bee-bceb-e8d53b3d37ae
+
+	measure PAO_Discapacidad_Multiple_VAL = CALCULATE([PAO_Total_Personas_VAL], FILTER(Hecho_Personas_Atendidas_Ordinario, CONTAINSSTRING(UPPER(COALESCE(Hecho_Personas_Atendidas_Ordinario[discapacidad], "")), "MULTIPLE")))
+		isHidden
+		lineageTag: 83026459-6d6c-413e-bff5-16f801155d2c
+
+	measure PAO_Discapacidad_Visual_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[discapacidad] = "VISUAL")
+		isHidden
+		lineageTag: f2c19247-24ee-489b-97c6-1bec31c59ec5
+
+	measure PAO_Discapacidad_Auditiva_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[discapacidad] = "AUDITIVA")
+		isHidden
+		lineageTag: 3ae16a56-7ac5-47a2-9b3e-768c388a9d80
+
+	measure PAO_Discapacidad_Desconocida_VAL = CALCULATE([PAO_Total_Personas_VAL], FILTER(Hecho_Personas_Atendidas_Ordinario, CONTAINSSTRING(UPPER(COALESCE(Hecho_Personas_Atendidas_Ordinario[discapacidad], "")), "SE DESCONOCE")))
+		isHidden
+		lineageTag: 98b1b192-39d8-4167-888c-9b57096ab363
+
+	measure PAO_Discapacidad_Sin_Dato_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[discapacidad] = "SIN DATO")
+		isHidden
+		lineageTag: 9a68cd85-1ec7-4966-883e-fc67d34cc8c7
+
+	measure PAO_Campesino_Si_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[campesino] = "SI")
+		isHidden
+		lineageTag: 641f6738-c1b5-4fcb-a247-6a1a02353260
+
+	measure PAO_Campesino_No_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[campesino] = "NO")
+		isHidden
+		lineageTag: cd37b30b-bb19-4966-a241-79179fd6e5b3
+
+	measure PAO_Campesino_Sin_Dato_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[campesino] = "SIN DATO")
+		isHidden
+		lineageTag: 814867ec-72b5-4355-b90f-48bf44a1d823
+
+	measure PAO_Campesino_Sin_Respuesta_VAL = CALCULATE([PAO_Total_Personas_VAL], FILTER(Hecho_Personas_Atendidas_Ordinario, ISBLANK(Hecho_Personas_Atendidas_Ordinario[campesino])))
+		isHidden
+		lineageTag: 72cf1edc-b4e9-4974-83cb-80e794a1b0e1
+
+	measure PAO_Desplazado_Si_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[desplazado] = "SI")
+		isHidden
+		lineageTag: 5486aba2-2a48-4caa-bc97-e296bea66fe2
+
+	measure PAO_Desplazado_No_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[desplazado] = "NO")
+		isHidden
+		lineageTag: 609a0139-a5ca-4128-98b7-0b5910e521be
+
+	measure PAO_Desplazado_Sin_Dato_VAL = CALCULATE([PAO_Total_Personas_VAL], Hecho_Personas_Atendidas_Ordinario[desplazado] = "SIN DATO")
+		isHidden
+		lineageTag: 5db5cd7a-bab2-4bbf-b38a-22fe69caf07b
+
+	measure PAO_Victima_VAL = CALCULATE([PAO_Total_Personas_VAL], FILTER(Hecho_Personas_Atendidas_Ordinario, NOT(ISBLANK(Hecho_Personas_Atendidas_Ordinario[victima])) && UPPER(Hecho_Personas_Atendidas_Ordinario[victima]) <> "NINGUNA"))
+		isHidden
+		lineageTag: d19fb4ae-6bce-4323-9539-e75b44e1beba
+
+	measure PAO_No_Victima_VAL = CALCULATE([PAO_Total_Personas_VAL], FILTER(Hecho_Personas_Atendidas_Ordinario, ISBLANK(Hecho_Personas_Atendidas_Ordinario[victima]) || UPPER(Hecho_Personas_Atendidas_Ordinario[victima]) = "NINGUNA"))
+		isHidden
+		lineageTag: 4ee55c70-8b6d-40cb-b82f-c236067e07ea
+
+	measure PAO_Total_Personas = IF(ISBLANK([PAO_Total_Personas_VAL]), "N/A", FORMAT([PAO_Total_Personas_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Total
+		lineageTag: 326df3e6-8b75-40d6-ae41-55d4ba6d1ea7
+
+	measure PAO_Hombre = IF(ISBLANK([PAO_Hombre_VAL]), "N/A", FORMAT([PAO_Hombre_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Sexo
+		lineageTag: 3d30c66b-e7ff-4d2f-bea7-cdc3e6597e42
+
+	measure PAO_Mujer = IF(ISBLANK([PAO_Mujer_VAL]), "N/A", FORMAT([PAO_Mujer_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Sexo
+		lineageTag: 3c4e1235-7fa8-4af9-aed3-c83d9987ac7e
+
+	measure PAO_Intersexual = IF(ISBLANK([PAO_Intersexual_VAL]), "N/A", FORMAT([PAO_Intersexual_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Sexo
+		lineageTag: 1c143cc6-bf53-4680-9e86-7181a807a54f
+
+	measure PAO_Menor_Edad = IF(ISBLANK([PAO_Menor_Edad_VAL]), "N/A", FORMAT([PAO_Menor_Edad_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Edad
+		lineageTag: e3cef84c-aa27-4c89-9e61-45569b232cc5
+
+	measure PAO_Adulto = IF(ISBLANK([PAO_Adulto_VAL]), "N/A", FORMAT([PAO_Adulto_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Edad
+		lineageTag: f4c44be6-46ee-4c57-86bf-bb6623249461
+
+	measure PAO_Adulto_Mayor = IF(ISBLANK([PAO_Adulto_Mayor_VAL]), "N/A", FORMAT([PAO_Adulto_Mayor_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Edad
+		lineageTag: efe84d47-21cb-4934-ac60-7b00e355c626
+
+	measure PAO_Etnia_Ninguna = IF(ISBLANK([PAO_Etnia_Ninguna_VAL]), "N/A", FORMAT([PAO_Etnia_Ninguna_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Etnia
+		lineageTag: 079eb0fe-33de-48ce-bd00-42a980041745
+
+	measure PAO_Etnia_Afrodescendiente = IF(ISBLANK([PAO_Etnia_Afrodescendiente_VAL]), "N/A", FORMAT([PAO_Etnia_Afrodescendiente_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Etnia
+		lineageTag: 84df08dc-3435-45a5-86e2-b0df1c12820a
+
+	measure PAO_Etnia_Indigena = IF(ISBLANK([PAO_Etnia_Indigena_VAL]), "N/A", FORMAT([PAO_Etnia_Indigena_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Etnia
+		lineageTag: d3530330-7930-4771-96c6-5bed9b4d73e4
+
+	measure PAO_Etnia_Negro = IF(ISBLANK([PAO_Etnia_Negro_VAL]), "N/A", FORMAT([PAO_Etnia_Negro_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Etnia
+		lineageTag: ed4cfd42-3806-41a9-aa26-1b301439274e
+
+	measure PAO_Etnia_Sin_Dato = IF(ISBLANK([PAO_Etnia_Sin_Dato_VAL]), "N/A", FORMAT([PAO_Etnia_Sin_Dato_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Etnia
+		lineageTag: ec9c0642-158a-4b96-ba20-68ea20d938eb
+
+	measure PAO_Discapacidad_No_Tiene = IF(ISBLANK([PAO_Discapacidad_No_Tiene_VAL]), "N/A", FORMAT([PAO_Discapacidad_No_Tiene_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Discapacidad
+		lineageTag: 97bbcd5e-efc9-445b-af7e-964e3d9d0f56
+
+	measure PAO_Discapacidad_Fisica = IF(ISBLANK([PAO_Discapacidad_Fisica_VAL]), "N/A", FORMAT([PAO_Discapacidad_Fisica_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Discapacidad
+		lineageTag: 57e46193-7931-4e34-9502-f7fed392d911
+
+	measure PAO_Discapacidad_Psicosocial = IF(ISBLANK([PAO_Discapacidad_Psicosocial_VAL]), "N/A", FORMAT([PAO_Discapacidad_Psicosocial_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Discapacidad
+		lineageTag: f34afd37-f60d-4b69-ae6a-ebc772ac4339
+
+	measure PAO_Discapacidad_Intelectual = IF(ISBLANK([PAO_Discapacidad_Intelectual_VAL]), "N/A", FORMAT([PAO_Discapacidad_Intelectual_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Discapacidad
+		lineageTag: 3adfc1d3-2bd8-4ef1-a49d-7d3f4662bb1b
+
+	measure PAO_Discapacidad_Multiple = IF(ISBLANK([PAO_Discapacidad_Multiple_VAL]), "N/A", FORMAT([PAO_Discapacidad_Multiple_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Discapacidad
+		lineageTag: 57e09fdb-556d-4d89-89a4-50c99df7f46b
+
+	measure PAO_Discapacidad_Visual = IF(ISBLANK([PAO_Discapacidad_Visual_VAL]), "N/A", FORMAT([PAO_Discapacidad_Visual_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Discapacidad
+		lineageTag: b69dedd1-ba0b-488e-b95e-af7e5d28568b
+
+	measure PAO_Discapacidad_Auditiva = IF(ISBLANK([PAO_Discapacidad_Auditiva_VAL]), "N/A", FORMAT([PAO_Discapacidad_Auditiva_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Discapacidad
+		lineageTag: 0d02e842-bb23-4dfa-9a95-45a76b3f566a
+
+	measure PAO_Discapacidad_Desconocida = IF(ISBLANK([PAO_Discapacidad_Desconocida_VAL]), "N/A", FORMAT([PAO_Discapacidad_Desconocida_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Discapacidad
+		lineageTag: e247a6ef-16c5-47ed-8657-dfcbbe3d00f9
+
+	measure PAO_Discapacidad_Sin_Dato = IF(ISBLANK([PAO_Discapacidad_Sin_Dato_VAL]), "N/A", FORMAT([PAO_Discapacidad_Sin_Dato_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Discapacidad
+		lineageTag: 0b3d94ef-13dc-4ccd-a75d-238a4c9af13f
+
+	measure PAO_Campesino_Si = IF(ISBLANK([PAO_Campesino_Si_VAL]), "N/A", FORMAT([PAO_Campesino_Si_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Campesino
+		lineageTag: 798e7b41-fa7b-497b-9987-a95c2670f0a8
+
+	measure PAO_Campesino_No = IF(ISBLANK([PAO_Campesino_No_VAL]), "N/A", FORMAT([PAO_Campesino_No_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Campesino
+		lineageTag: d6f6fce3-b0ea-4ece-8bdb-ccb8f7278f91
+
+	measure PAO_Campesino_Sin_Dato = IF(ISBLANK([PAO_Campesino_Sin_Dato_VAL]), "N/A", FORMAT([PAO_Campesino_Sin_Dato_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Campesino
+		lineageTag: 3df5ab16-e4fd-4730-b038-32410b7f8327
+
+	measure PAO_Campesino_Sin_Respuesta = IF(ISBLANK([PAO_Campesino_Sin_Respuesta_VAL]), "N/A", FORMAT([PAO_Campesino_Sin_Respuesta_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Campesino
+		lineageTag: 1077a738-67fc-453c-9a2e-1c3a70b44a6d
+
+	measure PAO_Desplazado_Si = IF(ISBLANK([PAO_Desplazado_Si_VAL]), "N/A", FORMAT([PAO_Desplazado_Si_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Desplazado
+		lineageTag: 4d54272b-970a-41af-bb6e-0a138c2de66f
+
+	measure PAO_Desplazado_No = IF(ISBLANK([PAO_Desplazado_No_VAL]), "N/A", FORMAT([PAO_Desplazado_No_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Desplazado
+		lineageTag: 4dc1ced4-1ec8-45ec-a116-30584ec2240e
+
+	measure PAO_Desplazado_Sin_Dato = IF(ISBLANK([PAO_Desplazado_Sin_Dato_VAL]), "N/A", FORMAT([PAO_Desplazado_Sin_Dato_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Desplazado
+		lineageTag: 059872a2-e4bd-4ac4-9119-92002124deab
+
+	measure PAO_Victima = IF(ISBLANK([PAO_Victima_VAL]), "N/A", FORMAT([PAO_Victima_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Victima
+		lineageTag: e508782f-e12f-4da7-9878-96e29d2fdc54
+
+	measure PAO_No_Victima = IF(ISBLANK([PAO_No_Victima_VAL]), "N/A", FORMAT([PAO_No_Victima_VAL], "#,##0"))
+		displayFolder: Personas Atendidas/Victima
+		lineageTag: 24066307-3172-409c-96d7-de4ef7875950
+
+	measure IXR_Total_Eventos_VAL = DISTINCTCOUNT(Hecho_IxR[evento_id])
+		isHidden
+		lineageTag: 339a8c66-f034-4619-867c-2cfd89020333
+
+	measure IXR_Lesionados_VAL = SUM(Hecho_IxR[numero_lesionados])
+		isHidden
+		lineageTag: 1f589521-6884-43f1-9120-bf802df5c3cd
+
+	measure IXR_Muertos_VAL = SUM(Hecho_IxR[numero_muertos])
+		isHidden
+		lineageTag: e46bc6bb-1ec5-4ddf-97c4-c39106751f2a
+
+	measure IXR_Evac_Temporal_VAL = SUM(Hecho_IxR[evac_temporal])
+		isHidden
+		lineageTag: cb77bcd9-935b-4cea-85b6-6746bc39e1cf
+
+	measure IXR_Evac_Definitiva_VAL = SUM(Hecho_IxR[evac_definitiva])
+		isHidden
+		lineageTag: 0f9d03eb-6dcb-4d28-8f9a-76b7550f933e
+
+	measure IXR_Origen_Socionatural_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[origen] = "Socionatural")
+		isHidden
+		lineageTag: c8c64307-0fcc-4909-887c-7acacf2a8609
+
+	measure IXR_Origen_Antrapico_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[origen], "")), "ANTR")))
+		isHidden
+		lineageTag: 1a32b2a5-2233-4120-8ce4-12939387caeb
+
+	measure IXR_Origen_Natural_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[origen] = "Natural")
+		isHidden
+		lineageTag: e8ed067a-934d-4dce-b8fb-67ebf941a302
+
+	measure IXR_Origen_Tecnologico_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[origen], "")), "TECNO")))
+		isHidden
+		lineageTag: 0633c675-16fe-43b1-bc31-c842d41f4272
+
+	measure IXR_Escenario_Movimiento_Masa_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[escenario_riesgo], "")), "MOVIMIENTO")))
+		isHidden
+		lineageTag: 4e4f3f4b-421e-4820-bb0a-dceb62477cba
+
+	measure IXR_Escenario_Estructural_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[escenario_riesgo] = "Estructural")
+		isHidden
+		lineageTag: b1992a89-8add-4f9f-b27a-d8fcb3bd1a49
+
+	measure IXR_Escenario_Inundacion_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[escenario_riesgo], "")), "INUND")))
+		isHidden
+		lineageTag: 9b5bf3da-d347-4025-9697-07c63720bfda
+
+	measure IXR_Escenario_Avenida_Torrencial_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[escenario_riesgo], "")), "AVENIDA")))
+		isHidden
+		lineageTag: f27c98ef-a196-473d-9e53-3a5ae29c2aa9
+
+	measure IXR_Escenario_Otros_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[escenario_riesgo] = "Otros")
+		isHidden
+		lineageTag: 830dfe4f-a609-41cc-afd8-82808fe8d1db
+
+	measure IXR_Fenomeno_Movimiento_Masa_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[fenomeno_amenazante], "")), "MOVIMIENTO")))
+		isHidden
+		lineageTag: 7c833bc7-74b7-448c-8a3e-cabec8466869
+
+	measure IXR_Fenomeno_Incendio_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[fenomeno_amenazante] = "Incendio")
+		isHidden
+		lineageTag: 30869894-bd78-4be7-ae3c-27b6e48863d7
+
+	measure IXR_Fenomeno_Estructural_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[fenomeno_amenazante] = "Estructural")
+		isHidden
+		lineageTag: 2907cd16-3610-437b-82b9-677aec328e73
+
+	measure IXR_Fenomeno_Inundacion_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[fenomeno_amenazante], "")), "INUND")))
+		isHidden
+		lineageTag: b83f2c68-9825-4b02-b4d4-ee6da4ccb38c
+
+	measure IXR_Fenomeno_Avenida_Torrencial_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[fenomeno_amenazante] = "Avenida Torrencial")
+		isHidden
+		lineageTag: 8644ce6b-f2ff-4828-9c76-3612864ca72f
+
+	measure IXR_Fenomeno_Ambiental_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[fenomeno_amenazante] = "Ambiental")
+		isHidden
+		lineageTag: c5c7ec89-7938-4f34-af32-adc4506c2bae
+
+	measure IXR_Fenomeno_Erosion_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[fenomeno_amenazante], "")), "EROSI")))
+		isHidden
+		lineageTag: 03a3df77-ecab-46b5-b23b-7dd806ab9f74
+
+	measure IXR_Fenomeno_Explosion_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[fenomeno_amenazante], "")), "EXPLOS")))
+		isHidden
+		lineageTag: a8fc8664-9994-4425-bc4c-43e3be45526f
+
+	measure IXR_Recepcion_Linea123_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_recepcion], "")), "123")))
+		isHidden
+		lineageTag: 5ebf71ab-87f8-4c50-b7ce-120b18071ed9
+
+	measure IXR_Recepcion_Whatsapp_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_recepcion], "")), "WHATSAPP")))
+		isHidden
+		lineageTag: 09bd2b44-caa8-42c9-839b-adfaebaa21c5
+
+	measure IXR_Recepcion_Radicado_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_recepcion], "")), "RADICADO")))
+		isHidden
+		lineageTag: 8fc224cb-659e-4c48-8715-7d7edb959d2a
+
+	measure IXR_Recepcion_Correo_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_recepcion], "")), "CORREO")))
+		isHidden
+		lineageTag: 4c8899f9-223f-4605-b1b3-f6d51dd31b06
+
+	measure IXR_Recepcion_Guardia_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_recepcion], "")), "GUARDIA")))
+		isHidden
+		lineageTag: e2c411c5-d320-4484-8c13-05edc1041f07
+
+	measure IXR_TipoIncidente_Desgarre_Superficial_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "DESGARRE")))
+		isHidden
+		lineageTag: f7b10deb-d1f3-4d21-9438-5f73616121cb
+
+	measure IXR_TipoIncidente_Deslizamiento_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[tipo_incidente] = "Deslizamiento")
+		isHidden
+		lineageTag: 33b02bf7-4500-4796-bef5-0b5540d2f292
+
+	measure IXR_TipoIncidente_Incendio_Estructural_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[tipo_incidente] = "Incendio Estructural")
+		isHidden
+		lineageTag: e09fab47-55e0-41d8-8849-c66e9089cb1f
+
+	measure IXR_TipoIncidente_Colapso_Parcial_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[tipo_incidente] = "Colapso parcial")
+		isHidden
+		lineageTag: d140bf06-647c-4b41-b1b7-b8c4c5017227
+
+	measure IXR_TipoIncidente_Desbordamiento_Cuerpo_Agua_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "DESBORDAMIENTO CUERPO")))
+		isHidden
+		lineageTag: b15ec173-a1bb-46c0-821c-4cd9b1135347
+
+	measure IXR_TipoIncidente_Flujo_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[tipo_incidente] = "Flujo")
+		isHidden
+		lineageTag: c4d77c67-07fa-4dd4-8819-e824e8f70e39
+
+	measure IXR_TipoIncidente_Movimientos_Complejos_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "MOVIMIENTOS COMPLEJOS")))
+		isHidden
+		lineageTag: 1ef7c4b1-0944-4cb0-aa4a-d259c27087a9
+
+	measure IXR_TipoIncidente_Flujos_Hiperconcentrados_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "HIPERCONCENTRADOS")))
+		isHidden
+		lineageTag: 1c9e07ad-9333-4476-83a4-63e2be39a9b8
+
+	measure IXR_TipoIncidente_Caida_de_Rocas_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "ROCAS")))
+		isHidden
+		lineageTag: bc88cc74-e3e5-4def-b37e-4ca946618b7b
+
+	measure IXR_TipoIncidente_Redes_Alcantarillado_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "ALCANTARILLADO")))
+		isHidden
+		lineageTag: 50bf416d-402b-49e6-8cff-cb557f483c4b
+
+	measure IXR_TipoIncidente_Vendaval_Fuerza_Eolica_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "VENDAVAL")))
+		isHidden
+		lineageTag: 73ceb2b0-e389-40d2-890c-8051e23d7555
+
+	measure IXR_TipoIncidente_Desconfinamiento_Fundacion_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "DESCONFINAMIENTO")))
+		isHidden
+		lineageTag: 9b1e5ba0-3620-426b-a471-e9d5d3a483a1
+
+	measure IXR_TipoIncidente_Erosion_Lateral_Orillas_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "EROSION LATERAL")))
+		isHidden
+		lineageTag: 7d6fe409-955a-4ae8-85a9-3fbd1049e6fa
+
+	measure IXR_TipoIncidente_Flujos_De_Lodos_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "LODOS")))
+		isHidden
+		lineageTag: 70c950e5-ba38-466f-83d2-b93161577942
+
+	measure IXR_TipoIncidente_Colapso_Total_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[tipo_incidente] = "Colapso total")
+		isHidden
+		lineageTag: 5e1635c8-3312-4827-bb74-f4d64e907ec2
+
+	measure IXR_TipoIncidente_Deterioro_Generalizado_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "DETERIORO")))
+		isHidden
+		lineageTag: 1a152d83-25c7-4a3a-b5d3-2805112c7e35
+
+	measure IXR_TipoIncidente_Subsidencia_VAL = CALCULATE([IXR_Total_Eventos_VAL], Hecho_IxR[tipo_incidente] = "Subsidencia")
+		isHidden
+		lineageTag: d6e6cb7b-d044-48f8-b36b-b2290c6e805a
+
+	measure IXR_TipoIncidente_Explosion_Tecnologica_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "EXPLOSION TECNO")))
+		isHidden
+		lineageTag: e0cf2ed4-662a-490f-ac00-844bc78ee6d1
+
+	measure IXR_TipoIncidente_Flujos_De_Detritos_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "DETRITOS")))
+		isHidden
+		lineageTag: a9d3734f-8eb6-468d-bfb0-dd05b722e824
+
+	measure IXR_TipoIncidente_Actividad_Antripica_VAL = CALCULATE([IXR_Total_Eventos_VAL], FILTER(Hecho_IxR, CONTAINSSTRING(UPPER(COALESCE(Hecho_IxR[tipo_incidente], "")), "ACTIVIDAD ANTR")))
+		isHidden
+		lineageTag: 8ba0b72a-557d-4980-a27e-5ac15be957c2
+
+	measure IXR_Total_Eventos = IF(ISBLANK([IXR_Total_Eventos_VAL]), "N/A", FORMAT([IXR_Total_Eventos_VAL], "#,##0"))
+		displayFolder: IxR/Total
+		lineageTag: 07a18311-a0ae-4392-8d2c-96d0a3de5353
+
+	measure IXR_Lesionados = IF(ISBLANK([IXR_Lesionados_VAL]), "N/A", FORMAT([IXR_Lesionados_VAL], "#,##0"))
+		displayFolder: IxR/Impacto
+		lineageTag: 1b8d6c6a-c0df-44aa-b4e4-6edba50dfc08
+
+	measure IXR_Muertos = IF(ISBLANK([IXR_Muertos_VAL]), "N/A", FORMAT([IXR_Muertos_VAL], "#,##0"))
+		displayFolder: IxR/Impacto
+		lineageTag: dab981bd-5c71-4186-9441-c4e0ad7143f9
+
+	measure IXR_Evac_Temporal = IF(ISBLANK([IXR_Evac_Temporal_VAL]), "N/A", FORMAT([IXR_Evac_Temporal_VAL], "#,##0"))
+		displayFolder: IxR/Impacto
+		lineageTag: 4fd38027-ef35-402d-9559-815b4fc2dc55
+
+	measure IXR_Evac_Definitiva = IF(ISBLANK([IXR_Evac_Definitiva_VAL]), "N/A", FORMAT([IXR_Evac_Definitiva_VAL], "#,##0"))
+		displayFolder: IxR/Impacto
+		lineageTag: 767521d2-1b69-46c2-94e9-8868f13c761f
+
+	measure IXR_Origen_Socionatural = IF(ISBLANK([IXR_Origen_Socionatural_VAL]), "N/A", FORMAT([IXR_Origen_Socionatural_VAL], "#,##0"))
+		displayFolder: IxR/Origen
+		lineageTag: c0b14065-90c6-4514-8604-64e1fe9b72ee
+
+	measure IXR_Origen_Antrapico = IF(ISBLANK([IXR_Origen_Antrapico_VAL]), "N/A", FORMAT([IXR_Origen_Antrapico_VAL], "#,##0"))
+		displayFolder: IxR/Origen
+		lineageTag: 6376a292-ca8e-4c49-a1af-5a5be326bdb1
+
+	measure IXR_Origen_Natural = IF(ISBLANK([IXR_Origen_Natural_VAL]), "N/A", FORMAT([IXR_Origen_Natural_VAL], "#,##0"))
+		displayFolder: IxR/Origen
+		lineageTag: 6b0a353d-a658-4a4b-be2c-250bb11be74a
+
+	measure IXR_Origen_Tecnologico = IF(ISBLANK([IXR_Origen_Tecnologico_VAL]), "N/A", FORMAT([IXR_Origen_Tecnologico_VAL], "#,##0"))
+		displayFolder: IxR/Origen
+		lineageTag: 91d3f5f7-3225-414f-81a0-eb30e2d7d055
+
+	measure IXR_Escenario_Movimiento_Masa = IF(ISBLANK([IXR_Escenario_Movimiento_Masa_VAL]), "N/A", FORMAT([IXR_Escenario_Movimiento_Masa_VAL], "#,##0"))
+		displayFolder: IxR/Escenario
+		lineageTag: 79be54b3-9570-45d3-a7bb-da38d8060c26
+
+	measure IXR_Escenario_Estructural = IF(ISBLANK([IXR_Escenario_Estructural_VAL]), "N/A", FORMAT([IXR_Escenario_Estructural_VAL], "#,##0"))
+		displayFolder: IxR/Escenario
+		lineageTag: bc4baf39-30c8-4501-9c8d-93c562851779
+
+	measure IXR_Escenario_Inundacion = IF(ISBLANK([IXR_Escenario_Inundacion_VAL]), "N/A", FORMAT([IXR_Escenario_Inundacion_VAL], "#,##0"))
+		displayFolder: IxR/Escenario
+		lineageTag: d7f6e87a-7f89-4db5-8352-01a797b3edbf
+
+	measure IXR_Escenario_Avenida_Torrencial = IF(ISBLANK([IXR_Escenario_Avenida_Torrencial_VAL]), "N/A", FORMAT([IXR_Escenario_Avenida_Torrencial_VAL], "#,##0"))
+		displayFolder: IxR/Escenario
+		lineageTag: 353eab42-a8b0-4ccc-87b9-123dc7f33d56
+
+	measure IXR_Escenario_Otros = IF(ISBLANK([IXR_Escenario_Otros_VAL]), "N/A", FORMAT([IXR_Escenario_Otros_VAL], "#,##0"))
+		displayFolder: IxR/Escenario
+		lineageTag: 9348c45b-23fc-406c-8271-8debe49ee60d
+
+	measure IXR_Fenomeno_Movimiento_Masa = IF(ISBLANK([IXR_Fenomeno_Movimiento_Masa_VAL]), "N/A", FORMAT([IXR_Fenomeno_Movimiento_Masa_VAL], "#,##0"))
+		displayFolder: IxR/Fenomeno
+		lineageTag: dbb73f74-3e71-492f-9fee-d930d4d67394
+
+	measure IXR_Fenomeno_Incendio = IF(ISBLANK([IXR_Fenomeno_Incendio_VAL]), "N/A", FORMAT([IXR_Fenomeno_Incendio_VAL], "#,##0"))
+		displayFolder: IxR/Fenomeno
+		lineageTag: 70603e77-ee8d-48f8-a640-c2490399bdef
+
+	measure IXR_Fenomeno_Estructural = IF(ISBLANK([IXR_Fenomeno_Estructural_VAL]), "N/A", FORMAT([IXR_Fenomeno_Estructural_VAL], "#,##0"))
+		displayFolder: IxR/Fenomeno
+		lineageTag: 3dab9339-f92b-4a2c-abd9-336877ea4359
+
+	measure IXR_Fenomeno_Inundacion = IF(ISBLANK([IXR_Fenomeno_Inundacion_VAL]), "N/A", FORMAT([IXR_Fenomeno_Inundacion_VAL], "#,##0"))
+		displayFolder: IxR/Fenomeno
+		lineageTag: 9b838dd1-7830-47b2-8f5a-6e66f9a00112
+
+	measure IXR_Fenomeno_Avenida_Torrencial = IF(ISBLANK([IXR_Fenomeno_Avenida_Torrencial_VAL]), "N/A", FORMAT([IXR_Fenomeno_Avenida_Torrencial_VAL], "#,##0"))
+		displayFolder: IxR/Fenomeno
+		lineageTag: 3192c55b-c15a-48f9-8821-974a1bafdef9
+
+	measure IXR_Fenomeno_Ambiental = IF(ISBLANK([IXR_Fenomeno_Ambiental_VAL]), "N/A", FORMAT([IXR_Fenomeno_Ambiental_VAL], "#,##0"))
+		displayFolder: IxR/Fenomeno
+		lineageTag: 16a302eb-2c4f-4a9c-b56e-2417ba962a07
+
+	measure IXR_Fenomeno_Erosion = IF(ISBLANK([IXR_Fenomeno_Erosion_VAL]), "N/A", FORMAT([IXR_Fenomeno_Erosion_VAL], "#,##0"))
+		displayFolder: IxR/Fenomeno
+		lineageTag: a89c3a8a-2d9c-462d-be46-dd2e0a40bb18
+
+	measure IXR_Fenomeno_Explosion = IF(ISBLANK([IXR_Fenomeno_Explosion_VAL]), "N/A", FORMAT([IXR_Fenomeno_Explosion_VAL], "#,##0"))
+		displayFolder: IxR/Fenomeno
+		lineageTag: 33c4db80-e875-4623-b48d-4bf0ed9dbd69
+
+	measure IXR_Recepcion_Linea123 = IF(ISBLANK([IXR_Recepcion_Linea123_VAL]), "N/A", FORMAT([IXR_Recepcion_Linea123_VAL], "#,##0"))
+		displayFolder: IxR/Recepcion
+		lineageTag: 5265c865-34d1-48c2-b527-e72191d33321
+
+	measure IXR_Recepcion_Whatsapp = IF(ISBLANK([IXR_Recepcion_Whatsapp_VAL]), "N/A", FORMAT([IXR_Recepcion_Whatsapp_VAL], "#,##0"))
+		displayFolder: IxR/Recepcion
+		lineageTag: ca8314a7-ef7d-4933-997f-359e1ca63ca6
+
+	measure IXR_Recepcion_Radicado = IF(ISBLANK([IXR_Recepcion_Radicado_VAL]), "N/A", FORMAT([IXR_Recepcion_Radicado_VAL], "#,##0"))
+		displayFolder: IxR/Recepcion
+		lineageTag: 107cdb25-0828-483f-b5db-6da154e497c0
+
+	measure IXR_Recepcion_Correo = IF(ISBLANK([IXR_Recepcion_Correo_VAL]), "N/A", FORMAT([IXR_Recepcion_Correo_VAL], "#,##0"))
+		displayFolder: IxR/Recepcion
+		lineageTag: 53fa3ee5-fb8e-4d60-9e39-7602274331bb
+
+	measure IXR_Recepcion_Guardia = IF(ISBLANK([IXR_Recepcion_Guardia_VAL]), "N/A", FORMAT([IXR_Recepcion_Guardia_VAL], "#,##0"))
+		displayFolder: IxR/Recepcion
+		lineageTag: 1c1825a6-aaf9-482a-8318-c9a5c36c3aa9
+
+	measure IXR_TipoIncidente_Desgarre_Superficial = IF(ISBLANK([IXR_TipoIncidente_Desgarre_Superficial_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Desgarre_Superficial_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 77317589-f4cd-4c3c-93aa-1a2e6a0dc803
+
+	measure IXR_TipoIncidente_Deslizamiento = IF(ISBLANK([IXR_TipoIncidente_Deslizamiento_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Deslizamiento_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: a1759a57-c50b-44cc-ae13-9ac23709f9ae
+
+	measure IXR_TipoIncidente_Incendio_Estructural = IF(ISBLANK([IXR_TipoIncidente_Incendio_Estructural_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Incendio_Estructural_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 6558774a-c164-4e70-ac01-caf2089ef8bf
+
+	measure IXR_TipoIncidente_Colapso_Parcial = IF(ISBLANK([IXR_TipoIncidente_Colapso_Parcial_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Colapso_Parcial_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 92a30293-d235-475c-88d6-dc13191d2a46
+
+	measure IXR_TipoIncidente_Desbordamiento_Cuerpo_Agua = IF(ISBLANK([IXR_TipoIncidente_Desbordamiento_Cuerpo_Agua_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Desbordamiento_Cuerpo_Agua_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 3051c3d7-d618-4e8f-b279-9dc52f8465f5
+
+	measure IXR_TipoIncidente_Flujo = IF(ISBLANK([IXR_TipoIncidente_Flujo_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Flujo_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 60efdc52-64f2-4e47-b864-8c73b25813d0
+
+	measure IXR_TipoIncidente_Movimientos_Complejos = IF(ISBLANK([IXR_TipoIncidente_Movimientos_Complejos_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Movimientos_Complejos_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 80f2db97-1797-48ba-919c-9cef4bd63d5b
+
+	measure IXR_TipoIncidente_Flujos_Hiperconcentrados = IF(ISBLANK([IXR_TipoIncidente_Flujos_Hiperconcentrados_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Flujos_Hiperconcentrados_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 33436f7b-32f1-4a55-b8de-1c93f5433759
+
+	measure IXR_TipoIncidente_Caida_de_Rocas = IF(ISBLANK([IXR_TipoIncidente_Caida_de_Rocas_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Caida_de_Rocas_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 3639d1d5-c639-44af-b39f-a02682944a30
+
+	measure IXR_TipoIncidente_Redes_Alcantarillado = IF(ISBLANK([IXR_TipoIncidente_Redes_Alcantarillado_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Redes_Alcantarillado_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 54ea03ef-0438-449e-b55e-1ffd8190725a
+
+	measure IXR_TipoIncidente_Vendaval_Fuerza_Eolica = IF(ISBLANK([IXR_TipoIncidente_Vendaval_Fuerza_Eolica_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Vendaval_Fuerza_Eolica_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 985140c1-581e-466d-8c7a-d746dd313784
+
+	measure IXR_TipoIncidente_Desconfinamiento_Fundacion = IF(ISBLANK([IXR_TipoIncidente_Desconfinamiento_Fundacion_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Desconfinamiento_Fundacion_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 3d39234f-5bdc-4fa1-8386-79988a488714
+
+	measure IXR_TipoIncidente_Erosion_Lateral_Orillas = IF(ISBLANK([IXR_TipoIncidente_Erosion_Lateral_Orillas_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Erosion_Lateral_Orillas_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 791d3486-f5b6-41a7-99dc-58c4dc7c6a12
+
+	measure IXR_TipoIncidente_Flujos_De_Lodos = IF(ISBLANK([IXR_TipoIncidente_Flujos_De_Lodos_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Flujos_De_Lodos_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: c57e4c38-82e1-47bd-9301-0641893bc68d
+
+	measure IXR_TipoIncidente_Colapso_Total = IF(ISBLANK([IXR_TipoIncidente_Colapso_Total_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Colapso_Total_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 63f4b763-7abf-4f1d-8a8e-4905d0494191
+
+	measure IXR_TipoIncidente_Deterioro_Generalizado = IF(ISBLANK([IXR_TipoIncidente_Deterioro_Generalizado_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Deterioro_Generalizado_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 80a90652-1458-4660-a8fe-5ab9ed024c22
+
+	measure IXR_TipoIncidente_Subsidencia = IF(ISBLANK([IXR_TipoIncidente_Subsidencia_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Subsidencia_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 737bec51-bb20-4adf-a0a0-b34b8388ac01
+
+	measure IXR_TipoIncidente_Explosion_Tecnologica = IF(ISBLANK([IXR_TipoIncidente_Explosion_Tecnologica_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Explosion_Tecnologica_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: b72bd5f0-a36a-4a2f-bdc4-caa705ed25f6
+
+	measure IXR_TipoIncidente_Flujos_De_Detritos = IF(ISBLANK([IXR_TipoIncidente_Flujos_De_Detritos_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Flujos_De_Detritos_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: 9c5785f6-cd6c-49f8-ba13-1e047d9b0231
+
+	measure IXR_TipoIncidente_Actividad_Antripica = IF(ISBLANK([IXR_TipoIncidente_Actividad_Antripica_VAL]), "N/A", FORMAT([IXR_TipoIncidente_Actividad_Antripica_VAL], "#,##0"))
+		displayFolder: IxR/Tipo Incidente
+		lineageTag: cc7aa56f-9303-41ac-968c-26f1ecf1f8e9
+
+	measure PAO_Grafica_Afectacion_VAL =
+			VAR grupoSeleccionado = SELECTEDVALUE(Dim_Grafica_PAO[Grupo])
+			VAR segmentacionSeleccionada = SELECTEDVALUE(Dim_Grafica_PAO[Segmentacion])
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        grupoSeleccionado = "Género" && segmentacionSeleccionada = "Hombre", [PAO_Hombre_VAL],
+			        grupoSeleccionado = "Género" && segmentacionSeleccionada = "Mujer", [PAO_Mujer_VAL],
+			        grupoSeleccionado = "Género" && segmentacionSeleccionada = "Intersexual", [PAO_Intersexual_VAL],
+			        grupoSeleccionado = "Grupo etario" && segmentacionSeleccionada = "Menor de edad", [PAO_Menor_Edad_VAL],
+			        grupoSeleccionado = "Grupo etario" && segmentacionSeleccionada = "Adulto", [PAO_Adulto_VAL],
+			        grupoSeleccionado = "Grupo etario" && segmentacionSeleccionada = "Adulto mayor", [PAO_Adulto_Mayor_VAL],
+			        grupoSeleccionado = "Étnico" && segmentacionSeleccionada = "Ninguna", [PAO_Etnia_Ninguna_VAL],
+			        grupoSeleccionado = "Étnico" && segmentacionSeleccionada = "Afrodescendiente", [PAO_Etnia_Afrodescendiente_VAL],
+			        grupoSeleccionado = "Étnico" && segmentacionSeleccionada = "Indígena", [PAO_Etnia_Indigena_VAL],
+			        grupoSeleccionado = "Étnico" && segmentacionSeleccionada = "Negro", [PAO_Etnia_Negro_VAL],
+			        grupoSeleccionado = "Étnico" && segmentacionSeleccionada = "Sin dato", [PAO_Etnia_Sin_Dato_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "No tiene", [PAO_Discapacidad_No_Tiene_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Física", [PAO_Discapacidad_Fisica_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Psicosocial", [PAO_Discapacidad_Psicosocial_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Intelectual", [PAO_Discapacidad_Intelectual_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Múltiple", [PAO_Discapacidad_Multiple_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Visual", [PAO_Discapacidad_Visual_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Auditiva", [PAO_Discapacidad_Auditiva_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Desconocida", [PAO_Discapacidad_Desconocida_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Sin dato", [PAO_Discapacidad_Sin_Dato_VAL],
+			        BLANK()
+			    )
+		formatString: #,##0
+		displayFolder: PAO/Grafica
+		lineageTag: 7b71cb58-50d5-418c-a5d5-98c0a61bde52
+
+	measure PAO_Grafica_Afectacion_Analitica_VAL =
+			VAR grupoSeleccionado = SELECTEDVALUE(Dim_Grafica_PAO[Grupo])
+			VAR segmentacionSeleccionada = SELECTEDVALUE(Dim_Grafica_PAO[Segmentacion])
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        -- Genero (se muestran todas)
+			        grupoSeleccionado = "Género" && segmentacionSeleccionada = "Hombre", [PAO_Hombre_VAL],
+			        grupoSeleccionado = "Género" && segmentacionSeleccionada = "Mujer", [PAO_Mujer_VAL],
+			        grupoSeleccionado = "Género" && segmentacionSeleccionada = "Intersexual", [PAO_Intersexual_VAL],
+			
+			        -- Grupo etario (se muestran todas)
+			        grupoSeleccionado = "Grupo etario" && segmentacionSeleccionada = "Menor de edad", [PAO_Menor_Edad_VAL],
+			        grupoSeleccionado = "Grupo etario" && segmentacionSeleccionada = "Adulto", [PAO_Adulto_VAL],
+			        grupoSeleccionado = "Grupo etario" && segmentacionSeleccionada = "Adulto mayor", [PAO_Adulto_Mayor_VAL],
+			
+			        -- Etnico (solo poblacion etnica; se excluye Ninguna y Sin dato)
+			        grupoSeleccionado = "Étnico" && segmentacionSeleccionada = "Afrodescendiente", [PAO_Etnia_Afrodescendiente_VAL],
+			        grupoSeleccionado = "Étnico" && segmentacionSeleccionada = "Indígena", [PAO_Etnia_Indigena_VAL],
+			        grupoSeleccionado = "Étnico" && segmentacionSeleccionada = "Negro", [PAO_Etnia_Negro_VAL],
+			
+			        -- Discapacidad (solo personas con discapacidad; se excluye No tiene, Desconocida, Sin dato)
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Física", [PAO_Discapacidad_Fisica_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Psicosocial", [PAO_Discapacidad_Psicosocial_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Intelectual", [PAO_Discapacidad_Intelectual_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Múltiple", [PAO_Discapacidad_Multiple_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Visual", [PAO_Discapacidad_Visual_VAL],
+			        grupoSeleccionado = "Discapacidad" && segmentacionSeleccionada = "Auditiva", [PAO_Discapacidad_Auditiva_VAL],
+			
+			        BLANK()
+			    )
+		formatString: #,##0
+		displayFolder: PAO/Grafica
+		lineageTag: fd4dfee0-dd0f-4250-8122-2cf9f39741a6
+
+	measure PAO_Grafica_Afectacion_Analitica = IF(ISBLANK([PAO_Grafica_Afectacion_Analitica_VAL]), BLANK(), FORMAT([PAO_Grafica_Afectacion_Analitica_VAL], "#,##0"))
+		displayFolder: PAO/Grafica
+		lineageTag: 0f365a85-b671-4a9b-b5c7-a6afe08b689e
+
+	measure PAO_Grafica_Afectacion_Analitica_TotalGrupo_VAL = CALCULATE([PAO_Grafica_Afectacion_Analitica_VAL], ALLEXCEPT(Dim_Grafica_PAO, Dim_Grafica_PAO[Grupo]))
+		formatString: #,##0
+		displayFolder: PAO/Grafica
+		lineageTag: 41ce0c0e-d5d6-4175-ba47-1c979ea8dc80
+
+	measure PAO_Grafica_Afectacion_Analitica_Pct_Grupo_VAL = DIVIDE([PAO_Grafica_Afectacion_Analitica_VAL], [PAO_Grafica_Afectacion_Analitica_TotalGrupo_VAL])
+		formatString: 0.0%
+		displayFolder: PAO/Grafica
+		lineageTag: 634b3475-66b2-4f2a-84db-49c80b929995
+
+	measure PAO_Grafica_Afectacion_Analitica_Pct_Total_VAL = DIVIDE([PAO_Grafica_Afectacion_Analitica_VAL], [PAO_Total_Personas_VAL])
+		formatString: 0.0%
+		displayFolder: PAO/Grafica
+		lineageTag: 0b2b1fab-9bb9-4d49-823f-4526c7e3270b
+
+	measure PAO_Grafica_Afectacion_Analitica_Rank_VAL =
+			VAR grupoSeleccionado = SELECTEDVALUE(Dim_Grafica_PAO[Grupo])
+			RETURN
+			    IF(
+			        ISBLANK([PAO_Grafica_Afectacion_Analitica_VAL]),
+			        BLANK(),
+			        RANKX(
+			            FILTER(ALL(Dim_Grafica_PAO), Dim_Grafica_PAO[Grupo] = grupoSeleccionado),
+			            [PAO_Grafica_Afectacion_Analitica_VAL],
+			            ,
+			            DESC,
+			            DENSE
+			        )
+			    )
+		formatString: 0
+		displayFolder: PAO/Grafica
+		lineageTag: 7663da26-cc26-42b5-b021-7cfd793dfd23
+
+	measure PAO_Grafica_Afectacion_Analitica_Visible_VAL = IF(NOT(ISBLANK([PAO_Grafica_Afectacion_Analitica_VAL])) && [PAO_Grafica_Afectacion_Analitica_VAL] > 0, 1, BLANK())
+		formatString: 0
+		displayFolder: PAO/Grafica
+		lineageTag: 172eb068-c7d2-40c3-8bbb-75cce6b21a5b
+
+	measure PAO_Grafica_Afectacion_Analitica_Tooltip =
+			VAR valor = [PAO_Grafica_Afectacion_Analitica_VAL]
+			VAR pctGrupo = [PAO_Grafica_Afectacion_Analitica_Pct_Grupo_VAL]
+			VAR pctTotal = [PAO_Grafica_Afectacion_Analitica_Pct_Total_VAL]
+			RETURN
+			    IF(
+			        ISBLANK(valor),
+			        BLANK(),
+			        FORMAT(valor, "#,##0")
+			            & " | Grupo: " & FORMAT(pctGrupo, "0.0%")
+			            & " | Total: " & FORMAT(pctTotal, "0.0%")
+			    )
+		displayFolder: PAO/Grafica
+		lineageTag: e60fdc6f-5337-4aaa-8b38-500f772fd8cc
+
+	measure PAO_Grafica_Demografica_VAL =
+			VAR g = SELECTEDVALUE(Dim_Grafica_PAO[Grupo])
+			VAR s = SELECTEDVALUE(Dim_Grafica_PAO[Segmentacion])
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    -- Genero (solo Hombre y Mujer)
+			    g = "Género" && s = "Hombre", [PAO_Hombre_VAL],
+			    g = "Género" && s = "Mujer", [PAO_Mujer_VAL],
+			
+			    -- Grupo etario
+			    g = "Grupo etario" && s = "Menor de edad", [PAO_Menor_Edad_VAL],
+			    g = "Grupo etario" && s = "Adulto", [PAO_Adulto_VAL],
+			    g = "Grupo etario" && s = "Adulto mayor", [PAO_Adulto_Mayor_VAL],
+			
+			    -- Etnico (solo pertenencia etnica)
+			    g = "Étnico" && s = "Afrodescendiente", [PAO_Etnia_Afrodescendiente_VAL],
+			    g = "Étnico" && s = "Indígena", [PAO_Etnia_Indigena_VAL],
+			    g = "Étnico" && s = "Negro", [PAO_Etnia_Negro_VAL],
+			
+			    -- Discapacidad (solo tipos de discapacidad)
+			    g = "Discapacidad" && s = "Física", [PAO_Discapacidad_Fisica_VAL],
+			    g = "Discapacidad" && s = "Psicosocial", [PAO_Discapacidad_Psicosocial_VAL],
+			    g = "Discapacidad" && s = "Intelectual", [PAO_Discapacidad_Intelectual_VAL],
+			    g = "Discapacidad" && s = "Múltiple", [PAO_Discapacidad_Multiple_VAL],
+			    g = "Discapacidad" && s = "Visual", [PAO_Discapacidad_Visual_VAL],
+			    g = "Discapacidad" && s = "Auditiva", [PAO_Discapacidad_Auditiva_VAL],
+			
+			    BLANK()
+			)
+		formatString: #,##0
+		displayFolder: PAO/Grafica
+		lineageTag: 02bbfc58-8eb6-42fe-9482-4310274ee241
+
+	measure PAO_Grafica_Demografica_TotalGrupo_VAL = CALCULATE([PAO_Grafica_Demografica_VAL], ALLEXCEPT(Dim_Grafica_PAO, Dim_Grafica_PAO[Grupo]))
+		formatString: #,##0
+		displayFolder: PAO/Grafica
+		lineageTag: fce94313-0371-40cb-94d7-a68514ada097
+
+	measure PAO_Grafica_Demografica_Pct_Grupo_VAL = DIVIDE([PAO_Grafica_Demografica_VAL], [PAO_Grafica_Demografica_TotalGrupo_VAL])
+		formatString: 0.0%
+		displayFolder: PAO/Grafica
+		lineageTag: 83541a49-575c-4be8-ad33-e4d87ee7641d
+
+	measure PAO_Grafica_Demografica_Visible_VAL = IF(NOT(ISBLANK([PAO_Grafica_Demografica_VAL])) && [PAO_Grafica_Demografica_VAL] > 0, 1, BLANK())
+		formatString: 0
+		displayFolder: PAO/Grafica
+		lineageTag: d3415741-4e52-4f28-802a-f3ea713f9cb8
+
 	column Id
 		isHidden
 		lineageTag: ee6ca3f0-fc85-4bda-a77b-d890b9489803

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import re
+import unicodedata
 from pathlib import Path
 
 import pandas as pd
@@ -11,6 +13,228 @@ MODELO = BASE / "data" / "model" / "Modelo_Reporte_Paginas_2026.xlsx"
 SATC_VALID = BASE / "data" / "model" / "validacion_satc_2026_03_18.xlsx"
 ENTREGABLE_MODELO = BASE / "entregables" / "publicacion_nube_2026-03-20" / "02_datos_modelo" / "Modelo_Reporte_Paginas_2026.xlsx"
 DIM_COMITES_CSV = BASE / "data" / "model" / "Dim_Comites_Comisiones_2026.csv"
+EXCEL_MAESTRO_POWERBI = BASE / "data" / "model" / "Excel_Maestro_PowerBI.xlsx"
+CONSOLIDADO_COMITES_PREFERIDO = BASE / "data" / "model" / "CONSOLIDADO COMITES COMISIONES 03-2026.xlsx"
+CONSOLIDADO_COMITES_LEGACY = BASE / "data" / "model" / "CONSOLIDADO COMITES COMISIONES 03-2026_Construcciom.xlsx"
+
+
+def _get_consolidado_comites_path() -> Path:
+    # Prioriza el archivo solicitado por el usuario; mantiene compatibilidad con nombre legacy.
+    if CONSOLIDADO_COMITES_PREFERIDO.exists():
+        return CONSOLIDADO_COMITES_PREFERIDO
+    return CONSOLIDADO_COMITES_LEGACY
+
+
+def _strip_accents(value: str) -> str:
+    normalized = unicodedata.normalize("NFD", value)
+    return "".join(ch for ch in normalized if unicodedata.category(ch) != "Mn")
+
+
+def _normalize_spaces(value: str) -> str:
+    return re.sub(r"\s+", " ", value).strip()
+
+
+def _normalize_comite_name(value: object) -> str:
+    text = _normalize_spaces(str(value or "").replace("\xa0", " "))
+    if not text or text.lower() in {"nan", "none"}:
+        return ""
+    text = _strip_accents(text).upper()
+    text = re.sub(r"[;|,]+$", "", text).strip()
+    return text
+
+def _normalize_header(value: object) -> str:
+    text = _normalize_spaces(str(value or "").replace("\xa0", " ").replace("\n", " "))
+    text = _strip_accents(text).lower()
+    return text
+
+
+def _extract_code_from_sheet_name(sheet_name: str) -> int | None:
+    match = re.search(r"(\d{1,3})", str(sheet_name or ""))
+    if match:
+        return int(match.group(1))
+    return None
+
+
+def _parse_comuna_code(raw_code: object, raw_name: object) -> int | None:
+    code = pd.to_numeric(raw_code, errors="coerce")
+    if pd.notna(code) and int(code) > 0:
+        return int(code)
+
+    name = _strip_accents(_normalize_spaces(str(raw_name or "").lower()))
+    if not name or name in {"nan", "none"}:
+        return None
+
+    match = re.search(r"\b(\d{1,3})\b", name)
+    if match:
+        return int(match.group(1))
+
+    correg_map = {
+        "palmitas": 50,
+        "san cristobal": 60,
+        "altavista": 70,
+        "san antonio de prado": 80,
+        "santa elena": 90,
+    }
+    for key, value in correg_map.items():
+        if key in name:
+            return value
+
+    comuna_map = {
+        "popular": 1,
+        "santa cruz": 2,
+        "manrique": 3,
+        "aranjuez": 4,
+        "castilla": 5,
+        "doce de octubre": 6,
+        "robledo": 7,
+        "villa hermosa": 8,
+        "buenos aires": 9,
+        "la candelaria": 10,
+        "laureles estadio": 11,
+        "la america": 12,
+        "san javier": 13,
+        "el poblado": 14,
+        "guayabal": 15,
+        "belen": 16,
+    }
+    for key, value in comuna_map.items():
+        if key in name:
+            return value
+    return None
+
+
+def _build_dim_comites_desde_consolidado_confiable() -> pd.DataFrame | None:
+    expected_cols = ["comuna_cod", "comite_comision_nombre", "comite_comision_etiqueta"]
+    consolidado_path = _get_consolidado_comites_path()
+    if not consolidado_path.exists():
+        return None
+
+    try:
+        xls = pd.ExcelFile(consolidado_path)
+    except Exception:
+        return None
+
+    rows: list[dict[str, object]] = []
+    for sheet in xls.sheet_names:
+        sh = _normalize_header(sheet)
+        if "resumen" in sh or sh == "consolidado":
+            continue
+
+        try:
+            # Intenta primero con headers estándar
+            df = pd.read_excel(consolidado_path, sheet_name=sheet)
+        except Exception:
+            continue
+
+        df = df.fillna("")
+        headers = list(df.columns)
+
+        # Intenta encontrar columnas por nombre (para hojas con headers claros como COMUNA 2, COMUNA 3)
+        comuna_col = None
+        name_col = None
+
+        for c in headers:
+            hc = _normalize_header(c)
+            if comuna_col is None and (hc == "comuna" or hc.startswith("comuna ")):
+                comuna_col = c
+            if name_col is None and ("nombre" in hc and ("comision" in hc or "ccgrd" in hc)):
+                name_col = c
+
+        # Si no encuentra columnas por nombre, intenta leer sin headers para hojas tipo C1-C16
+        if name_col is None:
+            try:
+                df_raw = pd.read_excel(consolidado_path, sheet_name=sheet, header=None)
+                if len(df_raw) > 1 and len(df_raw.columns) >= 8:
+                    # En hojas tipo C, la fila 0 es vacía (NaN) y la fila 1 tiene los headers
+                    # Buscar "Nombre CCGRD" en la fila 1
+                    for col_idx, val in enumerate(df_raw.iloc[1]):
+                        val_str = str(val).lower().replace(" ", "")
+                        if "nombre" in val_str and "ccgrd" in val_str:
+                            name_col = col_idx
+                            # Usar df desde la fila 2 en adelante
+                            df = df_raw.iloc[2:].reset_index(drop=True)
+                            break
+            except Exception:
+                pass
+
+        if name_col is None:
+            continue
+
+        sheet_code = _extract_code_from_sheet_name(sheet)
+
+        for _, r in df.iterrows():
+            raw_name = r.get(name_col, "")
+            nombre = _normalize_comite_name(raw_name)
+            if not nombre:
+                continue
+
+            comuna_raw = r.get(comuna_col, "") if comuna_col else ""
+            comuna_cod = _parse_comuna_code(sheet_code, comuna_raw)
+            if comuna_cod is None:
+                comuna_cod = _parse_comuna_code(None, comuna_raw)
+            if comuna_cod is None:
+                comuna_cod = _parse_comuna_code(None, sheet)
+            if comuna_cod is None or int(comuna_cod) <= 0:
+                continue
+
+            rows.append({
+                "comuna_cod": int(comuna_cod),
+                "comite_comision_nombre": nombre,
+            })
+
+    if not rows:
+        return None
+
+    work = pd.DataFrame(rows)
+    work = work.drop_duplicates(subset=["comuna_cod", "comite_comision_nombre"]).copy()
+    work["comite_comision_etiqueta"] = work.apply(
+        lambda r: f"C{int(r['comuna_cod'])} - {r['comite_comision_nombre']}", axis=1
+    )
+    work = work.sort_values(["comuna_cod", "comite_comision_nombre"]).reset_index(drop=True)
+    return work[expected_cols]
+
+
+def _build_dim_comites_desde_excel_maestro() -> pd.DataFrame | None:
+    expected_cols = ["comuna_cod", "comite_comision_nombre", "comite_comision_etiqueta"]
+    if not EXCEL_MAESTRO_POWERBI.exists():
+        return None
+
+    try:
+        raw = pd.read_excel(EXCEL_MAESTRO_POWERBI, sheet_name="Comites")
+    except Exception:
+        return None
+
+    col_cod = "Comuna_Cod" if "Comuna_Cod" in raw.columns else None
+    col_comuna = "Comuna" if "Comuna" in raw.columns else None
+    col_nombre = "Nombre_Comite" if "Nombre_Comite" in raw.columns else None
+    col_estado = "Estado" if "Estado" in raw.columns else None
+
+    if col_nombre is None:
+        return None
+
+    work = pd.DataFrame()
+    work["comuna_cod"] = raw.apply(
+        lambda row: _parse_comuna_code(
+            row.get(col_cod) if col_cod else None,
+            row.get(col_comuna) if col_comuna else None,
+        ),
+        axis=1,
+    )
+    work["comite_comision_nombre"] = raw[col_nombre].apply(_normalize_comite_name)
+
+    if col_estado:
+        estado_norm = raw[col_estado].astype(str).str.strip().str.lower()
+        work = work[~estado_norm.isin({"inactivo", "inactive"})]
+
+    work = work[work["comuna_cod"].notna()]
+    work["comuna_cod"] = work["comuna_cod"].astype(int)
+    work = work[(work["comuna_cod"] > 0) & (work["comite_comision_nombre"] != "")]
+    work = work.drop_duplicates(subset=["comuna_cod", "comite_comision_nombre"]).copy()
+    work["comite_comision_etiqueta"] = work.apply(
+        lambda r: f"C{int(r['comuna_cod'])} - {r['comite_comision_nombre']}", axis=1
+    )
+    work = work.sort_values(["comuna_cod", "comite_comision_nombre"]).reset_index(drop=True)
+    return work[expected_cols]
 
 
 def build_satc_tables() -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -65,10 +289,81 @@ def build_dim_semilleros_vacia() -> pd.DataFrame:
     )
 
 
-def build_dim_comites_desde_csv() -> pd.DataFrame:
-    if DIM_COMITES_CSV.exists():
-        return pd.read_csv(DIM_COMITES_CSV)
-    return pd.DataFrame(columns=["Nombre_Comite", "Comuna_Cod", "Comuna_Nombre", "Tipo"])
+def build_dim_comites_desde_fuente() -> pd.DataFrame:
+    # Prioridad 1: fuente confiable solicitada por usuario (consolidado por comuna/corregimiento).
+    from_consolidado = _build_dim_comites_desde_consolidado_confiable()
+    if from_consolidado is not None and len(from_consolidado) > 0:
+        from_consolidado.to_csv(DIM_COMITES_CSV, index=False, encoding="utf-8-sig")
+        print(f"Fuente comites usada: {_get_consolidado_comites_path()}")
+        print(f"CSV actualizado: {DIM_COMITES_CSV} ({len(from_consolidado)} filas)")
+        return from_consolidado
+
+    # Prioridad 2: base consolidada para Power BI (usa Comuna/Comuna_Cod).
+    from_maestro = _build_dim_comites_desde_excel_maestro()
+    if from_maestro is not None and len(from_maestro) > 0:
+        from_maestro.to_csv(DIM_COMITES_CSV, index=False, encoding="utf-8-sig")
+        print(f"Fuente comites usada: {EXCEL_MAESTRO_POWERBI} [Comites]")
+        print(f"CSV actualizado: {DIM_COMITES_CSV} ({len(from_maestro)} filas)")
+        return from_maestro
+
+    patterns = ["*comites*comisiones*2026*.xls*", "*comit*comision*2026*.xls*"]
+    candidates: list[Path] = []
+    for pattern in patterns:
+        candidates.extend((BASE / "data" / "model").glob(pattern))
+    candidates = sorted({p for p in candidates if p.is_file()}, key=lambda p: p.stat().st_mtime, reverse=True)
+
+    expected_cols = ["comuna_cod", "comite_comision_nombre", "comite_comision_etiqueta"]
+
+    if not candidates:
+        if DIM_COMITES_CSV.exists():
+            return pd.read_csv(DIM_COMITES_CSV)
+        return pd.DataFrame(columns=expected_cols)
+
+    source = candidates[0]
+    try:
+        raw = pd.read_excel(source, sheet_name=0)
+    except Exception:
+        if DIM_COMITES_CSV.exists():
+            return pd.read_csv(DIM_COMITES_CSV)
+        return pd.DataFrame(columns=expected_cols)
+
+    comuna_col = "comuna_cod" if "comuna_cod" in raw.columns else None
+    comuna_name_col = "comuna_nom" if "comuna_nom" in raw.columns else None
+    nombre_col = "nom_titulo" if "nom_titulo" in raw.columns else None
+    estado_col = "estado" if "estado" in raw.columns else None
+
+    if nombre_col is None:
+        if DIM_COMITES_CSV.exists():
+            return pd.read_csv(DIM_COMITES_CSV)
+        return pd.DataFrame(columns=expected_cols)
+
+    work = pd.DataFrame()
+    work["comuna_cod"] = raw.apply(
+        lambda row: _parse_comuna_code(
+            row.get(comuna_col) if comuna_col else None,
+            row.get(comuna_name_col) if comuna_name_col else None,
+        ),
+        axis=1,
+    )
+    work["comite_comision_nombre"] = raw[nombre_col].apply(_normalize_comite_name)
+
+    if estado_col:
+        estado_norm = raw[estado_col].astype(str).str.strip().str.lower()
+        work = work[~estado_norm.isin({"inactivo", "inactive"})]
+
+    work = work[work["comuna_cod"].notna()]
+    work["comuna_cod"] = work["comuna_cod"].astype(int)
+    work = work[(work["comuna_cod"] > 0) & (work["comite_comision_nombre"] != "")]
+    work = work.drop_duplicates(subset=["comuna_cod", "comite_comision_nombre"]).copy()
+    work["comite_comision_etiqueta"] = work.apply(
+        lambda r: f"C{int(r['comuna_cod'])} - {r['comite_comision_nombre']}", axis=1
+    )
+    work = work.sort_values(["comuna_cod", "comite_comision_nombre"]).reset_index(drop=True)
+
+    work.to_csv(DIM_COMITES_CSV, index=False, encoding="utf-8-sig")
+    print(f"Fuente comites usada: {source}")
+    print(f"CSV actualizado: {DIM_COMITES_CSV} ({len(work)} filas)")
+    return work[expected_cols]
 
 
 def write_df_to_sheet(wb, sheet_name: str, df: pd.DataFrame) -> None:
@@ -141,7 +436,7 @@ def main() -> None:
     write_df_to_sheet(wb, "Dim_Semilleros_Confiable", sem_conf)
 
     # Comités/Comisiones requeridos por consultas del PBIX
-    write_df_to_sheet(wb, "Dim_Comites_Comisiones_2026", build_dim_comites_desde_csv())
+    write_df_to_sheet(wb, "Dim_Comites_Comisiones_2026", build_dim_comites_desde_fuente())
 
     wb.save(MODELO)
 

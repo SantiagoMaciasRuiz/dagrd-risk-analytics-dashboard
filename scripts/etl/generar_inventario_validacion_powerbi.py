@@ -9,6 +9,7 @@ from pathlib import Path
 BASE = Path(r"c:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard")
 MED_FILE = BASE / "powerbi" / "tmdl_live" / "tables" / "_Medidas.tmdl"
 LAYOUT_FILE = BASE / "_pbix_temp" / "Report" / "Layout"
+ALT_LAYOUT_FILE = BASE / "Tableros" / "_pbix_extract_temp" / "Report" / "Layout"
 OUT_MEASURES = BASE / "data" / "reference" / "powerbi_medidas_mapeo_2026.csv"
 OUT_MEASURES_USED = BASE / "data" / "reference" / "powerbi_medidas_usadas_en_visuales_2026.csv"
 OUT_VISUALS = BASE / "data" / "reference" / "powerbi_consultas_visuales_2026.csv"
@@ -43,7 +44,8 @@ def parse_measures() -> list[dict[str, str]]:
 
 
 def parse_layout() -> list[dict[str, str]]:
-    raw_bytes = LAYOUT_FILE.read_bytes()
+    layout_path = LAYOUT_FILE if LAYOUT_FILE.exists() else ALT_LAYOUT_FILE
+    raw_bytes = layout_path.read_bytes()
     if b"\x00" in raw_bytes[:256]:
         raw = raw_bytes.decode("utf-16-le", errors="ignore")
     else:

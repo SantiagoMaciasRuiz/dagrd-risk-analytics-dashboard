@@ -116,6 +116,21 @@ $assemblyRoots = @(
     "$env:ProgramFiles\\Microsoft.NET\\ADOMD.NET\\150"
 )
 
+$localNugetRoot = Join-Path $PSScriptRoot "..\\..\\data\\nuget"
+if (Test-Path $localNugetRoot) {
+    $nugetLibDirs = Get-ChildItem -Path $localNugetRoot -Directory -Filter "Microsoft.AnalysisServices.retail.amd64*" -ErrorAction SilentlyContinue |
+        Sort-Object Name -Descending |
+        ForEach-Object {
+            $libPath = Join-Path $_.FullName "lib"
+            if (Test-Path $libPath) {
+                Get-ChildItem -Path $libPath -Directory -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
+            }
+        }
+    if ($nugetLibDirs) {
+        $assemblyRoots += $nugetLibDirs
+    }
+}
+
 Import-AnalysisAssembly -AssemblyName "Microsoft.AnalysisServices.Core" -CandidatePaths ($assemblyRoots | ForEach-Object { Join-Path $_ "Microsoft.AnalysisServices.Core.dll" })
 Import-AnalysisAssembly -AssemblyName "Microsoft.AnalysisServices" -CandidatePaths ($assemblyRoots | ForEach-Object { Join-Path $_ "Microsoft.AnalysisServices.dll" })
 Import-AnalysisAssembly -AssemblyName "Microsoft.AnalysisServices.Tabular" -CandidatePaths ($assemblyRoots | ForEach-Object { Join-Path $_ "Microsoft.AnalysisServices.Tabular.dll" })

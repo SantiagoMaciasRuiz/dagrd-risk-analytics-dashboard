@@ -9,7 +9,7 @@
   - `scripts/etl/` - Scripts de extracción y transformación
   - `scripts/qa/` - Scripts de validación y análisis
   - `scripts/powerbi/` - Scripts de generación de medidas
-  - `scripts/dax/` - Definiciones de medidas DAX
+  - `scripts/dax/` - Definiciones de medidas DAX   
 
 #### Nueva Tabla: Dim_Semilleros
 - ✅ Tabla confiable con 20 semilleros DAGRD

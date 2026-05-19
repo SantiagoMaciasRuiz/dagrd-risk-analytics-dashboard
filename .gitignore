@@ -17,6 +17,18 @@ Thumbs.db
 .tmp_*.py
 *.tmp
 *.log
+*.bak
+*.old
+*.orig
+
+# Python build/cache artifacts
+*.egg-info/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Jupyter artifacts
+.ipynb_checkpoints/
 
 # Excel lock and backup files
 ~$*.xlsx
@@ -30,9 +42,25 @@ Tableros/**/AnalysisServicesWorkspace*/
 
 # Power BI binaries (keep source scripts/TMDL in repo)
 *.pbix
+*.pbix.backup
+*_BACKUP.pbix
+
+# Power BI/Excel generated temporary files
+*.tmp.xlsx
+*.tmp.xls
 
 # Large local deliverables/generated bundles
 entregables/publicacion_nube_2026-03-20/01_pbix/
+entregables/*.zip
+entregables/Corte */
+entregables/publicacion_nube_2026-04-29/
+
+# Local package dumps / vendor binaries
+data/nuget/
+
+# Local debug/legacy staging (keep scripts but avoid accidental dumps)
+scripts/legacy/**/*.csv
+scripts/legacy/**/*.xlsx
 
 # Optional local data dumps (uncomment if needed)
 # data/raw/

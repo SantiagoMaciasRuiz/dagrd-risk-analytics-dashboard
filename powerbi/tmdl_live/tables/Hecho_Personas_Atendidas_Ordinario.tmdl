@@ -1,0 +1,211 @@
+table Hecho_Personas_Atendidas_Ordinario
+	lineageTag: caa7aaa6-88d3-4fbe-a8a0-78b87e87b134
+
+	column idintegrante
+		dataType: string
+		lineageTag: 9c5cea93-4398-43d4-9d03-3deefc2379db
+		sourceColumn: idintegrante
+
+	column sexo
+		dataType: string
+		lineageTag: 7e4cf284-e478-409a-bca0-2d546713d820
+		sourceColumn: sexo
+
+	column tipo_edad
+		dataType: string
+		lineageTag: ff4da798-21e5-41f7-b447-d5716461533a
+		sourceColumn: tipo_edad
+
+	column etnia
+		dataType: string
+		lineageTag: 8bf1abf3-c148-44fb-815e-47687a30512a
+		sourceColumn: etnia
+
+	column discapacidad
+		dataType: string
+		lineageTag: f891eebb-6d00-4f5c-8c55-60088e484b79
+		sourceColumn: discapacidad
+
+	column campesino
+		dataType: string
+		lineageTag: 43b70de6-ed57-4000-af36-b01447d6ac24
+		sourceColumn: campesino
+
+	column desplazado
+		dataType: string
+		lineageTag: b5e035cb-c4d3-4ac2-9ab5-1d80c8e5b0f4
+		sourceColumn: desplazado
+
+	column victima
+		dataType: string
+		lineageTag: 66440491-1a92-4adf-8edc-1c934ac74251
+		sourceColumn: victima
+
+	column comuna_texto
+		dataType: string
+		lineageTag: 8a70787f-b5ff-4888-976a-0dd24fd8da7c
+		sourceColumn: comuna_texto
+
+	column comuna_cod
+		dataType: int64
+		lineageTag: 39f79976-898b-4c99-a950-9b66eaa0361a
+		sourceColumn: comuna_cod
+
+	column fecha_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: a1b2c3d4-e5f6-47g8-9hij-k0lmnopqrst1
+		sourceColumn: fecha_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column TIPO_FICHA
+		dataType: string
+		lineageTag: f51ca9cd-52a8-4e1c-8776-343fc22d946d
+		summarizeBy: none
+		sourceColumn: TIPO_FICHA
+
+		annotation SummarizationSetBy = Automatic
+
+	column NACIONALIDAD
+		dataType: string
+		lineageTag: d9b81c8a-2510-46b0-b1ff-a05c9cf27e60
+		summarizeBy: none
+		sourceColumn: NACIONALIDAD
+
+		annotation SummarizationSetBy = Automatic
+
+	column EDAD
+		dataType: string
+		lineageTag: ce91a394-4409-4962-94a5-2bbedff04423
+		summarizeBy: none
+		sourceColumn: EDAD
+
+		annotation SummarizationSetBy = Automatic
+
+	column BARRIO
+		dataType: string
+		lineageTag: 68c52d4a-ff1b-48d0-a5d2-2bab21d6eac0
+		summarizeBy: none
+		sourceColumn: BARRIO
+
+		annotation SummarizationSetBy = Automatic
+
+	column ORIENTACION_SEXUAL
+		dataType: string
+		lineageTag: 108b1714-6a41-4977-8b9a-c0101727fc44
+		summarizeBy: none
+		sourceColumn: ORIENTACION_SEXUAL
+
+		annotation SummarizationSetBy = Automatic
+
+	column IDENTIDAD_GENERO
+		dataType: string
+		lineageTag: f8d488a5-f213-4b27-8664-c7f0cb960c3a
+		summarizeBy: none
+		sourceColumn: IDENTIDAD_GENERO
+
+		annotation SummarizationSetBy = Automatic
+
+	column ESTADO_CIVIL
+		dataType: string
+		lineageTag: 7ff6928a-5c34-41ed-a7f6-cbae9df4179e
+		summarizeBy: none
+		sourceColumn: ESTADO_CIVIL
+
+		annotation SummarizationSetBy = Automatic
+
+	column GESTANTE
+		dataType: string
+		lineageTag: bc313413-3831-48a5-9d5c-06dd98422bac
+		summarizeBy: none
+		sourceColumn: GESTANTE
+
+		annotation SummarizationSetBy = Automatic
+
+	column ESCOLARIDAD
+		dataType: string
+		lineageTag: 00be17f5-3e27-4307-b50d-ceb1c19dcab6
+		summarizeBy: none
+		sourceColumn: ESCOLARIDAD
+
+		annotation SummarizationSetBy = Automatic
+
+	column PARENTESCO
+		dataType: string
+		lineageTag: f5378736-e163-4644-8c98-8dce502dc771
+		summarizeBy: none
+		sourceColumn: PARENTESCO
+
+		annotation SummarizationSetBy = Automatic
+
+	column REGIMEN_SALUD
+		dataType: string
+		lineageTag: 4488491b-d3d2-4473-aba8-8f25358c85cd
+		summarizeBy: none
+		sourceColumn: REGIMEN_SALUD
+
+		annotation SummarizationSetBy = Automatic
+
+	column ENFERMEDADES
+		dataType: string
+		lineageTag: 0009c9ad-7700-438a-86ea-aebfa0608fc3
+		summarizeBy: none
+		sourceColumn: ENFERMEDADES
+
+		annotation SummarizationSetBy = Automatic
+
+	column ACTIVIDAD
+		dataType: string
+		lineageTag: bd1df095-cd3b-404f-aebe-a802c248d856
+		summarizeBy: none
+		sourceColumn: ACTIVIDAD
+
+		annotation SummarizationSetBy = Automatic
+
+	column OCUPACION
+		dataType: string
+		lineageTag: ce17b5bd-8091-4114-a084-8caf4127d89c
+		summarizeBy: none
+		sourceColumn: OCUPACION
+
+		annotation SummarizationSetBy = Automatic
+
+	column SISBENIZADO
+		dataType: string
+		lineageTag: c764aa26-2dba-4ec4-97dc-06b5f255eae7
+		summarizeBy: none
+		sourceColumn: SISBENIZADO
+
+		annotation SummarizationSetBy = Automatic
+
+	column TIENE_UNIDAD_PRODUCTIVA
+		dataType: string
+		lineageTag: 9babd3ac-7159-4615-96cf-de283ef0053d
+		summarizeBy: none
+		sourceColumn: TIENE_UNIDAD_PRODUCTIVA
+
+		annotation SummarizationSetBy = Automatic
+
+	column CUAL_UNIDAD_PRODUCTIVA
+		dataType: string
+		lineageTag: b0d51551-6ec6-4d1f-809b-aa021ce8a606
+		summarizeBy: none
+		sourceColumn: CUAL_UNIDAD_PRODUCTIVA
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Hecho_Personas_Atendidas_Ordinario = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\BD PERSONAS ATENDIDAS ORDINARIO 01-01-2025 A 31-01-2026.xlsx"), null, true),
+				    Personas = Origen{[Item="personas ordinario",Kind="Sheet"]}[Data],
+				    Encabezados = Table.PromoteHeaders(Personas, [PromoteAllScalars=true]),
+				    Renombradas = Table.RenameColumns(Encabezados, {{"idintegrante", "idintegrante"}, {"SEXO", "sexo"}, {"TIPO_EDAD", "tipo_edad"}, {"ETNIA", "etnia"}, {"DISCAPACIDAD", "discapacidad"}, {"CAMPESINO", "campesino"}, {"DESPLAZADO", "desplazado"}, {"VICTIMA", "victima"}, {"COMUNA", "comuna_texto"}}),
+				    Tipos = Table.TransformColumnTypes(Renombradas, {{"idintegrante", type text}, {"sexo", type text}, {"tipo_edad", type text}, {"etnia", type text}, {"discapacidad", type text}, {"campesino", type text}, {"desplazado", type text}, {"victima", type text}, {"comuna_texto", type text}}),
+				    ComunaCod = Table.AddColumn(Tipos, "comuna_cod", each let txt = Text.Upper(Text.Trim(Text.From([comuna_texto]))), digits = Text.Select(txt, {"0".."9"}) in if digits <> "" then Number.FromText(digits) else null, Int64.Type),
+				    FechaDate = Table.AddColumn(ComunaCod, "fecha_date", each #date(2025, 7, 1), type date)
+				in
+				    FechaDate
+

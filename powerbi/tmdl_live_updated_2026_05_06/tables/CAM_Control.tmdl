@@ -1,0 +1,38 @@
+table CAM_Control
+	lineageTag: a080df89-5258-4b0c-b9fd-d4b34572ab47
+
+	column cam_activos_total
+		dataType: int64
+		lineageTag: 06382a6e-4b6e-4567-a980-6a745ca7045f
+		summarizeBy: none
+		sourceColumn: cam_activos_total
+
+	column zonas_cam_total
+		dataType: int64
+		lineageTag: c76b7f08-c982-47ef-a37b-fa23a9d43674
+		summarizeBy: none
+		sourceColumn: zonas_cam_total
+
+	column empresas_unicas_global
+		dataType: int64
+		lineageTag: 48e7b49c-73cb-4383-abac-0f9bc9e4fb22
+		summarizeBy: none
+		sourceColumn: empresas_unicas_global
+
+	column empresas_unicas_suma_por_zona
+		dataType: int64
+		lineageTag: 8faf666e-b01d-4cc3-9e4d-565ab0f13c37
+		summarizeBy: none
+		sourceColumn: empresas_unicas_suma_por_zona
+
+	partition CAM_Control = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\Modelo_Reporte_Paginas_2026.xlsx"), null, true),
+				    CAM_Control_Sheet = Origen{[Item="CAM_Control",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(CAM_Control_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"cam_activos_total", Int64.Type}, {"zonas_cam_total", Int64.Type}, {"empresas_unicas_global", Int64.Type}, {"empresas_unicas_suma_por_zona", Int64.Type}})
+				in
+				    #"Tipo cambiado"
+

@@ -1,0 +1,55 @@
+table CAM_Detalle
+	lineageTag: 328660fb-5263-43c4-b6a8-a00e71e69e29
+
+	column cam_activo_id
+		dataType: int64
+		lineageTag: a51b7c66-3d57-4d1b-a0d0-2895a4f0ddf9
+		summarizeBy: none
+		sourceColumn: cam_activo_id
+
+	column zona_cam
+		dataType: string
+		lineageTag: 059297d1-3260-4f69-81c7-45ed1785c292
+		summarizeBy: none
+		sourceColumn: zona_cam
+
+	column empresa
+		dataType: string
+		lineageTag: b9dc1012-c35f-419a-aebf-332fe159fe6f
+		summarizeBy: none
+		sourceColumn: empresa
+
+	column empresa_normalizada
+		dataType: string
+		lineageTag: d5140bad-0b7f-4cba-bd7c-9fc8c7feda47
+		summarizeBy: none
+		sourceColumn: empresa_normalizada
+
+	column fuente_archivo
+		dataType: string
+		lineageTag: f7c522b1-e7ea-4d9b-9954-190f9641f978
+		summarizeBy: none
+		sourceColumn: fuente_archivo
+
+		annotation SummarizationSetBy = Automatic
+
+	column fuente_hoja
+		dataType: string
+		lineageTag: 9c03dc8e-f285-4ed3-bfff-2d79b8fbef58
+		summarizeBy: none
+		sourceColumn: fuente_hoja
+
+		annotation SummarizationSetBy = Automatic
+
+	partition CAM_Detalle = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\Modelo_Reporte_Paginas_2026.xlsx"), null, true),
+				    CAM_Detalle_Sheet = Origen{[Item="CAM_Detalle",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(CAM_Detalle_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"cam_activo_id", Int64.Type}, {"zona_cam", type text}, {"empresa_cam", type text}, {"empresa_cam_norm", type text}}),
+				    #"Columnas renombradas" = Table.RenameColumns(#"Tipo cambiado",{{"empresa_cam", "empresa"}, {"empresa_cam_norm", "empresa_normalizada"}})
+				in
+				    #"Columnas renombradas"
+
