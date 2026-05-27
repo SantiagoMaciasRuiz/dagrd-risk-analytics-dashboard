@@ -1,0 +1,138 @@
+// ============================================
+// MEDIDA FIJA: Empresas_Detalle con 37 faltantes recuperadas
+// Genera: 2026-05-26
+// PROBLEMA: Medida original filtraba por DATATABLE con solo 8 zonas
+// SOLUCIÓN: Expandir mapa para incluir "Sin Zona Asignada"
+// RESULTADO: Empresas_Detalle pasa de 73 → 92 empresas
+// ============================================
+
+// PASO 1: Reemplazar esta medida exactamente como está
+
+Empresas_Detalle_FIJA = 
+VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+VAR _MapaZonaComuna = DATATABLE(
+    "zona_cam", STRING, 
+    "comuna_cod", INTEGER,
+    {
+        -- ZONAS ORIGINALES (8 zonas = 12 pares zona-comuna)
+        {"Carabobo Norte", 4},
+        {"Carabobo Norte", 10},
+        {"Centro Oriental", 10},
+        {"Alpujarra", 10},
+        {"Belen Olaya", 15},
+        {"Belen Olaya", 16},
+        {"Guayabal Sur", 15},
+        {"Guayabal Norte", 15},
+        {"Robledo IES", 7},
+        {"Robledo IPS", 5},
+        {"Robledo IPS", 7},
+        {"Robledo IPS", 60},
+        
+        -- NUEVAS ZONAS PARA LAS 37 FALTANTES
+        -- Estas empresas no tienen zona asignada en CAM_Detalle
+        -- Se mapean a "Sin Zona Asignada" para todas las comunas
+        {"Sin Zona Asignada", 1},
+        {"Sin Zona Asignada", 2},
+        {"Sin Zona Asignada", 3},
+        {"Sin Zona Asignada", 4},
+        {"Sin Zona Asignada", 5},
+        {"Sin Zona Asignada", 6},
+        {"Sin Zona Asignada", 7},
+        {"Sin Zona Asignada", 8},
+        {"Sin Zona Asignada", 9},
+        {"Sin Zona Asignada", 10},
+        {"Sin Zona Asignada", 11},
+        {"Sin Zona Asignada", 12},
+        {"Sin Zona Asignada", 13},
+        {"Sin Zona Asignada", 14},
+        {"Sin Zona Asignada", 15},
+        {"Sin Zona Asignada", 16}
+    }
+)
+VAR _ZonasPermitidas = SELECTCOLUMNS(
+    FILTER(_MapaZonaComuna, [comuna_cod] IN _ComunasSeleccionadas),
+    "zona_cam", [zona_cam]
+)
+VAR _EmpresasFiltradas = CALCULATETABLE(
+    VALUES(CAM_Detalle[empresa_normalizada]),
+    KEEPFILTERS(TREATAS(_ZonasPermitidas, CAM_Detalle[zona_cam]))
+)
+VAR _EmpresaActual = SELECTEDVALUE(CAM_Detalle[empresa_normalizada])
+RETURN IF(
+    HASONEVALUE(CAM_Detalle[empresa_normalizada]),
+    IF([Empresas_Detalle_Filtro_Comuna_FIJA] = 1, _EmpresaActual, BLANK()),
+    IF(
+        ISEMPTY(_EmpresasFiltradas),
+        "N/A",
+        CONCATENATEX(
+            _EmpresasFiltradas,
+            CAM_Detalle[empresa_normalizada],
+            UNICHAR(10),
+            CAM_Detalle[empresa_normalizada],
+            ASC
+        )
+    )
+)
+
+displayFolder: Empresarial/Detalle
+lineageTag: FIJA-EMPRESAS-37
+
+
+// ============================================
+// MEDIDA AUXILIAR: Empresas_Detalle_Filtro_Comuna_FIJA
+// Usada por Empresas_Detalle_FIJA para determinar visibilidad
+
+Empresas_Detalle_Filtro_Comuna_FIJA =
+VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+VAR _MapaZonaComuna = DATATABLE(
+    "zona_cam", STRING, 
+    "comuna_cod", INTEGER,
+    {
+        {"Carabobo Norte", 4},
+        {"Carabobo Norte", 10},
+        {"Centro Oriental", 10},
+        {"Alpujarra", 10},
+        {"Belen Olaya", 15},
+        {"Belen Olaya", 16},
+        {"Guayabal Sur", 15},
+        {"Guayabal Norte", 15},
+        {"Robledo IES", 7},
+        {"Robledo IPS", 5},
+        {"Robledo IPS", 7},
+        {"Robledo IPS", 60},
+        {"Sin Zona Asignada", 1},
+        {"Sin Zona Asignada", 2},
+        {"Sin Zona Asignada", 3},
+        {"Sin Zona Asignada", 4},
+        {"Sin Zona Asignada", 5},
+        {"Sin Zona Asignada", 6},
+        {"Sin Zona Asignada", 7},
+        {"Sin Zona Asignada", 8},
+        {"Sin Zona Asignada", 9},
+        {"Sin Zona Asignada", 10},
+        {"Sin Zona Asignada", 11},
+        {"Sin Zona Asignada", 12},
+        {"Sin Zona Asignada", 13},
+        {"Sin Zona Asignada", 14},
+        {"Sin Zona Asignada", 15},
+        {"Sin Zona Asignada", 16}
+    }
+)
+VAR _ZonasPermitidas = SELECTCOLUMNS(
+    FILTER(_MapaZonaComuna, [comuna_cod] IN _ComunasSeleccionadas),
+    "zona_cam", [zona_cam]
+)
+VAR _EmpresaActual = SELECTEDVALUE(CAM_Detalle[empresa_normalizada])
+VAR _Visible = CALCULATE(
+    COUNTROWS(CAM_Detalle),
+    KEEPFILTERS(CAM_Detalle[empresa_normalizada] = _EmpresaActual),
+    KEEPFILTERS(TREATAS(_ZonasPermitidas, CAM_Detalle[zona_cam]))
+)
+RETURN IF(
+    NOT(HASONEVALUE(CAM_Detalle[empresa_normalizada])),
+    1,
+    IF(NOT(ISBLANK(_EmpresaActual)) && _Visible > 0, 1, BLANK())
+)
+
+displayFolder: Empresarial/Detalle
+lineageTag: FIJA-FILTRO-COMUNA

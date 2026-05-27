@@ -10,13 +10,12 @@ MODELO = BASE / "data" / "model" / "Modelo_Reporte_Paginas_2026.xlsx"
 # Leer la hoja Hecho_Personas_Atendidas_Ordinario
 df = pd.read_excel(MODELO, sheet_name='Hecho_Personas_Atendidas_Ordinario')
 
-# Verificar si ya tiene fecha_date
-if 'fecha_date' in df.columns:
-    print("✓ Ya tiene fecha_date")
+# Usar la fecha real de atención para que Año/Mes filtren la visual correctamente
+if 'FECHA ATENCIÓN' in df.columns:
+    df['fecha_date'] = pd.to_datetime(df['FECHA ATENCIÓN'], errors='coerce').dt.date
+    print("✓ fecha_date derivada desde FECHA ATENCIÓN")
 else:
-    # Agregar columna con fecha predeterminada (mitad del período 2025-01-01 a 2026-01-31)
-    df['fecha_date'] = pd.to_datetime('2025-07-01')
-    print("✓ Agregada columna fecha_date = 2025-07-01 para todos los registros")
+    raise KeyError("No se encontró la columna 'FECHA ATENCIÓN' en la hoja Personas Atendidas")
 
 print(f"Shape: {df.shape}")
 print(f"Columnas ({len(df.columns)}): {list(df.columns)}")

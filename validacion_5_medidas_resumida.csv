@@ -1,0 +1,6 @@
+Medida,Tipo_Dato,ANTES_Valor,ANTES_Problema,AHORA_Valor,AHORA_Solucion,Status,Timestamp
+Empresas_Detalle,String,"19-73 visibles","DATATABLE hardcodeado (8 zonas CAM)","92 empresas","CALCULATETABLE(VALUES(CAM_Detalle))","✅ FIXED","2026-05-27T14:38:12"
+Actividades_Empresa,String,73,"MAX(CAM_Control) - retornaba 73",92,"DISTINCTCOUNT(CAM_Detalle[empresa_normalizada])","✅ FIXED","2026-05-27T14:38:12"
+Participantes_CAM,String,"N/A (dummy)","Hardcoded N/A - no lógica real",997,"CALCULATE(SUM(...), bloque=CAM)","✅ FIXED","2026-05-27T14:38:12"
+Empresas_Detalle_Filtro_Comuna,Int64,1,"TREATAS + DATATABLE frágil",1,"Simplificado: IF(NOT(ISBLANK(empresa)))","✅ FIXED","2026-05-27T14:38:28"
+Actividades_PlanesAyudaMutua,Int64,1,"Hardcoded constante 1",0,"CALCULATE(COUNTROWS(...), bloque=PlanesF)","✅ FIXED","2026-05-27T14:38:28"

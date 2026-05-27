@@ -117,68 +117,76 @@ def _build_dim_comites_desde_consolidado_confiable() -> pd.DataFrame | None:
     rows: list[dict[str, object]] = []
     for sheet in xls.sheet_names:
         sh = _normalize_header(sheet)
-        if "resumen" in sh or sh == "consolidado":
+        if "resumen" in sh or "coordinadores" in sh or sh == "consolidado":
             continue
 
         try:
-            # Intenta primero con headers estándar
-            df = pd.read_excel(consolidado_path, sheet_name=sheet)
+            df_raw = pd.read_excel(consolidado_path, sheet_name=sheet, header=None)
         except Exception:
             continue
 
-        df = df.fillna("")
-        headers = list(df.columns)
+        # Buscar el header row (contiene "Comuna2" y "NombreGCRD" o similar)
+        header_idx = None
+        header_map = {}
+        for i in range(min(8, len(df_raw))):
+            vals = [str(v).strip() for v in df_raw.iloc[i].tolist()]
+            norm = [v.lower().replace(" ", "") for v in vals]
+            if "comuna2" in norm and any("nombreccgrd" in x for x in norm):
+                header_idx = i
+                header_map = {j: vals[j] for j in range(len(vals))}
+                break
 
-        # Intenta encontrar columnas por nombre (para hojas con headers claros como COMUNA 2, COMUNA 3)
-        comuna_col = None
-        name_col = None
-
-        for c in headers:
-            hc = _normalize_header(c)
-            if comuna_col is None and (hc == "comuna" or hc.startswith("comuna ")):
-                comuna_col = c
-            if name_col is None and ("nombre" in hc and ("comision" in hc or "ccgrd" in hc)):
-                name_col = c
-
-        # Si no encuentra columnas por nombre, intenta leer sin headers para hojas tipo C1-C16
-        if name_col is None:
-            try:
-                df_raw = pd.read_excel(consolidado_path, sheet_name=sheet, header=None)
-                if len(df_raw) > 1 and len(df_raw.columns) >= 8:
-                    # En hojas tipo C, la fila 0 es vacía (NaN) y la fila 1 tiene los headers
-                    # Buscar "Nombre CCGRD" en la fila 1
-                    for col_idx, val in enumerate(df_raw.iloc[1]):
-                        val_str = str(val).lower().replace(" ", "")
-                        if "nombre" in val_str and "ccgrd" in val_str:
-                            name_col = col_idx
-                            # Usar df desde la fila 2 en adelante
-                            df = df_raw.iloc[2:].reset_index(drop=True)
-                            break
-            except Exception:
-                pass
-
-        if name_col is None:
+        if header_idx is None:
             continue
 
-        sheet_code = _extract_code_from_sheet_name(sheet)
+        # Leer datos desde la fila después del header
+        data = df_raw.iloc[header_idx + 1:].copy()
+        data.columns = [header_map.get(j, f"col_{j}") for j in range(data.shape[1])]
+        cols_norm = {str(c).strip().lower().replace(" ", ""): c for c in data.columns}
 
-        for _, r in df.iterrows():
-            raw_name = r.get(name_col, "")
-            nombre = _normalize_comite_name(raw_name)
+        # Encontrar columnas clave
+        col_tipo = cols_norm.get("comuna")  # Columna que contiene T/S
+        col_comuna2 = cols_norm.get("comuna2")  # Código de comuna
+        col_nombre = None
+        for k, c in cols_norm.items():
+            if "nombreccgrd" in k:
+                col_nombre = c
+                break
+
+        if not (col_tipo and col_comuna2 and col_nombre):
+            continue
+
+        # Procesar datos
+        work = data[[col_tipo, col_comuna2, col_nombre]].copy()
+        work.columns = ["tipo_raw", "comuna2", "nombre_ccgrd"]
+        
+        # Normalizar tipo
+        work["tipo_raw"] = work["tipo_raw"].astype(str).str.strip().str.upper().replace({"NAN": "", "NONE": ""})
+        
+        # IMPORTANTE: Filtrar SOLO registros donde tipo es explícitamente S o T (sin ffill)
+        work = work[work["tipo_raw"].isin(["S", "T"])].copy()
+        work["tipo"] = work["tipo_raw"]
+        
+        # Normalizar comuna2 y nombre
+        work["comuna2"] = pd.to_numeric(work["comuna2"], errors="coerce")
+        work["nombre_ccgrd"] = work["nombre_ccgrd"].astype(str).str.strip()
+        
+        # Filtros finales
+        work = work[(work["nombre_ccgrd"] != "") & (~work["nombre_ccgrd"].str.lower().isin(["nan", "none"]))]
+        work = work[work["comuna2"].notna()]
+        
+        # Iterar sobre registros únicos
+        for _, row in work.iterrows():
+            nombre = _normalize_comite_name(row["nombre_ccgrd"])
             if not nombre:
                 continue
 
-            comuna_raw = r.get(comuna_col, "") if comuna_col else ""
-            comuna_cod = _parse_comuna_code(sheet_code, comuna_raw)
-            if comuna_cod is None:
-                comuna_cod = _parse_comuna_code(None, comuna_raw)
-            if comuna_cod is None:
-                comuna_cod = _parse_comuna_code(None, sheet)
-            if comuna_cod is None or int(comuna_cod) <= 0:
+            comuna_cod = int(row["comuna2"])
+            if comuna_cod <= 0:
                 continue
 
             rows.append({
-                "comuna_cod": int(comuna_cod),
+                "comuna_cod": comuna_cod,
                 "comite_comision_nombre": nombre,
             })
 
@@ -186,7 +194,10 @@ def _build_dim_comites_desde_consolidado_confiable() -> pd.DataFrame | None:
         return None
 
     work = pd.DataFrame(rows)
-    work = work.drop_duplicates(subset=["comuna_cod", "comite_comision_nombre"]).copy()
+    # NO deduplicar: mantener TODOS los registros del consolidado, incluyendo duplicados intra-hoja
+    # (ej: Los Mangos y Villatina en C8 que aparecen 2 veces)
+    # Esto asegura que el CSV tenga 158 filas, matching con RESUMEN COUNTIF
+    # work = work.drop_duplicates(subset=["comuna_cod", "comite_comision_nombre"]).copy()
     work["comite_comision_etiqueta"] = work.apply(
         lambda r: f"C{int(r['comuna_cod'])} - {r['comite_comision_nombre']}", axis=1
     )

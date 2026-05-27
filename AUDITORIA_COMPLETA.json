@@ -1,0 +1,465 @@
+﻿{
+    "SCRIPTS":  {
+                    "Size":  null,
+                    "Details":  [
+                                    {
+                                        "Files":  3,
+                                        "Subfolder":  "\\scripts\\dax",
+                                        "Size":  null
+                                    },
+                                    {
+                                        "Files":  37,
+                                        "Subfolder":  "\\scripts\\etl",
+                                        "Size":  null
+                                    },
+                                    {
+                                        "Files":  11,
+                                        "Subfolder":  "\\scripts\\legacy\\etl_debug",
+                                        "Size":  null
+                                    },
+                                    {
+                                        "Files":  13,
+                                        "Subfolder":  "\\scripts\\legacy\\root_diagnostics",
+                                        "Size":  null
+                                    },
+                                    {
+                                        "Files":  17,
+                                        "Subfolder":  "\\scripts\\powerbi",
+                                        "Size":  null
+                                    },
+                                    {
+                                        "Files":  8,
+                                        "Subfolder":  "\\scripts\\qa",
+                                        "Size":  null
+                                    },
+                                    {
+                                        "Files":  2,
+                                        "Subfolder":  "\\scripts\\satc",
+                                        "Size":  null
+                                    }
+                                ],
+                    "Count":  91
+                },
+    "DATA":  {
+                 "Size":  null,
+                 "Details":  [
+                                 {
+                                     "Files":  12,
+                                     "Subfolder":  "\\data\\model",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  2,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  10,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\ar",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\bg",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\ca",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\cs",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\da",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\de",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\el",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\es",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\et",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\eu",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\fi",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\fr",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\gl",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\he",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\hi",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\hr",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\hu",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\id",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\it",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\ja",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\kk",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\ko",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\lt",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\lv",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\ms",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\nl",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\no",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\pl",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\pt",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\pt-PT",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\ro",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\ru",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\sk",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\sl",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\sr-Cyrl",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\sr-Latn",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\sv",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\th",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\tr",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\uk",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\vi",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\zh-Hans",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  3,
+                                     "Subfolder":  "\\data\\nuget\\Microsoft.AnalysisServices.retail.amd64.19.84.1\\lib\\net45\\zh-Hant",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  14,
+                                     "Subfolder":  "\\data\\raw",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  13,
+                                     "Subfolder":  "\\data\\reference",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  2,
+                                     "Subfolder":  "\\data\\reference\\autobuild",
+                                     "Size":  null
+                                 },
+                                 {
+                                     "Files":  1,
+                                     "Subfolder":  "\\data\\source",
+                                     "Size":  null
+                                 }
+                             ],
+                 "Count":  183
+             },
+    "ROOT":  {
+                 "Size":  933134,
+                 "Files":  [
+                               {
+                                   "Name":  ".gitignore",
+                                   "MB":  0,
+                                   "Age(d)":  7
+                               },
+                               {
+                                   "Name":  "ACCESO_RAPIDO.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  48
+                               },
+                               {
+                                   "Name":  "AUDITORIA_CAM_DETALLE_2026-05-26.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "AUDITORIA_LIMPIEZA.ps1",
+                                   "MB":  0,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "AUDITORÍA_RESULTADO_COMITES_COMISIONES.md",
+                                   "MB":  0,
+                                   "Age(d)":  6
+                               },
+                               {
+                                   "Name":  "CHANGELOG.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  45
+                               },
+                               {
+                                   "Name":  "CLEANUP_MEMO_2026-05-26.md",
+                                   "MB":  0,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "COMPARATIVA_OPCIONES_FILTROS.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "CONTRIBUTING.md",
+                                   "MB":  0,
+                                   "Age(d)":  34
+                               },
+                               {
+                                   "Name":  "Dashboard_backup_legacy_raw_2026-05-26.zip",
+                                   "MB":  0.72,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "INDICE_CENTRAL_PLAN_FILTROS.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "INSTRUCCIONES_REFRESCAR_POWERBI.md",
+                                   "MB":  0,
+                                   "Age(d)":  6
+                               },
+                               {
+                                   "Name":  "INVESTIGACION_CRITICA_37_EMPRESAS_FALTANTES.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "LICENSE",
+                                   "MB":  0,
+                                   "Age(d)":  34
+                               },
+                               {
+                                   "Name":  "MAPA_VISUAL_PLAN_FILTROS.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "PLAN_FILTROS_AÑO_MES_HIBRIDO.md",
+                                   "MB":  0.02,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "QUICK_REFERENCE_CARD.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "README.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  34
+                               },
+                               {
+                                   "Name":  "requirements.txt",
+                                   "MB":  0,
+                                   "Age(d)":  34
+                               },
+                               {
+                                   "Name":  "RESUMEN_EJECUTIVO_PLAN_FILTROS.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "RESUMEN_EJECUTIVO_VALIDACION.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "run_pipeline.py",
+                                   "MB":  0.01,
+                                   "Age(d)":  26
+                               },
+                               {
+                                   "Name":  "SATC_37_LISTA_FINAL.txt",
+                                   "MB":  0,
+                                   "Age(d)":  60
+                               },
+                               {
+                                   "Name":  "TABLA_FINAL_CAM_EMPRESAS_DETALLE.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "validacion_cam_empresas_detalle.py",
+                                   "MB":  0.01,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "Validacion_CAM_Empresas_Detalle_RESUMEN.csv",
+                                   "MB":  0,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "Validacion_CAM_FALTANTES.csv",
+                                   "MB":  0,
+                                   "Age(d)":  0
+                               },
+                               {
+                                   "Name":  "VALIDACION_COMPLETA_CAM_EMPRESAS.md",
+                                   "MB":  0.01,
+                                   "Age(d)":  0
+                               }
+                           ],
+                 "Count":  28
+             },
+    "TABLEROS":  {
+                     "Count":  52,
+                     "Size":  null
+                 },
+    "BACKUP_2026-05-26":  {
+                              "Count":  38,
+                              "Size":  null
+                          },
+    "ENTREGABLES":  {
+                        "Count":  23,
+                        "Size":  null
+                    },
+    "POWERBI":  {
+                    "Count":  103,
+                    "Size":  null
+                },
+    "DOCS":  {
+                 "Count":  16,
+                 "Size":  null
+             }
+}
