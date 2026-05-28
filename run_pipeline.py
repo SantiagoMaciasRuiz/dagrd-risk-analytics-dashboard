@@ -11,7 +11,19 @@ import sys
 from pathlib import Path
 
 BASE_URL = "http://127.0.0.1:8000/api"
-EXCEL_PATH = r"C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\source\Reporte de actividades equipo social 2026 (1).xlsx"
+SOURCE_DIR = Path(r"C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\source")
+
+
+def _find_excel_path() -> Path:
+    candidates = sorted(
+        SOURCE_DIR.glob("Reporte de actividades equipo social*.xlsx"),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    return candidates[0] if candidates else SOURCE_DIR / "Reporte de actividades equipo social 2026.xlsx"
+
+
+EXCEL_PATH = _find_excel_path()
 
 def print_phase(phase_num, phase_name, action):
     """Imprimir encabezado de fase"""

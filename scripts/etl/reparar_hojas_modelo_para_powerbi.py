@@ -10,6 +10,8 @@ from openpyxl import load_workbook
 
 BASE = Path(r"c:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard")
 MODELO = BASE / "data" / "model" / "Modelo_Reporte_Paginas_2026.xlsx"
+SATC_SOURCE_DIR = BASE / "data" / "source"
+SATC_SOURCE_GLOB = "Reporte de actividades equipo social*.xlsx"
 SATC_VALID = BASE / "data" / "model" / "validacion_satc_2026_03_18.xlsx"
 ENTREGABLE_MODELO = BASE / "entregables" / "publicacion_nube_2026-03-20" / "02_datos_modelo" / "Modelo_Reporte_Paginas_2026.xlsx"
 DIM_COMITES_CSV = BASE / "data" / "model" / "Dim_Comites_Comisiones_2026.csv"
@@ -46,6 +48,15 @@ def _normalize_header(value: object) -> str:
     text = _normalize_spaces(str(value or "").replace("\xa0", " ").replace("\n", " "))
     text = _strip_accents(text).lower()
     return text
+
+
+def _get_satc_source_path() -> Path | None:
+    candidates = sorted(
+        SATC_SOURCE_DIR.glob(SATC_SOURCE_GLOB),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    return candidates[0] if candidates else None
 
 
 def _extract_code_from_sheet_name(sheet_name: str) -> int | None:
@@ -249,7 +260,29 @@ def _build_dim_comites_desde_excel_maestro() -> pd.DataFrame | None:
 
 
 def build_satc_tables() -> tuple[pd.DataFrame, pd.DataFrame]:
-    if SATC_VALID.exists():
+    satc_df = pd.DataFrame(columns=["SATC_ID", "SATC_Nombre", "Comuna_Cod", "Talleres", "Comites", "Activo"])
+
+    source_path = _get_satc_source_path()
+    if source_path is not None:
+        try:
+            satc_raw = pd.read_excel(source_path, sheet_name="SAT-C", header=1)
+            satc_df = pd.DataFrame(
+                {
+                    "SATC_ID": pd.to_numeric(satc_raw["SATC #"], errors="coerce").fillna(0).astype(int).astype(str),
+                    "SATC_Nombre": satc_raw["SATC"].astype(str).str.strip(),
+                    "Comuna_Cod": satc_raw["Comuna"].apply(lambda value: _parse_comuna_code(None, value)).fillna(0).astype(int),
+                    "Talleres": 0,
+                    "Comites": 0,
+                    "Activo": "Sí",
+                }
+            )
+            satc_df = satc_df[(satc_df["SATC_Nombre"].astype(str).str.strip() != "") & (satc_df["Comuna_Cod"] > 0)].copy()
+            satc_df = satc_df.drop_duplicates(subset=["SATC_ID", "SATC_Nombre", "Comuna_Cod"]).sort_values(["Comuna_Cod", "SATC_ID"])
+            print(f"Fuente SATC usada: {source_path} [SAT-C]")
+        except Exception as exc:
+            print(f"No se pudo leer la fuente SATC nueva ({source_path}): {exc}")
+
+    if satc_df.empty and SATC_VALID.exists():
         satc_raw = pd.read_excel(SATC_VALID, sheet_name="SATC_Validacion")
         satc_df = pd.DataFrame(
             {
@@ -261,8 +294,6 @@ def build_satc_tables() -> tuple[pd.DataFrame, pd.DataFrame]:
                 "Activo": satc_raw["existe_datos"].map({True: "Sí", False: "No"}).fillna("Sí"),
             }
         )
-    else:
-        satc_df = pd.DataFrame(columns=["SATC_ID", "SATC_Nombre", "Comuna_Cod", "Talleres", "Comites", "Activo"])
 
     rel_df = (
         satc_df.groupby("Comuna_Cod", dropna=False)

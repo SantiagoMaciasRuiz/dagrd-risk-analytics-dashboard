@@ -827,7 +827,9 @@ def _extract_fact_and_queries() -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame], 
     idx_publico_comunidad = _find_col(header_map, ["publico objeto", "comunidad"])
     idx_semillero = _find_col(header_map, ["semillero", "grd"])
     idx_actividad_semillero = _find_col(header_map, ["actividad realizada", "semillero"])
-    idx_nombre_satc = _find_col(header_map, ["sat-c"])
+    # La fuente nueva expone el campo como "Nombre del SAT-C"; mantenemos
+    # variantes antiguas para no romper libros previos.
+    idx_nombre_satc = _find_col(header_map, ["nombre del sat-c", "nombre del satc", "sat-c", "satc"])
     idx_actividad_comunitaria = _find_col(header_map, ["actividad asociada", "instancia comunitaria"])
     idx_publico_primera = _find_col(header_map, ["publico objeto", "primera infancia"])
     idx_comuna_bc = _find_col(header_map, ["comuna", "establecimiento de bc"])

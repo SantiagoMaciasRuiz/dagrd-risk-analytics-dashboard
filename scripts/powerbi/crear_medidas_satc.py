@@ -9,32 +9,30 @@ print("=" * 80)
 
 dax_script = """-- Medidas SATC con nombres existentes (compatibles con visuales ya creados)
 
--- Total SAT-C del catalogo oficial (37)
+-- Total SAT-C del catalogo vigente
 Total_SATC_Unicos =
 DISTINCTCOUNT(Dim_SATC[SATC_Nombre])
 
--- Total SAT-C en actividades comunitarias (debe quedar 37 con datos normalizados)
+-- Total SAT-C en actividades comunitarias
 SATC_Principales =
 CALCULATE(
   DISTINCTCOUNT(Hecho_Participacion_General[nombre_satc]),
   Hecho_Participacion_General[bloque_comunidad] = "SAT-C"
 )
 
--- Actividades SAT-C
 Actividades_por_SATC =
 CALCULATE(
   COALESCE(COUNTROWS(Hecho_Participacion_General), 0),
   Hecho_Participacion_General[bloque_comunidad] = "SAT-C"
 )
 
--- Participantes SAT-C
 Participantes_por_SATC =
 CALCULATE(
   COALESCE(SUM(Hecho_Participacion_General[participantes]), 0),
   Hecho_Participacion_General[bloque_comunidad] = "SAT-C"
 )
 
--- Cobertura entre actividades SAT-C y catalogo oficial
+-- Cobertura entre actividades SAT-C y catalogo vigente
 Cobertura_SATC_Porcentaje =
 DIVIDE(
   [SATC_Principales],
@@ -56,13 +54,12 @@ PASO 2: Mantener nombres de medidas existentes
 5. Cobertura_SATC_Porcentaje
 
 PASO 3: Validar resultados esperados
-1. Total_SATC_Unicos: 37
-2. SATC_Principales: 37
-3. Actividades_por_SATC: 172
+1. Total_SATC_Unicos: 40
+2. SATC_Principales: 33
+3. Actividades_por_SATC: 200
 
 NOTA
-- No se crean nombres nuevos de medidas.
-- El ajuste principal está en datos (Dim_SATC + normalización de Hecho_Participacion_General[nombre_satc]).
+- La fuente vigente es la hoja SAT-C del archivo Reporte de actividades equipo social 2026.xlsx.
 """
 
 dax_file = Path("medidas_satc.dax")
