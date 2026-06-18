@@ -141,7 +141,7 @@ def main() -> None:
     lines = [
         "# Tabla DAX vs Excel para validación",
         "",
-        "Archivo fuente para validar: data/source/Reporte de actividades equipo social 2026 (1).xlsx",
+        "Archivo fuente para validar: data/source/Reporte de actividades equipo social 2026.xlsx",
         "",
         f"Filas generadas: {len(rows)}",
         "",

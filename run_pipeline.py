@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 BASE_URL = "http://127.0.0.1:8000/api"
-SOURCE_DIR = Path(r"C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\source")
+SOURCE_DIR = Path(__file__).resolve().parent / "data" / "source"
 
 
 def _find_excel_path() -> Path:

@@ -8,7 +8,21 @@ import pandas as pd
 
 BASE = Path(r"c:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard")
 CSV_VALIDACION = BASE / "data" / "reference" / "powerbi_consultas_validacion_excel_2026.csv"
-EXCEL_FUENTE = BASE / "data" / "source" / "Reporte de actividades equipo social 2026 (1).xlsx"
+
+
+def _resolve_excel_fuente() -> Path:
+    source_dir = BASE / "data" / "source"
+    candidates = sorted(
+        source_dir.glob("Reporte de actividades equipo social 2026*.xlsx"),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    if candidates:
+        return candidates[0]
+    return source_dir / "Reporte de actividades equipo social 2026.xlsx"
+
+
+EXCEL_FUENTE = _resolve_excel_fuente()
 OUT_CSV = BASE / "data" / "reference" / "validacion_estrategia_resultados_2026.csv"
 OUT_JSON = BASE / "data" / "reference" / "validacion_estrategia_resumen_2026.json"
 

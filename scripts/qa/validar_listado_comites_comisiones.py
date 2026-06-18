@@ -6,9 +6,22 @@ from pathlib import Path
 import pandas as pd
 
 
-SOURCE_XLSX = Path(
-    r"c:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\source\Reporte de actividades equipo social 2026 (1).xlsx"
-)
+BASE = Path(r"c:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard")
+
+
+def _resolve_source_xlsx() -> Path:
+    source_dir = BASE / "data" / "source"
+    candidates = sorted(
+        source_dir.glob("Reporte de actividades equipo social 2026*.xlsx"),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    if candidates:
+        return candidates[0]
+    return source_dir / "Reporte de actividades equipo social 2026.xlsx"
+
+
+SOURCE_XLSX = _resolve_source_xlsx()
 OUT_DIR = Path(
     r"c:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\reference"
 )

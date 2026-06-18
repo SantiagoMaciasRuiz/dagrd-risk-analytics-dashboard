@@ -12,7 +12,21 @@ import pandas as pd
 
 
 BASE_DIR = Path(r"c:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard")
-REPORT_FILE = BASE_DIR / "data" / "source" / "Reporte de actividades equipo social 2026 (1).xlsx"
+
+
+def _resolve_report_file() -> Path:
+    source_dir = BASE_DIR / "data" / "source"
+    candidates = sorted(
+        source_dir.glob("Reporte de actividades equipo social 2026*.xlsx"),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    if candidates:
+        return candidates[0]
+    return source_dir / "Reporte de actividades equipo social 2026.xlsx"
+
+
+REPORT_FILE = _resolve_report_file()
 OUTPUT_FILE = BASE_DIR / "data" / "model" / "Participantes_Generales_Transaccional_2026.xlsx"
 
 SHEET_DETALLE = "Sheet1"

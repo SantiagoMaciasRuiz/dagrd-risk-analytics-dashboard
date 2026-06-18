@@ -4,8 +4,10 @@ from __future__ import annotations
 import re
 import unicodedata
 import os
+import shutil
 import zipfile
 import xml.etree.ElementTree as ET
+import json
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
 import runpy
@@ -13,21 +15,37 @@ import runpy
 import pandas as pd
 
 
-BASE_DIR = Path(r"c:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard")
-# Support filenames with or without the ' (1)' suffix — pick the first matching candidate.
-source_dir = BASE_DIR / "data" / "source"
-candidates = list(source_dir.glob("Reporte de actividades equipo social 2026*.xlsx"))
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# Cargar configuración centralizada
+config_file = Path(__file__).resolve().parent / "etl_config.json"
+try:
+    with open(config_file, "r", encoding="utf-8") as f:
+        config = json.load(f)
+except Exception as e:
+    raise RuntimeError(f"No se pudo leer el archivo de configuración etl_config.json: {e}")
+
+# Configurar rutas y archivos
+source_dir = BASE_DIR / config["paths"]["source_dir"]
+source_pattern = config["paths"]["source_file_pattern"]
+
+candidates = sorted(
+    source_dir.glob(source_pattern),
+    key=lambda path: path.stat().st_mtime,
+    reverse=True,
+)
 if not candidates:
-    REPORT_FILE = source_dir / "Reporte de actividades equipo social 2026 (1).xlsx"
+    # Fallback si no hay candidatos
+    REPORT_FILE = source_dir / "Reporte de actividades equipo social 2026.xlsx"
 else:
     REPORT_FILE = candidates[0]
 
-OUTPUT_FILE = BASE_DIR / "data" / "model" / "Modelo_Reporte_Paginas_2026.xlsx"
+OUTPUT_FILE = BASE_DIR / config["paths"]["model_output"]
 
-SHEET_DETALLE = "Sheet1"
-SHEET_PIVOT = "Tablas dinámicas"
-SHEET_SIMULACROS = "Simulacros"
-SHEET_CAM = "CAM"
+SHEET_DETALLE = config["sheets"]["detalle"]
+SHEET_PIVOT = config["sheets"]["pivot"]
+SHEET_SIMULACROS = config["sheets"]["simulacros"]
+SHEET_CAM = config["sheets"]["cam"]
 
 NS_MAIN = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 NS_REL = {"r": "http://schemas.openxmlformats.org/package/2006/relationships"}
@@ -409,7 +427,7 @@ def _extract_cam_tables() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     ]
 
     try:
-        cam_raw = pd.read_excel(REPORT_FILE, sheet_name=SHEET_CAM, engine="openpyxl")
+        cam_raw = pd.read_excel(REPORT_FILE, sheet_name=SHEET_CAM, header=None, engine="openpyxl")
     except Exception:
         return (
             pd.DataFrame(columns=cam_detalle_cols),
@@ -424,7 +442,30 @@ def _extract_cam_tables() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
             pd.DataFrame(columns=cam_control_cols),
         )
 
-    cam_df = cam_raw.iloc[:, :3].copy()
+    # Find the header row by searching for "CAM ACTIVOS" and "EMPRESAS" in the first 10 rows
+    header_idx = None
+    col_idx_activo = None
+    col_idx_empresa = None
+    for i in range(min(10, len(cam_raw))):
+        row_vals = [str(x).strip().upper() for x in cam_raw.iloc[i].tolist()]
+        if "CAM ACTIVOS" in row_vals and "EMPRESAS" in row_vals:
+            header_idx = i
+            col_idx_activo = row_vals.index("CAM ACTIVOS")
+            col_idx_empresa = row_vals.index("EMPRESAS")
+            break
+
+    if header_idx is None:
+        # Fallback to index 0, 1, 2 if headers aren't found
+        col_idx_activo = 0
+        col_idx_zona = 1
+        col_idx_empresa = 2
+        data_df = cam_raw.copy()
+    else:
+        # Zone column is assumed to be between active CAM and companies (usually col_idx_activo + 1)
+        col_idx_zona = col_idx_activo + 1
+        data_df = cam_raw.iloc[header_idx + 1:].copy()
+
+    cam_df = data_df[[col_idx_activo, col_idx_zona, col_idx_empresa]].copy()
     cam_df.columns = ["cam_activo_raw", "zona_cam_raw", "empresa_cam_raw"]
 
     for col in cam_df.columns:
@@ -829,7 +870,7 @@ def _extract_fact_and_queries() -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame], 
     idx_actividad_semillero = _find_col(header_map, ["actividad realizada", "semillero"])
     # La fuente nueva expone el campo como "Nombre del SAT-C"; mantenemos
     # variantes antiguas para no romper libros previos.
-    idx_nombre_satc = _find_col(header_map, ["nombre del sat-c", "nombre del satc", "sat-c", "satc"])
+    idx_nombre_satc = _find_col(header_map, ["nombre"], ["sat-c", "satc"])
     idx_actividad_comunitaria = _find_col(header_map, ["actividad asociada", "instancia comunitaria"])
     idx_publico_primera = _find_col(header_map, ["publico objeto", "primera infancia"])
     idx_comuna_bc = _find_col(header_map, ["comuna", "establecimiento de bc"])
@@ -1163,7 +1204,15 @@ def main() -> None:
     _, outputs, _ = _extract_fact_and_queries()
 
     temp_output = OUTPUT_FILE.with_name(f"{OUTPUT_FILE.stem}.tmp.xlsx")
-    with pd.ExcelWriter(temp_output, engine="openpyxl") as writer:
+    if OUTPUT_FILE.exists():
+        shutil.copy2(OUTPUT_FILE, temp_output)
+        writer_mode = "a"
+        writer_kwargs = {"if_sheet_exists": "replace"}
+    else:
+        writer_mode = "w"
+        writer_kwargs = {}
+
+    with pd.ExcelWriter(temp_output, engine="openpyxl", mode=writer_mode, **writer_kwargs) as writer:
         for sheet_name, df in outputs.items():
             df.to_excel(writer, sheet_name=sheet_name, index=False)
 

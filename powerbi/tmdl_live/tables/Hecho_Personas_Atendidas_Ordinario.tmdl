@@ -209,8 +209,7 @@ table Hecho_Personas_Atendidas_Ordinario
 				    Encabezados = Table.PromoteHeaders(Personas, [PromoteAllScalars=true]),
 				    Renombradas = Table.RenameColumns(Encabezados, {{"idintegrante", "idintegrante"}, {"SEXO", "sexo"}, {"TIPO_EDAD", "tipo_edad"}, {"ETNIA", "etnia"}, {"DISCAPACIDAD", "discapacidad"}, {"CAMPESINO", "campesino"}, {"DESPLAZADO", "desplazado"}, {"VICTIMA", "victima"}, {"COMUNA", "comuna_texto"}}),
 					Tipos = Table.TransformColumnTypes(Renombradas, {{"idintegrante", type text}, {"sexo", type text}, {"tipo_edad", type text}, {"etnia", type text}, {"discapacidad", type text}, {"campesino", type text}, {"desplazado", type text}, {"victima", type text}, {"comuna_texto", type text}, {"FECHA ATENCIÓN", type date}, {"AÑO ATENCIÓN", Int64.Type}}),
-					ComunaCod = Table.AddColumn(Tipos, "comuna_cod", each let txt = Text.Upper(Text.Trim(Text.From([comuna_texto]))), digits = Text.Select(txt, {"0".."9"}) in if digits <> "" then Number.FromText(digits) else null, Int64.Type),
-					FechaDate = Table.AddColumn(ComunaCod, "fecha_date", each Date.From([#"FECHA ATENCIÓN"]), type date)
+					ComunaCod = Table.AddColumn(Tipos, "comuna_cod", each let txt = Text.Upper(Text.Trim(Text.From([comuna_texto]))), digits = Text.Select(txt, {"0".."9"}) in if digits <> "" then Number.FromText(digits) else null, Int64.Type)
 				in
-				    FechaDate
+					ComunaCod
 

@@ -4,14 +4,14 @@
 Esta guia reemplaza el flujo anterior para que trabajes solo con una fuente:
 1. Borrar el modelo y los datos actuales del PBIX.
 2. Conservar solo el diseno visual de tus paginas.
-3. Reconectar un modelo limpio usando unicamente `Reporte de actividades equipo social 2026 (1).xlsx`.
+3. Reconectar un modelo limpio usando unicamente `Reporte de actividades equipo social 2026.xlsx`.
 4. Volver a enlazar medidas y visuales sin redisenar.
 
 Regla central de trabajo:
 - Si no es diseno visual (posicion, color, logos, encabezados, navegacion), se borra y se reconstruye.
 
 Alcance de esta version:
-- Fuente unica: `Reporte de actividades equipo social 2026 (1).xlsx`.
+- Fuente unica: `Reporte de actividades equipo social 2026.xlsx`.
 - Fuera de alcance: `Excel_Maestro_PowerBI.xlsx` y cualquier tabla derivada de ese archivo.
 
 ---
@@ -21,11 +21,11 @@ Alcance de esta version:
 ### 0.1 Cerrar archivos bloqueados
 1. Cierra Excel.
 2. Cierra Power BI Desktop.
-3. Verifica que no exista abierto `~$Reporte de actividades equipo social 2026 (1).xlsx`.
+3. Verifica que no exista abierto `~$Reporte de actividades equipo social 2026.xlsx`.
 
 ### 0.2 Confirmar archivos fuente
 Deben existir estos archivos en la carpeta del proyecto:
-1. `Reporte de actividades equipo social 2026 (1).xlsx`
+1. `Reporte de actividades equipo social 2026.xlsx`
 2. `extraer_consultas_paginas_reporte.py` (opcional para control y auditoria)
 
 ---
@@ -121,7 +121,7 @@ En `Control_Extraccion` valida:
 
 ### 4.1 Conectar unicamente el Excel de reporte
 1. En Power BI: `Inicio` > `Obtener datos` > `Excel`.
-2. Selecciona `Reporte de actividades equipo social 2026 (1).xlsx`.
+2. Selecciona `Reporte de actividades equipo social 2026.xlsx`.
 3. Click en `Transformar datos`.
 4. En Navegador marca solo:
 5. `Sheet1`

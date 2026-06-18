@@ -1,0 +1,21 @@
+{
+  "paths": {
+    "source_dir": "data/source",
+    "source_file_pattern": "Reporte de actividades equipo social*.xlsx",
+    "model_output": "data/model/Modelo_Reporte_Paginas_2026.xlsx",
+    "satc_valid": "data/model/validacion_satc_2026_03_18.xlsx",
+    "entregable_modelo": "entregables/publicacion_nube_2026-03-20/02_datos_modelo/Modelo_Reporte_Paginas_2026.xlsx",
+    "dim_comites_csv": "data/model/Dim_Comites_Comisiones_2026.csv",
+    "excel_maestro_powerbi": "data/model/Excel_Maestro_PowerBI.xlsx",
+    "consolidado_comites_preferido": "data/model/CONSOLIDADO COMITES COMISIONES 03-2026.xlsx",
+    "consolidado_comites_legacy": "data/model/CONSOLIDADO COMITES COMISIONES 03-2026_Construcciom.xlsx",
+    "semilleros_seed_script": "scripts/etl/crear_tabla_semilleros.py"
+  },
+  "sheets": {
+    "detalle": "Sheet1",
+    "pivot": "Tablas dinámicas",
+    "simulacros": "Simulacros",
+    "cam": "CAM",
+    "satc": "SAT-C"
+  }
+}

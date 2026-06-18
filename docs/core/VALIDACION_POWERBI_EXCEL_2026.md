@@ -1,6 +1,6 @@
 # Validacion Power BI vs Excel 2026
 
-Fuente principal: data/source/Reporte de actividades equipo social 2026 (1).xlsx
+Fuente principal: data/source/Reporte de actividades equipo social 2026.xlsx
 
 ## Archivos generados
 - data/reference/powerbi_medidas_mapeo_2026.csv

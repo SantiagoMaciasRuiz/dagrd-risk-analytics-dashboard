@@ -1,7 +1,20 @@
 from openpyxl import load_workbook
 from pathlib import Path
 
-source_file = Path(r"data\source\Reporte de actividades equipo social 2026 (1).xlsx")
+
+def _resolve_source_file() -> Path:
+    source_dir = Path("data/source")
+    candidates = sorted(
+        source_dir.glob("Reporte de actividades equipo social 2026*.xlsx"),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    if candidates:
+        return candidates[0]
+    return source_dir / "Reporte de actividades equipo social 2026.xlsx"
+
+
+source_file = _resolve_source_file()
 
 # Cargar archivo
 wb = load_workbook(source_file)

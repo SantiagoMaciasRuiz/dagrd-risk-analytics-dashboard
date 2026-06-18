@@ -150,15 +150,60 @@ table _Medidas
 		lineageTag: 41af3518-bf13-4104-a322-a836bfe34824
 
 	measure Actividades_Empresa =
-			VAR _v = MAX(CAM_Control[empresas_unicas_global])
-			RETURN IF(ISBLANK(_v), "N/A", FORMAT(_v, "#,##0"))
+			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
+			VAR _MapaZonaComuna =
+			    DATATABLE(
+			        "zona_cam", STRING,
+			        "comuna_cod", INTEGER,
+			        {
+			            {"Carabobo Norte", 4},
+			            {"Carabobo Norte", 10},
+			            {"Centro Oriental", 10},
+			            {"Alpujarra", 10},
+			            {"Belen Olaya", 15},
+			            {"Belen Olaya", 16},
+			            {"Guayabal Sur", 15},
+			            {"Guayabal Norte", 15},
+			            {"Robledo IES", 7},
+			            {"Robledo IPS", 5},
+			            {"Robledo IPS", 7},
+			            {"Robledo IPS", 60},
+			            {"La Presidenta", 14},
+			            {"Perpetuo Socorro", 10},
+			            {"FRATERNIDAD", 8},
+			            {"CIUDAD DEL RIO", 14},
+			            {"BARRIO COLOMBIA", 14},
+			            {"CARIBE", 5},
+			            {"La 30", 10}
+			        }
+			    )
+			VAR _ZonasPermitidas =
+			    SELECTCOLUMNS(
+			        FILTER(_MapaZonaComuna, [comuna_cod] IN _ComunasSeleccionadas),
+			        "zona_cam", [zona_cam]
+			    )
+			VAR _v =
+			    CALCULATE(
+			        DISTINCTCOUNT(CAM_Detalle[empresa_normalizada]),
+			        KEEPFILTERS(TREATAS(_ZonasPermitidas, CAM_Detalle[zona_cam]))
+			    )
+			RETURN
+			    IF(ISBLANK(_v), "0", FORMAT(_v, "#,##0"))
 		displayFolder: Empresarial
 		lineageTag: 2cf53097-1300-4f94-bd72-f2b411e62b8a
 
 	measure Actividades_Simulacro_Empresarial = CALCULATE(COUNTROWS(Hecho_Simulacros), Hecho_Simulacros[sector_tablero] = "Empresarial")
 		lineageTag: 3176b2da-dc7c-4f5e-a6be-daec099cfa8e
 
-	measure Participantes_CAM = "N/A"
+	measure Participantes_CAM =
+			VAR _v =
+			    CALCULATE(
+			        SUM(Hecho_Participacion_General[participantes]),
+			        Dim_Seccion[seccion_tablero] = "Empresarial",
+			        Hecho_Participacion_General[bloque_empresarial] = "CAM"
+			    )
+			RETURN
+			    IF(ISBLANK(_v), "0", FORMAT(_v, "#,##0"))
 		displayFolder: Empresarial
 		lineageTag: b897c91e-81a6-49fa-bc77-928879ce7c25
 
@@ -257,7 +302,15 @@ table _Medidas
 		displayFolder: Empresarial
 		lineageTag: ea76f394-ccd2-43ee-be67-f87335b723e2
 
-	measure Actividades_PlanesAyudaMutua = 1
+	measure Actividades_PlanesAyudaMutua =
+			VAR _v =
+			    CALCULATE(
+			        COUNTROWS(Hecho_Participacion_General),
+			        Dim_Seccion[seccion_tablero] = "Empresarial",
+			        Hecho_Participacion_General[bloque_empresarial] = "Planes de ayuda mutua/Acuerdo de voluntades"
+			    )
+			RETURN
+			    IF(ISBLANK(_v), 0, _v)
 		displayFolder: Empresarial
 		lineageTag: 88802f32-9f2e-440a-b554-cd7bc83d5951
 
@@ -639,7 +692,14 @@ table _Medidas
 			            {"Robledo IES", 7},
 			            {"Robledo IPS", 5},
 			            {"Robledo IPS", 7},
-			            {"Robledo IPS", 60}
+			            {"Robledo IPS", 60},
+			            {"La Presidenta", 14},
+			            {"Perpetuo Socorro", 10},
+			            {"FRATERNIDAD", 8},
+			            {"CIUDAD DEL RIO", 14},
+			            {"BARRIO COLOMBIA", 14},
+			            {"CARIBE", 5},
+			            {"La 30", 10}
 			        }
 			    )
 			VAR _ZonasPermitidas =
@@ -703,7 +763,14 @@ table _Medidas
 			            {"Robledo IES", 7},
 			            {"Robledo IPS", 5},
 			            {"Robledo IPS", 7},
-			            {"Robledo IPS", 60}
+			            {"Robledo IPS", 60},
+			            {"La Presidenta", 14},
+			            {"Perpetuo Socorro", 10},
+			            {"FRATERNIDAD", 8},
+			            {"CIUDAD DEL RIO", 14},
+			            {"BARRIO COLOMBIA", 14},
+			            {"CARIBE", 5},
+			            {"La 30", 10}
 			        }
 			    )
 			VAR _ZonasPermitidas =
@@ -745,7 +812,14 @@ table _Medidas
 			            {"Robledo IES", 7},
 			            {"Robledo IPS", 5},
 			            {"Robledo IPS", 7},
-			            {"Robledo IPS", 60}
+			            {"Robledo IPS", 60},
+			            {"La Presidenta", 14},
+			            {"Perpetuo Socorro", 10},
+			            {"FRATERNIDAD", 8},
+			            {"CIUDAD DEL RIO", 14},
+			            {"BARRIO COLOMBIA", 14},
+			            {"CARIBE", 5},
+			            {"La 30", 10}
 			        }
 			    )
 			VAR _ZonasPermitidas =

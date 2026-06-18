@@ -19,37 +19,35 @@ $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = Resolve-Path (Join-Path $scriptRoot '..\..')
 Set-Location $repoRoot
 
-# Normalizar nombre del archivo fuente "Reporte de actividades..."
-$sourceDir = Join-Path $PWD "data\source"
-$expectedName = "Reporte de actividades equipo social 2026 (1).xlsx"
-$expectedPath = Join-Path $sourceDir $expectedName
+# Cargar configuración centralizada
+$configFile = Join-Path $repoRoot "scripts\etl\etl_config.json"
+if (-not (Test-Path $configFile)) {
+    Write-Error "ERROR: Archivo de configuración no encontrado en $configFile"
+    exit 1
+}
+$config = Get-Content $configFile -Raw | ConvertFrom-Json
+$sourceSubDir = $config.paths.source_dir
+$sourcePattern = $config.paths.source_file_pattern
+
+$sourceDir = Join-Path $repoRoot $sourceSubDir
+$chosen = $null
 
 if (Test-Path $sourceDir) {
-    $candidates = Get-ChildItem -Path $sourceDir -Filter "Reporte de actividades equipo social*.xlsx" -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending
+    $candidates = Get-ChildItem -Path $sourceDir -Filter $sourcePattern -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending
     if ($candidates.Count -gt 0) {
         $chosen = $candidates[0]
-        if ($chosen.Name -ne $expectedName) {
-            Write-Output "Se detectó archivo fuente actualizado: $($chosen.Name). Copiando a nombre esperado: $expectedName"
-            try {
-                Copy-Item -Path $chosen.FullName -Destination $expectedPath -Force
-                Write-Output "Copia realizada: $expectedPath"
-            } catch {
-                Write-Warning ("No se pudo copiar {0} a {1}: {2}" -f $chosen.FullName, $expectedPath, $_)
-            }
-        } else {
-            Write-Output "Archivo fuente con nombre esperado presente: $expectedName"
-        }
+        Write-Output "Archivo fuente detectado: $($chosen.Name)"
     } else {
-        Write-Warning "No se encontró ningún archivo coincidente 'Reporte de actividades equipo social*.xlsx' en $sourceDir"
+        Write-Warning "No se encontró ningún archivo coincidente '$sourcePattern' en $sourceDir"
     }
 } else {
     Write-Warning "Directorio fuente no encontrado: $sourceDir"
 }
 
-$pbixPath = Join-Path $PWD "Tableros\tableroDAGRDCOPIA.pbix"
+$pbixPath = Join-Path $repoRoot "Tableros\tableroDAGRDCOPIA.pbix"
 $shouldReopenPowerBI = $false
 
-$py = Join-Path $PWD ".venv\Scripts\python.exe"
+$py = Join-Path $repoRoot ".venv\Scripts\python.exe"
 if (-not (Test-Path $py)) {
     Write-Error "Python virtual environment not found at $py. Activate venv or create it first."
     exit 1
@@ -70,7 +68,7 @@ try {
         throw "ETL failed with exit code $LASTEXITCODE"
     }
 
-    $repair = Join-Path $PWD ".\scripts\etl\reparar_hojas_modelo_para_powerbi.py"
+    $repair = Join-Path $repoRoot "scripts\etl\reparar_hojas_modelo_para_powerbi.py"
     if (Test-Path $repair) {
         Write-Output "Running mandatory post-ETL repair script: $repair"
         & $py $repair

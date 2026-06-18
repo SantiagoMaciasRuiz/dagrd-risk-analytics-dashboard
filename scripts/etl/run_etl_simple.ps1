@@ -9,11 +9,18 @@ Set-Location $repoRoot
 
 Write-Host "Iniciando pipeline ETL..."
 
-# Variables
-$sourceDir = Join-Path $PWD "data\source"
-$expectedName = "Reporte de actividades equipo social 2026 (1).xlsx"
-$expectedPath = Join-Path $sourceDir $expectedName
-$py = Join-Path $PWD ".venv\Scripts\python.exe"
+# Cargar configuración centralizada
+$configFile = Join-Path $repoRoot "scripts\etl\etl_config.json"
+if (-not (Test-Path $configFile)) {
+    Write-Host "ERROR: Archivo de configuración no encontrado en $configFile"
+    exit 1
+}
+$config = Get-Content $configFile -Raw | ConvertFrom-Json
+$sourceSubDir = $config.paths.source_dir
+$sourcePattern = $config.paths.source_file_pattern
+
+$sourceDir = Join-Path $repoRoot $sourceSubDir
+$py = Join-Path $repoRoot ".venv\Scripts\python.exe"
 
 # Validar Python
 if (-not (Test-Path $py)) {
@@ -22,19 +29,17 @@ if (-not (Test-Path $py)) {
 }
 
 # Validar y preparar archivo fuente
+$chosen = $null
 if (Test-Path $sourceDir) {
-    $candidates = Get-ChildItem -Path $sourceDir -Filter "Reporte de actividades equipo social*.xlsx" -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending
+    $candidates = Get-ChildItem -Path $sourceDir -Filter $sourcePattern -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending
     if ($candidates.Count -gt 0) {
         $chosen = $candidates[0]
-        if ($chosen.Name -ne $expectedName) {
-            Write-Host "Copiando archivo: $($chosen.Name)"
-            Copy-Item -Path $chosen.FullName -Destination $expectedPath -Force
-        }
+        Write-Host "Archivo fuente detectado: $($chosen.Name)"
     }
 }
 
 Write-Host ""
-Write-Host "Archivo fuente: $expectedName"
+Write-Host "Archivo fuente: $(if ($chosen) { $chosen.Name } else { 'No encontrado' })"
 Write-Host "Python: $py"
 Write-Host ""
 

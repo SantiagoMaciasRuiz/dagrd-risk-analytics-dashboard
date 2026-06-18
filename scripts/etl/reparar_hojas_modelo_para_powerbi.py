@@ -2,22 +2,37 @@
 from __future__ import annotations
 
 import re
+import runpy
 import unicodedata
+import json
 from pathlib import Path
 
 import pandas as pd
 from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.table import Table, TableStyleInfo
 
-BASE = Path(r"c:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard")
-MODELO = BASE / "data" / "model" / "Modelo_Reporte_Paginas_2026.xlsx"
-SATC_SOURCE_DIR = BASE / "data" / "source"
-SATC_SOURCE_GLOB = "Reporte de actividades equipo social*.xlsx"
-SATC_VALID = BASE / "data" / "model" / "validacion_satc_2026_03_18.xlsx"
-ENTREGABLE_MODELO = BASE / "entregables" / "publicacion_nube_2026-03-20" / "02_datos_modelo" / "Modelo_Reporte_Paginas_2026.xlsx"
-DIM_COMITES_CSV = BASE / "data" / "model" / "Dim_Comites_Comisiones_2026.csv"
-EXCEL_MAESTRO_POWERBI = BASE / "data" / "model" / "Excel_Maestro_PowerBI.xlsx"
-CONSOLIDADO_COMITES_PREFERIDO = BASE / "data" / "model" / "CONSOLIDADO COMITES COMISIONES 03-2026.xlsx"
-CONSOLIDADO_COMITES_LEGACY = BASE / "data" / "model" / "CONSOLIDADO COMITES COMISIONES 03-2026_Construcciom.xlsx"
+BASE = Path(__file__).resolve().parent.parent.parent
+
+# Cargar configuración centralizada
+config_file = Path(__file__).resolve().parent / "etl_config.json"
+try:
+    with open(config_file, "r", encoding="utf-8") as f:
+        config = json.load(f)
+except Exception as e:
+    raise RuntimeError(f"No se pudo leer el archivo de configuración etl_config.json: {e}")
+
+MODELO = BASE / config["paths"]["model_output"]
+SATC_SOURCE_DIR = BASE / config["paths"]["source_dir"]
+SATC_SOURCE_GLOB = config["paths"]["source_file_pattern"]
+SATC_VALID = BASE / config["paths"]["satc_valid"]
+ENTREGABLE_MODELO = BASE / config["paths"]["entregable_modelo"]
+DIM_COMITES_CSV = BASE / config["paths"]["dim_comites_csv"]
+EXCEL_MAESTRO_POWERBI = BASE / config["paths"]["excel_maestro_powerbi"]
+CONSOLIDADO_COMITES_PREFERIDO = BASE / config["paths"]["consolidado_comites_preferido"]
+CONSOLIDADO_COMITES_LEGACY = BASE / config["paths"]["consolidado_comites_legacy"]
+SEMILLEROS_SEED_SCRIPT = BASE / config["paths"]["semilleros_seed_script"]
+SHEET_SATC = config["sheets"]["satc"]
 
 
 def _get_consolidado_comites_path() -> Path:
@@ -265,7 +280,7 @@ def build_satc_tables() -> tuple[pd.DataFrame, pd.DataFrame]:
     source_path = _get_satc_source_path()
     if source_path is not None:
         try:
-            satc_raw = pd.read_excel(source_path, sheet_name="SAT-C", header=1)
+            satc_raw = pd.read_excel(source_path, sheet_name=SHEET_SATC, header=1)
             satc_df = pd.DataFrame(
                 {
                     "SATC_ID": pd.to_numeric(satc_raw["SATC #"], errors="coerce").fillna(0).astype(int).astype(str),
@@ -278,7 +293,7 @@ def build_satc_tables() -> tuple[pd.DataFrame, pd.DataFrame]:
             )
             satc_df = satc_df[(satc_df["SATC_Nombre"].astype(str).str.strip() != "") & (satc_df["Comuna_Cod"] > 0)].copy()
             satc_df = satc_df.drop_duplicates(subset=["SATC_ID", "SATC_Nombre", "Comuna_Cod"]).sort_values(["Comuna_Cod", "SATC_ID"])
-            print(f"Fuente SATC usada: {source_path} [SAT-C]")
+            print(f"Fuente SATC usada: {source_path} [{SHEET_SATC}]")
         except Exception as exc:
             print(f"No se pudo leer la fuente SATC nueva ({source_path}): {exc}")
 
@@ -326,9 +341,40 @@ def build_dim_semilleros_vacia() -> pd.DataFrame:
             "Comuna",
             "Comuna_Nombre",
             "Barrio_Organización",
-            "Total_Semilleros",
         ]
     )
+
+
+def build_dim_semilleros_seed() -> pd.DataFrame:
+    """Fallback confiable cuando el modelo quedó con Dim_Semilleros vacía.
+
+    Usa la semilla oficial del script `crear_tabla_semilleros.py` (20 registros).
+    """
+    if not SEMILLEROS_SEED_SCRIPT.exists():
+        return build_dim_semilleros_vacia()
+
+    try:
+        scope = runpy.run_path(str(SEMILLEROS_SEED_SCRIPT))
+        data = scope.get("SEMILLEROS_DATA", [])
+        if not data:
+            return build_dim_semilleros_vacia()
+
+        df = pd.DataFrame(data).copy()
+        rename_map = {
+            "N": "N°",
+            "Barrio_Organizacion": "Barrio_Organización",
+        }
+        df.rename(columns=rename_map, inplace=True)
+
+        required_cols = ["N°", "Semillero", "Comuna", "Comuna_Nombre", "Barrio_Organización"]
+        for col in required_cols:
+            if col not in df.columns:
+                df[col] = ""
+
+        df = df[required_cols].copy()
+        return df
+    except Exception:
+        return build_dim_semilleros_vacia()
 
 
 def build_dim_comites_desde_fuente() -> pd.DataFrame:
@@ -419,6 +465,24 @@ def write_df_to_sheet(wb, sheet_name: str, df: pd.DataFrame) -> None:
     for row in df.itertuples(index=False, name=None):
         ws.append(list(row))
 
+    # Power BI navega varias consultas por Kind="Table". Si solo existe la hoja,
+    # aparece el error "La clave no coincidió con ninguna fila de la tabla".
+    # Por eso recreamos una tabla con el mismo nombre lógico de la consulta.
+    if ws.max_column > 0:
+        table_name = re.sub(r"[^A-Za-z0-9_]", "_", sheet_name)[:255]
+        end_col = get_column_letter(ws.max_column)
+        end_row = ws.max_row if ws.max_row >= 1 else 1
+        table_ref = f"A1:{end_col}{end_row}"
+        table = Table(displayName=table_name, ref=table_ref)
+        table.tableStyleInfo = TableStyleInfo(
+            name="TableStyleMedium2",
+            showFirstColumn=False,
+            showLastColumn=False,
+            showRowStripes=True,
+            showColumnStripes=False,
+        )
+        ws.add_table(table)
+
 
 def read_sheet_df(path: Path, sheet_name: str, fallback: pd.DataFrame) -> pd.DataFrame:
     try:
@@ -463,16 +527,19 @@ def main() -> None:
     write_df_to_sheet(wb, "Dim_SATC_Relaciones", rel_df)
 
     # Semilleros requeridos por Power BI
-    if "Dim_Semilleros" not in existing_sheets:
-        dim_semilleros_df = build_dim_semilleros_vacia()
-        if ENTREGABLE_MODELO.exists():
-            try:
-                dim_semilleros_df = pd.read_excel(ENTREGABLE_MODELO, sheet_name="Dim_Semilleros", engine="openpyxl")
-            except Exception:
-                dim_semilleros_df = build_dim_semilleros_vacia()
-        write_df_to_sheet(wb, "Dim_Semilleros", dim_semilleros_df)
-    else:
-        dim_semilleros_df = sem_existing if not sem_existing.empty else build_dim_semilleros_vacia()
+    dim_semilleros_df = sem_existing.copy() if not sem_existing.empty else pd.DataFrame()
+
+    if dim_semilleros_df.empty and ENTREGABLE_MODELO.exists():
+        try:
+            dim_semilleros_df = pd.read_excel(ENTREGABLE_MODELO, sheet_name="Dim_Semilleros", engine="openpyxl")
+        except Exception:
+            dim_semilleros_df = pd.DataFrame()
+
+    # Último fallback: semilla oficial (20 semilleros).
+    if dim_semilleros_df.empty:
+        dim_semilleros_df = build_dim_semilleros_seed()
+
+    write_df_to_sheet(wb, "Dim_Semilleros", dim_semilleros_df)
 
     sem_conf = build_semilleros_confiable(dim_semilleros_df)
     write_df_to_sheet(wb, "Dim_Semilleros_Confiable", sem_conf)
