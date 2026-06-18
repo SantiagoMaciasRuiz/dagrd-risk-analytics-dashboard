@@ -174,7 +174,10 @@ table _Medidas
 			            {"CIUDAD DEL RIO", 14},
 			            {"BARRIO COLOMBIA", 14},
 			            {"CARIBE", 5},
-			            {"La 30", 10}
+			            {"La 30", 10},
+			            {"Milla de Oro", 14},
+			            {"Guayaquil", 10},
+			            {"TESORO", 14}
 			        }
 			    )
 			VAR _ZonasPermitidas =
@@ -699,7 +702,10 @@ table _Medidas
 			            {"CIUDAD DEL RIO", 14},
 			            {"BARRIO COLOMBIA", 14},
 			            {"CARIBE", 5},
-			            {"La 30", 10}
+			            {"La 30", 10},
+			            {"Milla de Oro", 14},
+			            {"Guayaquil", 10},
+			            {"TESORO", 14}
 			        }
 			    )
 			VAR _ZonasPermitidas =
@@ -770,7 +776,10 @@ table _Medidas
 			            {"CIUDAD DEL RIO", 14},
 			            {"BARRIO COLOMBIA", 14},
 			            {"CARIBE", 5},
-			            {"La 30", 10}
+			            {"La 30", 10},
+			            {"Milla de Oro", 14},
+			            {"Guayaquil", 10},
+			            {"TESORO", 14}
 			        }
 			    )
 			VAR _ZonasPermitidas =
@@ -819,7 +828,10 @@ table _Medidas
 			            {"CIUDAD DEL RIO", 14},
 			            {"BARRIO COLOMBIA", 14},
 			            {"CARIBE", 5},
-			            {"La 30", 10}
+			            {"La 30", 10},
+			            {"Milla de Oro", 14},
+			            {"Guayaquil", 10},
+			            {"TESORO", 14}
 			        }
 			    )
 			VAR _ZonasPermitidas =
