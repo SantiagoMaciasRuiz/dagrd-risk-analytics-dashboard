@@ -6,7 +6,7 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["Hecho_Participacion_General","Hecho_Simulacros","Hecho_Demografia","Dim_SATC","Dim_SATC_Relaciones","Dim_Semilleros","Dim_Semilleros_Confiable","Dim_Comites_Comisiones_2026","CAM_Control","CAM_Resumen_Zona","CAM_Detalle","Hecho_Personas_Atendidas_Ordinario","Hecho_IxR"]
+annotation PBI_QueryOrder = ["Hecho_Participacion_General","Hecho_Simulacros","Hecho_Demografia","Dim_SATC","Dim_SATC_Relaciones","Dim_Semilleros","Dim_Semilleros_Confiable","Dim_Comites_Comisiones_2026","CAM_Control","CAM_Resumen_Zona","CAM_Detalle","Hecho_Personas_Atendidas_Ordinario","Hecho_IxR","Dim_Zonas_CAM"]
 
 annotation __PBI_TimeIntelligenceEnabled = 1
 
@@ -36,6 +36,7 @@ ref table Hecho_Personas_Atendidas_Ordinario
 ref table Hecho_IxR
 ref table LocalDateTable_a863f791-f138-400c-b8fd-670007b6f6ae
 ref table Dim_Grafica_PAO
+ref table Dim_Zonas_CAM
 
 ref cultureInfo es-ES
 

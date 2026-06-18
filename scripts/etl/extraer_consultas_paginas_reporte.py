@@ -1174,6 +1174,16 @@ def _extract_fact_and_queries() -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame], 
 
     cam_detalle, cam_resumen_zona, cam_control = _extract_cam_tables()
 
+    # Generar tabla de dimensiones de zonas CAM a partir del mapeo en config
+    zone_map = config.get("cam_zone_comuna_map", {})
+    zone_rows = []
+    for zone, comunas in zone_map.items():
+        for comuna in comunas:
+            zone_rows.append({"zona_cam": zone, "comuna_cod": int(comuna)})
+    dim_zonas_cam = pd.DataFrame(zone_rows)
+    if dim_zonas_cam.empty:
+        dim_zonas_cam = pd.DataFrame(columns=["zona_cam", "comuna_cod"])
+
     outputs: Dict[str, pd.DataFrame] = {
         "Hecho_Participacion_General": fact_df,
         "General_Por_Seccion": general_por_seccion,
@@ -1195,6 +1205,7 @@ def _extract_fact_and_queries() -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame], 
         "CAM_Detalle": cam_detalle,
         "CAM_Resumen_Zona": cam_resumen_zona,
         "CAM_Control": cam_control,
+        "Dim_Zonas_CAM": dim_zonas_cam,
         "Control_Extraccion": control_df,
     }
     return fact_df, outputs, control_df

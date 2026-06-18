@@ -151,39 +151,10 @@ table _Medidas
 
 	measure Actividades_Empresa =
 			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
-			VAR _MapaZonaComuna =
-			    DATATABLE(
-			        "zona_cam", STRING,
-			        "comuna_cod", INTEGER,
-			        {
-			            {"Carabobo Norte", 4},
-			            {"Carabobo Norte", 10},
-			            {"Centro Oriental", 10},
-			            {"Alpujarra", 10},
-			            {"Belen Olaya", 15},
-			            {"Belen Olaya", 16},
-			            {"Guayabal Sur", 15},
-			            {"Guayabal Norte", 15},
-			            {"Robledo IES", 7},
-			            {"Robledo IPS", 5},
-			            {"Robledo IPS", 7},
-			            {"Robledo IPS", 60},
-			            {"La Presidenta", 14},
-			            {"Perpetuo Socorro", 10},
-			            {"FRATERNIDAD", 8},
-			            {"CIUDAD DEL RIO", 14},
-			            {"BARRIO COLOMBIA", 14},
-			            {"CARIBE", 5},
-			            {"La 30", 10},
-			            {"Milla de Oro", 14},
-			            {"Guayaquil", 10},
-			            {"TESORO", 14}
-			        }
-			    )
 			VAR _ZonasPermitidas =
 			    SELECTCOLUMNS(
-			        FILTER(_MapaZonaComuna, [comuna_cod] IN _ComunasSeleccionadas),
-			        "zona_cam", [zona_cam]
+			        FILTER(Dim_Zonas_CAM, Dim_Zonas_CAM[comuna_cod] IN _ComunasSeleccionadas),
+			        "zona_cam", Dim_Zonas_CAM[zona_cam]
 			    )
 			VAR _v =
 			    CALCULATE(
@@ -679,39 +650,10 @@ table _Medidas
 
 	measure Lista_Nombres_CAM_Filtrados =
 			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
-			VAR _MapaZonaComuna =
-			    DATATABLE(
-			        "zona_cam", STRING,
-			        "comuna_cod", INTEGER,
-			        {
-			            {"Carabobo Norte", 4},
-			            {"Carabobo Norte", 10},
-			            {"Centro Oriental", 10},
-			            {"Alpujarra", 10},
-			            {"Belen Olaya", 15},
-			            {"Belen Olaya", 16},
-			            {"Guayabal Sur", 15},
-			            {"Guayabal Norte", 15},
-			            {"Robledo IES", 7},
-			            {"Robledo IPS", 5},
-			            {"Robledo IPS", 7},
-			            {"Robledo IPS", 60},
-			            {"La Presidenta", 14},
-			            {"Perpetuo Socorro", 10},
-			            {"FRATERNIDAD", 8},
-			            {"CIUDAD DEL RIO", 14},
-			            {"BARRIO COLOMBIA", 14},
-			            {"CARIBE", 5},
-			            {"La 30", 10},
-			            {"Milla de Oro", 14},
-			            {"Guayaquil", 10},
-			            {"TESORO", 14}
-			        }
-			    )
 			VAR _ZonasPermitidas =
 			    SELECTCOLUMNS(
-			        FILTER(_MapaZonaComuna, [comuna_cod] IN _ComunasSeleccionadas),
-			        "zona_cam", [zona_cam]
+			        FILTER(Dim_Zonas_CAM, Dim_Zonas_CAM[comuna_cod] IN _ComunasSeleccionadas),
+			        "zona_cam", Dim_Zonas_CAM[zona_cam]
 			    )
 			VAR _Nombres =
 			    CALCULATETABLE(
@@ -753,39 +695,10 @@ table _Medidas
 
 	measure Empresas_Detalle_Filtro_Comuna =
 			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
-			VAR _MapaZonaComuna =
-			    DATATABLE(
-			        "zona_cam", STRING,
-			        "comuna_cod", INTEGER,
-			        {
-			            {"Carabobo Norte", 4},
-			            {"Carabobo Norte", 10},
-			            {"Centro Oriental", 10},
-			            {"Alpujarra", 10},
-			            {"Belen Olaya", 15},
-			            {"Belen Olaya", 16},
-			            {"Guayabal Sur", 15},
-			            {"Guayabal Norte", 15},
-			            {"Robledo IES", 7},
-			            {"Robledo IPS", 5},
-			            {"Robledo IPS", 7},
-			            {"Robledo IPS", 60},
-			            {"La Presidenta", 14},
-			            {"Perpetuo Socorro", 10},
-			            {"FRATERNIDAD", 8},
-			            {"CIUDAD DEL RIO", 14},
-			            {"BARRIO COLOMBIA", 14},
-			            {"CARIBE", 5},
-			            {"La 30", 10},
-			            {"Milla de Oro", 14},
-			            {"Guayaquil", 10},
-			            {"TESORO", 14}
-			        }
-			    )
 			VAR _ZonasPermitidas =
 			    SELECTCOLUMNS(
-			        FILTER(_MapaZonaComuna, [comuna_cod] IN _ComunasSeleccionadas),
-			        "zona_cam", [zona_cam]
+			        FILTER(Dim_Zonas_CAM, Dim_Zonas_CAM[comuna_cod] IN _ComunasSeleccionadas),
+			        "zona_cam", Dim_Zonas_CAM[zona_cam]
 			    )
 			VAR _EmpresaActual = SELECTEDVALUE(CAM_Detalle[empresa_normalizada])
 			VAR _Visible =
@@ -805,39 +718,10 @@ table _Medidas
 
 	measure Empresas_Detalle =
 			VAR _ComunasSeleccionadas = VALUES(Dim_Comuna[comuna_cod])
-			VAR _MapaZonaComuna =
-			    DATATABLE(
-			        "zona_cam", STRING,
-			        "comuna_cod", INTEGER,
-			        {
-			            {"Carabobo Norte", 4},
-			            {"Carabobo Norte", 10},
-			            {"Centro Oriental", 10},
-			            {"Alpujarra", 10},
-			            {"Belen Olaya", 15},
-			            {"Belen Olaya", 16},
-			            {"Guayabal Sur", 15},
-			            {"Guayabal Norte", 15},
-			            {"Robledo IES", 7},
-			            {"Robledo IPS", 5},
-			            {"Robledo IPS", 7},
-			            {"Robledo IPS", 60},
-			            {"La Presidenta", 14},
-			            {"Perpetuo Socorro", 10},
-			            {"FRATERNIDAD", 8},
-			            {"CIUDAD DEL RIO", 14},
-			            {"BARRIO COLOMBIA", 14},
-			            {"CARIBE", 5},
-			            {"La 30", 10},
-			            {"Milla de Oro", 14},
-			            {"Guayaquil", 10},
-			            {"TESORO", 14}
-			        }
-			    )
 			VAR _ZonasPermitidas =
 			    SELECTCOLUMNS(
-			        FILTER(_MapaZonaComuna, [comuna_cod] IN _ComunasSeleccionadas),
-			        "zona_cam", [zona_cam]
+			        FILTER(Dim_Zonas_CAM, Dim_Zonas_CAM[comuna_cod] IN _ComunasSeleccionadas),
+			        "zona_cam", Dim_Zonas_CAM[zona_cam]
 			    )
 			VAR _EmpresasFiltradas =
 			    CALCULATETABLE(

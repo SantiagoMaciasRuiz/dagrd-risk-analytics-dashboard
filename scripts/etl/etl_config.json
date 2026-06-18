@@ -17,5 +17,25 @@
     "simulacros": "Simulacros",
     "cam": "CAM",
     "satc": "SAT-C"
+  },
+  "cam_zone_comuna_map": {
+    "Carabobo Norte": [4, 10],
+    "Centro Oriental": [10],
+    "Alpujarra": [10],
+    "Belen Olaya": [15, 16],
+    "Guayabal Sur": [15],
+    "Guayabal Norte": [15],
+    "Robledo IES": [7],
+    "Robledo IPS": [5, 7, 60],
+    "La Presidenta": [14],
+    "Perpetuo Socorro": [10],
+    "FRATERNIDAD": [8],
+    "CIUDAD DEL RIO": [14],
+    "BARRIO COLOMBIA": [14],
+    "CARIBE": [5],
+    "La 30": [10],
+    "Milla de Oro": [14],
+    "Guayaquil": [10],
+    "TESORO": [14]
   }
 }

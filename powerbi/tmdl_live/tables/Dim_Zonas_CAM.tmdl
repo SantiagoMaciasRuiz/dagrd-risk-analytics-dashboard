@@ -1,0 +1,25 @@
+table Dim_Zonas_CAM
+	lineageTag: e5b2c3d4-a1b2-3c4d-5e6f-7a8b9c0d1e2f
+
+	column zona_cam
+		dataType: string
+		lineageTag: a5c8e3d2-c4b1-4f30-8a1e-7d6f5e4d3c2b
+		summarizeBy: none
+		sourceColumn: zona_cam
+
+	column comuna_cod
+		dataType: int64
+		lineageTag: b8d9c0e1-f2a3-4b5c-6d7e-8f9a0b1c2d3e
+		summarizeBy: sum
+		sourceColumn: comuna_cod
+
+	partition Dim_Zonas_CAM = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\santi\OneDrive\Escritorio\Chamba\Dashboard\data\model\Modelo_Reporte_Paginas_2026.xlsx"), null, true),
+				    Dim_Zonas_CAM_Sheet = Origen{[Item="Dim_Zonas_CAM",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Dim_Zonas_CAM_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"zona_cam", type text}, {"comuna_cod", Int64.Type}})
+				in
+				    #"Tipo cambiado"
