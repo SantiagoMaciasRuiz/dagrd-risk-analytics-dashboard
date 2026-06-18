@@ -409,7 +409,7 @@ def _extract_pivot_totals(sheet_rows: List[Tuple[int, Dict[int, str]]]) -> Tuple
     return None, None
 
 
-def _extract_cam_tables() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def _extract_cam_tables() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, Dict[str, List[int]]]:
     cam_detalle_cols = [
         "cam_activo_id",
         "zona_cam",
@@ -433,6 +433,7 @@ def _extract_cam_tables() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
             pd.DataFrame(columns=cam_detalle_cols),
             pd.DataFrame(columns=cam_resumen_cols),
             pd.DataFrame(columns=cam_control_cols),
+            {},
         )
 
     if cam_raw.empty or cam_raw.shape[1] < 3:
@@ -440,18 +441,24 @@ def _extract_cam_tables() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
             pd.DataFrame(columns=cam_detalle_cols),
             pd.DataFrame(columns=cam_resumen_cols),
             pd.DataFrame(columns=cam_control_cols),
+            {},
         )
 
     # Find the header row by searching for "CAM ACTIVOS" and "EMPRESAS" in the first 10 rows
     header_idx = None
     col_idx_activo = None
     col_idx_empresa = None
+    col_idx_comuna = None
     for i in range(min(10, len(cam_raw))):
         row_vals = [str(x).strip().upper() for x in cam_raw.iloc[i].tolist()]
         if "CAM ACTIVOS" in row_vals and "EMPRESAS" in row_vals:
             header_idx = i
             col_idx_activo = row_vals.index("CAM ACTIVOS")
             col_idx_empresa = row_vals.index("EMPRESAS")
+            # Buscar columna opcional de Comuna
+            for idx, val in enumerate(row_vals):
+                if "COMUNA" in val:
+                    col_idx_comuna = idx
             break
 
     if header_idx is None:
@@ -465,8 +472,13 @@ def _extract_cam_tables() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         col_idx_zona = col_idx_activo + 1
         data_df = cam_raw.iloc[header_idx + 1:].copy()
 
-    cam_df = data_df[[col_idx_activo, col_idx_zona, col_idx_empresa]].copy()
-    cam_df.columns = ["cam_activo_raw", "zona_cam_raw", "empresa_cam_raw"]
+    if col_idx_comuna is not None:
+        cam_df = data_df[[col_idx_activo, col_idx_zona, col_idx_empresa, col_idx_comuna]].copy()
+        cam_df.columns = ["cam_activo_raw", "zona_cam_raw", "empresa_cam_raw", "comuna_raw"]
+    else:
+        cam_df = data_df[[col_idx_activo, col_idx_zona, col_idx_empresa]].copy()
+        cam_df.columns = ["cam_activo_raw", "zona_cam_raw", "empresa_cam_raw"]
+        cam_df["comuna_raw"] = None
 
     for col in cam_df.columns:
         cam_df[col] = cam_df[col].map(_clean_text)
@@ -477,10 +489,12 @@ def _extract_cam_tables() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
             pd.DataFrame(columns=cam_detalle_cols),
             pd.DataFrame(columns=cam_resumen_cols),
             pd.DataFrame(columns=cam_control_cols),
+            {},
         )
 
     cam_df["cam_activo_raw"] = cam_df["cam_activo_raw"].ffill()
     cam_df["zona_cam_raw"] = cam_df["zona_cam_raw"].ffill()
+    cam_df["comuna_raw"] = cam_df["comuna_raw"].ffill()
     cam_df["empresa_cam"] = cam_df["empresa_cam_raw"].map(_clean_text)
     cam_df = cam_df[cam_df["empresa_cam"].notna()].copy()
 
@@ -527,7 +541,17 @@ def _extract_cam_tables() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         ]
     )
 
-    return cam_detalle, cam_resumen_zona, cam_control
+    excel_zone_map = {}
+    if col_idx_comuna is not None:
+        for _, row in cam_df.iterrows():
+            zone = _clean_text(row["zona_cam_raw"])
+            comuna_val = row["comuna_raw"]
+            if zone and pd.notna(comuna_val) and zone not in excel_zone_map:
+                comunas_found = [int(c) for c in re.findall(r'\d+', str(comuna_val))]
+                if comunas_found:
+                    excel_zone_map[zone] = comunas_found
+
+    return cam_detalle, cam_resumen_zona, cam_control, excel_zone_map
 
 
 def _classify_comunidad(row: pd.Series) -> str | None:
@@ -1172,10 +1196,14 @@ def _extract_fact_and_queries() -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame], 
         ]
     )
 
-    cam_detalle, cam_resumen_zona, cam_control = _extract_cam_tables()
+    cam_detalle, cam_resumen_zona, cam_control, excel_zone_map = _extract_cam_tables()
 
-    # Generar tabla de dimensiones de zonas CAM a partir del mapeo en config
+    # Generar tabla de dimensiones de zonas CAM a partir del mapeo en config y Excel
     zone_map = config.get("cam_zone_comuna_map", {})
+    if excel_zone_map:
+        # Priorizar mapeo de Excel sobre el de la configuración
+        zone_map = {**zone_map, **excel_zone_map}
+
     zone_rows = []
     for zone, comunas in zone_map.items():
         for comuna in comunas:
