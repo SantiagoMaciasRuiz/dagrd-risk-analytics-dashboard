@@ -1,327 +1,120 @@
 # 📊 Dashboard DAGRD - Organización y Documentación
 
-**Última actualización:** 18 de marzo de 2026  
-**Estado:** ✅ Reorganizado y optimizado
+**Última actualización:** 18 de junio de 2026  
+**Estado:** ✅ Reorganizado, optimizado y totalmente portátil
+
+Este repositorio contiene el pipeline ETL y el modelo analítico para el tablero de control de gestión de riesgo del **DAGRD**. Ha sido optimizado para ser completamente independiente del entorno local, con configuraciones centralizadas en JSON y un flujo de ejecución sumamente simplificado.
 
 ---
 
-## 🚀 Qué Ver Primero (Para Revisores)
+## 🚀 Flujo de Trabajo Operativo (Actualización del Tablero)
 
-Si vas a evaluar el proyecto rápido, revisa en este orden:
+Para actualizar el tablero con datos nuevos del equipo social, sigue estos 3 simples pasos:
 
-1. `docs/core/RESUMEN_EJECUTIVO_DATOS.md`  
-	Contexto, alcance y resultado general del proyecto.
+### 1️⃣ Guardar el archivo fuente
+Copia el nuevo reporte de Excel en la carpeta:
+* `data/source/`
+* *Nota: El pipeline busca archivos bajo el patrón `Reporte de actividades equipo social*.xlsx` y procesa el más reciente por fecha de modificación.*
 
-2. `scripts/etl/extraer_consultas_paginas_reporte.py`  
-	ETL principal que construye el modelo analítico para Power BI.
-
-3. `powerbi/tmdl_live/tables/_Medidas.tmdl`  
-	Medidas DAX centralizadas y lógica de indicadores/tablas.
-
-4. `docs/core/VALIDACION_POWERBI_EXCEL_2026.md`  
-	Evidencia de validación entre Excel y Power BI.
-
-5. `docs/guides/GUIA_PASO_A_PASO_POWERBI_DAGRD.md`  
-	Flujo operativo para reproducir y mantener el tablero.
-
----
-
-## 📦 Publicación en GitHub
-
-Archivos clave para colaboración y despliegue del entorno:
-
-- `requirements.txt` (dependencias Python)
-- `LICENSE` (licencia MIT)
-- `CONTRIBUTING.md` (guía de contribución)
-
-Instalación rápida:
-
-```bash
-pip install -r requirements.txt
+### 2️⃣ Ejecutar el ETL
+Abre una terminal PowerShell en la raíz del proyecto y ejecuta:
+```powershell
+.\scripts\etl\run_etl_simple.ps1
 ```
+* **¿Qué hace este script?**
+  1. Lee la configuración de [etl_config.json](scripts/etl/etl_config.json).
+  2. Extrae las actividades y simulacros unificándolos.
+  3. Ejecuta el script de reparación de Power BI para crear/actualizar catálogos y formatear hojas críticas en Excel de forma que el refresco en Power BI no falle.
+
+### 3️⃣ Refrescar Power BI
+Abre el archivo de Power BI Desktop (`.pbix` o `.pbip`) y haz clic en **Refresh** (Actualizar) en la pestaña de inicio o presiona `Ctrl+Shift+R`.
 
 ---
 
-## 📁 Estructura de Carpetas
+## ⚙️ Configuración Centralizada
+Toda la lógica de carpetas de origen/destino y nombres de hojas de Excel se controla desde el archivo:
+* **[scripts/etl/etl_config.json](scripts/etl/etl_config.json)**
+
+Si en el futuro cambian los nombres de las hojas base (ej. `"Sheet1"`, `"Simulacros"`, `"CAM"`, `"SAT-C"`), **no edites los scripts**, solo actualiza las etiquetas correspondientes en este archivo JSON.
+
+---
+
+## 📁 Estructura de Carpetas Limpia y Organizada
 
 ```
 Dashboard/
 │
 ├── 📂 data/                    # Datos y modelos
-│   ├── model/                  # Archivos Excel principales
-│   │   ├── Modelo_Reporte_Paginas_2026.xlsx      # ⭐ ARCHIVO PRINCIPAL
-│   │   ├── Participantes_Generales_Reporte_2026.xlsx
-│   │   ├── Participantes_Generales_Transaccional_2026.xlsx
-│   │   ├── Modelo_Reporte_Paginas_2026_BACKUP.xlsx  # Backup
-│   │   └── ...
-│   ├── raw/                    # Datos sin procesar
-│   ├── source/                 # Datos fuente
+│   ├── source/                 # 📥 Archivos Excel de entrada del Equipo Social
+│   ├── model/                  # 📤 Archivos procesados de salida para Power BI
+│   │   ├── Modelo_Reporte_Paginas_2026.xlsx      # ⭐ BASE DE DATOS PRINCIPAL DE POWER BI
+│   │   ├── Excel_Maestro_PowerBI.xlsx            # Catálogo maestro de comunas/comités
+│   │   └── legacy/                               # Archivos antiguos de depuración
 │   └── reference/              # Datos de referencia
 │
 ├── 📂 scripts/                 # Automatización y procesamiento
-│   ├── etl/                    # Extracción, transformación, carga
-│   │   ├── crear_tabla_semilleros.py              # ⭐ NUEVO: Crear Dim_Semilleros
-│   │   ├── extraer_consultas_paginas_reporte.py
-│   │   ├── extraer_participantes_generales_reporte.py
-│   │   ├── extraer_participantes_transaccional_reporte.py
-│   │   ├── actualizar_37_satc_final.py
-│   │   └── regenerar_puente_37.py                 # Normalizar SAT-C
+│   ├── etl/                    # 🔄 Pipeline ETL Activo
+│   │   ├── etl_config.json                       # ⚙️ Archivo de configuración central
+│   │   ├── run_etl_simple.ps1                    # Runner simplificado
+│   │   ├── run_etl_full.ps1                      # Runner completo (cierre/apertura de PBI)
+│   │   ├── extraer_consultas_paginas_reporte.py  # Script de extracción
+│   │   ├── reparar_hojas_modelo_para_powerbi.py  # Script de formateo y reparación
+│   │   ├── crear_tabla_semilleros.py              # Semilla oficial de Semilleros
+│   │   └── legacy/                               # Scripts antiguos de debug
 │   │
 │   ├── qa/                     # Control de calidad y validación
-│   │   ├── analizar_kpis_comunidad.py
-│   │   └── perfil_bloques_comunidad.py
-│   │
-│   ├── powerbi/                # Scripts para Power BI
-│   │   ├── crear_medidas_satc.py
-│   │   ├── crear_medidas_semilleros.py           # ⭐ NUEVO: Medidas Semilleros
-│   │   └── preparar_modelo_powerbi.py
-│   │
-│   └── dax/                    # Definiciones DAX para Power BI
-│       ├── medidas_satc.dax
-│       └── medidas_semilleros.dax                # ⭐ NUEVO
+│   └── powerbi/                # Scripts para Power BI (medidas, visuales y automatización)
+│       └── legacy/             # Scripts antiguos de debug / medidas
 │
 ├── 📂 docs/                    # Documentación
-│   ├── core/                   # Documentación principal
-│   │   ├── ANALISIS_ESTRUCTURA_DATOS_COMPLETO.md
-│   │   ├── EXTRACCION_DATOS_COMPLETA.md
-│   │   └── RESUMEN_EJECUTIVO_DATOS.md
-│   │
-│   ├── guides/                 # Guías paso a paso
-│   │   └── GUIA_PASO_A_PASO_POWERBI_DAGRD.md
-│   │
-│   └── legacy/                 # Documentación antigua
+│   ├── core/                   # Documentación principal de análisis
+│   ├── guides/                 # Guías de usuario paso a paso
+│   │   └── GUIA_PASO_A_PASO_POWERBI_DAGRD.md     # Guía operativa completa
+│   └── auditorias/             # 📑 Resultados de auditorías, validaciones e investigaciones previas
 │
-├── 📂 powerbi/                 # Configuración Power BI
-│   ├── pbix/                   # Archivos Power BI Desktop (.pbix)
-│   ├── config/                 # Configuraciones
-│   └── dax/                    # Scripts DAX (legacy)
-│
-├── 📂 Tableros/                # Dashboards e informes
-│
-├── 📂 .venv/                   # Entorno virtual Python (ignorar)
-│
-├── 🔵 README.md                # Este archivo
-└── 📋 .gitignore               # Archivos ignorados en Git
+├── 📂 Tableros/                # Informes y archivos de Power BI (.pbix)
+├── 📂 powerbi/                 # Estructura TMDL y metadatos de Power BI Desktop
+├── 🔵 run_pipeline.py          # Script de integración con backend local (LLM y AutoVis)
+├── 📋 .gitignore               # Configuración de exclusiones de Git
+└── 📦 requirements.txt         # Dependencias Python
 ```
 
 ---
 
-## 📊 Tablas Principales en Excel
-
-### ✅ **Dim_Semilleros** (NUEVA - 20 registros)
-Tabla confiable de Semilleros DAGRD que incluye:
-- **Columnas:** N°, Semillero, Comuna, Comuna_Nombre, Barrio_Organización
-- **Registros:** 20 semilleros únicos
-- **Comunas:** Distribuidos en 9 comunas
-- **Fuente:** Datos oficiales DAGRD
-- **Ubicación:** Hoja 2 en `Modelo_Reporte_Paginas_2026.xlsx`
-
-**Cómo usar:**
-```dax
-Total_Semilleros = DISTINCTCOUNT(Dim_Semilleros[Semillero])  // = 20
-```
-
-### ✅ **Dim_SATC** (37 registros)
-- **Columnas:** SATC_ID, SATC_Nombre, Comuna_Cod, Talleres, Comites, Activo
-- **Registros:** 37 SAT-C validados y normalizados
-- **Comunas:** 12 comunas cubiertas
-
-### ✅ **Hecho_Participacion_General** (3,502 registros)
-- **Campos clave:** id_actividad, fecha, comuna_cod, nombre_satc, bloque_comunidad, satc_id, participantes
-- **Bloques:** SAT-C, Comisiones y comites, Semilleros, Hogares seguros, Otros Procesos Organizativos
-- **Cobertura:** 49.6% (1,737 registros con satc_id)
-
-### ✅ **Puente_SATC_Comuna** (37 registros)
-- **Mapeo:** Relación entre SATC y Comuna
-- **Cardinality:** 1:1 (cada SATC mapea a una comuna)
-
----
-
-## 🔄 Flujo de Trabajo Recomendado
-
-### 1️⃣ **Actualizar Datos (ETL)**
-```bash
-# Extraer datos actualizados
-python scripts/etl/extraer_consultas_paginas_reporte.py
-python scripts/etl/extraer_participantes_generales_reporte.py
-
-# Regenerar SAT-C (si hay cambios)
-python scripts/etl/regenerar_puente_37.py
-
-# Crear/actualizar Semilleros
-python scripts/etl/crear_tabla_semilleros.py
-```
-
-### 2️⃣ **Validar Datos (QA)**
-```bash
-# Analizar KPIs y estructura
-python scripts/qa/analizar_kpis_comunidad.py
-python scripts/qa/perfil_bloques_comunidad.py
-```
-
-### 3️⃣ **Actualizar Power BI**
-```bash
-# Generar medidas DAX
-python scripts/powerbi/crear_medidas_satc.py
-python scripts/powerbi/crear_medidas_semilleros.py
-
-# Luego en Power BI Desktop:
-# 1. Ctrl+Shift+R (Refrescar datos)
-# 2. Modelado → Nueva medida (copiar de scripts/dax/*.dax)
-# 3. Crear/actualizar visuales
-```
-
----
-
-## 📈 Medidas DAX Disponibles
-
-### Para SAT-C
-```dax
-Total_SATC_Unicos               // = 37
-SATC_Principales               // Activos en datos
-Actividades_por_SATC           // Conteo por SAT-C
-Participantes_por_SATC         // Suma de participantes
-Cobertura_SATC_Porcentaje      // % de cobertura
-```
-
-### Para Semilleros
-```dax
-Total_Semilleros               // = 20
-Semilleros_por_Comuna          // = 9
-Semilleros_Activos             // Con participación
-Comuna_Seleccionada_Semilleros // Para slicers
-```
-
-**Ubicación:** [scripts/dax/medidas_semilleros.dax](scripts/dax/medidas_semilleros.dax)
-
----
-
-## 🛠️ Configuración y Requisitos
+## 🛠️ Instalación y Requisitos
 
 ### Requisitos Previos
-- Python 3.8+
-- Librerías: pandas, openpyxl, unicodedata
-- Power BI Desktop (última versión)
-- Excel 2019+ o Microsoft 365
+* Python 3.8+ (64-bit recomendado)
+* Power BI Desktop
 
-### Instalación
-```bash
-# 1. Crear entorno virtual (ya existe en .venv/)
-python -m venv .venv
-
-# 2. Activar entorno
-.\.venv\Scripts\Activate.ps1
-
-# 3. Instalar dependencias
-pip install pandas openpyxl
-```
-
----
-
-## 🔐 Datos de Semilleros - Garantía de Confiabilidad
-
-✅ **20 Semilleros Registrados Oficialmente**
-
-| N° | Semillero | Comuna | Barrio/Organización |
-|---|---|---|---|
-| 1 | IE Fe y Alegría | 1 - Popular | Popular - IE Fe y Alegría |
-| 2 | Comunidad Embera Dobida | 80 - San Antonio | San Antonio de Prado |
-| 3 | Olaya Herrera | 7 - Robledo | Olaya Herrera - Comisión Riesgo |
-| 4 | Villatina | 8 - Villa Hermosa | Villatina |
-| 5 | El Pesebre | 13 - San Javier | El Pesebre - Mesa Gestión Riesgo |
-| ... | ... | ... | ... |
-
-**Ver tabla completa:** [data/model/Modelo_Reporte_Paginas_2026.xlsx](data/model/Modelo_Reporte_Paginas_2026.xlsx) → Hoja `Dim_Semilleros`
+### Instalación Rápida
+1. Abre tu terminal en la raíz del proyecto.
+2. Crea el entorno virtual si no existe:
+   ```bash
+   python -m venv .venv
+   ```
+3. Activa el entorno virtual:
+   * **PowerShell:** `.\.venv\Scripts\Activate.ps1`
+   * **CMD:** `.\.venv\Scripts\activate.bat`
+4. Instalar dependencias requeridas:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ---
 
-## 📝 Archivo de Semilleros en Power BI
+## ❓ Preguntas Frecuentes y Soporte
 
-### Paso 1: Refrescar datos Excel
-1. Abre `Modelo_Reporte_Paginas_2026.xlsx`
-2. Verifica que la hoja `Dim_Semilleros` esté presente
-3. En Power BI Desktop: `Inicio` → `Refrescar` (Ctrl+Shift+R)
+### P: Se agregaron nuevos comités en el consolidado y no aparecen en Power BI.
+* **R:** Asegúrate de que el archivo del consolidado esté en `data/model/CONSOLIDADO COMITES COMISIONES 03-2026.xlsx`. Al correr `run_etl_simple.ps1`, el script regenera el CSV `Dim_Comites_Comisiones_2026.csv` que lee Power BI automáticamente.
 
-### Paso 2: Crear relaciones (si es necesario)
-1. `Modelado` → `Administrar relaciones`
-2. Crear relación: `Dim_Semilleros[Comuna]` → `Hecho_Participacion_General[comuna_cod]`
-3. Cardinality: **Muchos a 1 (M:1)**
+### P: El pipeline falla con error de permisos o archivos bloqueados.
+* **R:** Esto ocurre si tienes el archivo de salida `Modelo_Reporte_Paginas_2026.xlsx` abierto en Excel. Ciérralo y vuelve a ejecutar el script. Para evitar bloqueos con Power BI, puedes usar `run_etl_full.ps1 -ClosePowerBI` el cual cierra Power BI Desktop antes de iniciar y lo vuelve a abrir al terminar.
 
-### Paso 3: Agregar medidas
-1. `Modelado` → `Nueva medida`
-2. Copiar cada medida desde [scripts/dax/medidas_semilleros.dax](scripts/dax/medidas_semilleros.dax)
-3. Pegar en la tabla correspondiente
-
-### Paso 4: Crear visuales
-1. Tabla o matriz con Semilleros por Comuna
-2. Card con Total_Semilleros (= 20)
-3. Slicer por Comuna_Nombre
+### P: Modifiqué o agregué zonas en el reporte CAM y no se muestran con su comuna en Power BI.
+* **R:** La relación entre las zonas CAM y las comunas de Medellín se maneja a través de relaciones virtuales en las medidas de Power BI. Si agregas zonas nuevas en el archivo fuente, deberás mapearlas en la medida `Empresas_Detalle` y afines dentro del archivo local `_Medidas.tmdl` o en la vista de modelado de Power BI.
 
 ---
 
-## 🗂️ Guía de Archivos Importantes
-
-| Archivo | Propósito | Actualización |
-|---------|----------|---------------|
-| **Modelo_Reporte_Paginas_2026.xlsx** | Datos maestro para Power BI | Manual o automated |
-| **scripts/etl/crear_tabla_semilleros.py** | Generar Dim_Semilleros | Según sea necesario |
-| **scripts/dax/medidas_semilleros.dax** | Medidas DAX para Semilleros | Generado automáticamente |
-| **docs/guides/GUIA_PASO_A_PASO_POWERBI_DAGRD.md** | Tutoriales paso a paso | Referencia |
-
----
-
-## ⚡ Comandos Rápidos
-
-```bash
-# Activar entorno Python
-.\.venv\Scripts\Activate.ps1
-
-# Crear tabla Semilleros
-python scripts/etl/crear_tabla_semilleros.py
-
-# Validar datos
-python scripts/qa/analizar_kpis_comunidad.py
-
-# Generar medidas DAX
-python scripts/powerbi/crear_medidas_semilleros.py
-
-# Ver estructura
-tree /F (Windows) o tree -L 3 (Mac/Linux)
-```
-
----
-
-## 📞 Soporte y Preguntas
-
-### Problemas Comunes
-
-**P: Semilleros no aparecen en Power BI**
-- ✅ Verificar que `Dim_Semilleros` exista en Excel (script `crear_tabla_semilleros.py`)
-- ✅ Ejecutar Refrescar en Power BI (Ctrl+Shift+R)
-- ✅ Verificar relaciones en Modelado
-- ✅ Confirmar que medidas están creadas
-
-**P: SAT-C no se ven normalizados**
-- ✅ Ejecutar `regenerar_puente_37.py`
-- ✅ Validar con `analizar_kpis_comunidad.py`
-- ✅ Refrescar Power BI
-
-**P: Archivo Excel se ve corrupto**
-- ✅ Usar backup: `Modelo_Reporte_Paginas_2026_BACKUP.xlsx`
-- ✅ Regenrar desde cero: `python scripts/etl/*.py`
-
----
-
-## 🎯 Próximos Pasos
-
-- [ ] Ejecutar `crear_tabla_semilleros.py` ✅ HECHO
-- [ ] Refrescar Power BI con nuevos datos
-- [ ] Crear visuales para Semilleros
-- [ ] Validar medidas con datos reales
-- [ ] Documentar proceso de actualización mensual
-
----
-
-**Mantenido por:** DAGRD  
-**Última revisión:** 2026-03-18  
-**Versión:** 2.0.0
+**Mantenido por:** Equipo Técnico DAGRD  
+**Versión del Proyecto:** 3.0.0 (Portátil y Configurable)
